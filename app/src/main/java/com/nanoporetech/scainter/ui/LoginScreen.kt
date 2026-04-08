@@ -1,5 +1,6 @@
 package com.nanoporetech.scainter.ui
 
+import android.R.attr.password
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -39,6 +40,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -52,7 +54,12 @@ import com.nanoporetech.scainter.ui.theme.ScaInterTheme
 private const val TAG = "LoginScreen"
 @Composable
 fun LoginScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onLogin: () -> Unit = {},
+    username: String = "",
+    onUsernameChanged: (String) -> Unit = {},
+    password: String = "",
+    onPasswordChanged: (String) -> Unit = {},
 ) {
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
     val largePadding = dimensionResource(R.dimen.padding_large)
@@ -79,6 +86,11 @@ fun LoginScreen(
 
         // CREDENTIALS SECTION
         CredentialsSection(
+            username = username,
+            onUsernameChanged = onUsernameChanged,
+            password = password,
+            onPasswordChanged = onPasswordChanged,
+            onLogin = onLogin,
             modifier = Modifier
                 .fillMaxWidth()
         )
@@ -95,7 +107,7 @@ fun LoginScreen(
 
         // LOGIN BUTTON
         Button(
-            onClick = {},
+            onClick = onLogin,
             colors = ButtonDefaults.buttonColors(
                 containerColor = ScaInterTheme.extendedColors.mainGreen.color,
             ),
@@ -140,6 +152,11 @@ fun HeaderAndLogo(
 
 @Composable
 fun CredentialsSection(
+    username: String,
+    onUsernameChanged: (String) -> Unit,
+    password: String,
+    onPasswordChanged: (String) -> Unit,
+    onLogin: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -148,7 +165,7 @@ fun CredentialsSection(
         val focusManager = LocalFocusManager.current
 
         OutlinedTextField(
-            value = "",
+            value = username,
             singleLine = true,
             leadingIcon = {
                 Icon(
@@ -163,11 +180,11 @@ fun CredentialsSection(
                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                 disabledContainerColor = MaterialTheme.colorScheme.surface,
-                focusedIndicatorColor = MaterialTheme.colorScheme.surface,
-                unfocusedIndicatorColor = MaterialTheme.colorScheme.surface,
-                disabledIndicatorColor =  MaterialTheme.colorScheme.surface,
+                focusedIndicatorColor = MaterialTheme.colorScheme.outlineVariant,
+                unfocusedIndicatorColor = MaterialTheme.colorScheme.outlineVariant,
+                disabledIndicatorColor =  MaterialTheme.colorScheme.outlineVariant,
             ),
-            onValueChange = {},
+            onValueChange = { onUsernameChanged(it) },
             isError = false,
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Next
@@ -182,7 +199,7 @@ fun CredentialsSection(
         )
 
         OutlinedTextField(
-            value = "",
+            value = password,
             singleLine = true,
             leadingIcon = {
                 Icon(
@@ -199,20 +216,20 @@ fun CredentialsSection(
                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                 disabledContainerColor = MaterialTheme.colorScheme.surface,
-                focusedIndicatorColor = MaterialTheme.colorScheme.surface,
-                unfocusedIndicatorColor = MaterialTheme.colorScheme.surface,
-                disabledIndicatorColor =  MaterialTheme.colorScheme.surface,
+                focusedIndicatorColor = MaterialTheme.colorScheme.outlineVariant,
+                unfocusedIndicatorColor = MaterialTheme.colorScheme.outlineVariant,
+                disabledIndicatorColor =  MaterialTheme.colorScheme.outlineVariant,
             ),
-            onValueChange = {},
+            onValueChange = { onPasswordChanged(it) },
             isError = false,
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Done,
                 keyboardType = KeyboardType.Password
             ),
             keyboardActions = KeyboardActions(
-                onDone = {}
+                onDone = { onLogin() }
             ),
-            visualTransformation = VisualTransformation.None,
+            visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier
                 .fillMaxWidth()
                 .shadow(dimensionResource(R.dimen.elevation_small))
