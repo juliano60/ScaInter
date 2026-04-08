@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="button_width">250dp</dimen>
+    <dimen name="card_elevation">5dp</dimen>
+    <dimen name="drawer_width">240dp</dimen>
+    <dimen name="drawer_padding_content">12dp</dimen>
+    <dimen name="icon_small">24dp</dimen>
+    <dimen name="icon_medium">48dp</dimen>
+    <dimen name="icon_large">64dp</dimen>
+    <dimen name="scanner_icon_size">120dp</dimen>
+    <dimen name="padding_xsmall">4dp</dimen>
+    <dimen name="padding_small">8dp</dimen>
+    <dimen name="padding_medium">16dp</dimen>
+    <dimen name="padding_large">32dp</dimen>
+    <dimen name="padding_xlarge">64dp</dimen>
+    <dimen name="profile_icon_size">215dp</dimen>
+    <dimen name="shadow_size">20dp</dimen>
+    <dimen name="vertical_spacing_medium">16dp</dimen>
+    <dimen name="vertical_spacing_small">8dp</dimen>
+    <dimen name="vertical_spacing_xsmall">4dp</dimen>
+    <dimen name="horizontal_spacing_small">8dp</dimen>
+</resources>

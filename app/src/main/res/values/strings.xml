@@ -1,3 +1,58 @@
 <resources>
     <string name="app_name">ScaInter</string>
+    <string name="company_name">SCA INTER A</string>
+
+    <!-- LOGIN -->
+    <string name="welcome_message">Welcome to mySCA Inter Partners</string>
+    <string name="username_label">Username</string>
+    <string name="password_label">Password</string>
+    <string name="password_forgotten">Forgot your password?</string>
+    <string name="remember_me">Remember me</string>
+    <string name="login">Login</string>
+    <string name="forgotten_password_title">Forgotten Password</string>
+    <string name="forgotten_password_text">lease use the number below to contact the technical support team.</string>
+
+    <!-- SUPPORT PAGE -->
+    <string name="contact_hours">Monday to Friday from 08h00 to 18h00</string>
+    <string name="sca_technical_support">SCA Inter A Technical Support</string>
+
+    <!-- HOME PAGE -->
+    <string name="logout">Logout</string>
+    <string name="health_care">Health Centre</string>
+    <string name="welcome_header">Welcome, %s</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="consultation_menu_title">My Consultations</string>
+    <string name="examination_menu_title">My Examinations</string>
+    <string name="hospitalisation_menu_title">My Hospitalisations</string>
+    <string name="new_care_sheet">New care sheet</string>
+    <string name="new_examination">New examination</string>
+    <string name="new_hospitalisation">New hospitalisation</string>
+    <string name="view_care_sheet">View care sheets</string>
+    <string name="view_examinations">View examinations</string>
+    <string name="view_hospitalisations">View hospitalisations</string>
+
+    <!-- DESTINATIONS -->
+    <string name="page_home">Home</string>
+    <string name="page_support">Help and support</string>
+
+    <!-- CONSULTATION PAGE -->
+    <string name="act_label">Act:</string>
+    <string name="consultation_info_title">Consultation</string>
+    <string name="date_label">Date:</string>
+    <string name="profile_image">Profile image</string>
+    <string name="coverage_label">Coverage:</string>
+    <string name="total_cost_title">Total</string>
+    <string name="total_cost_label">Total:</string>
+    <string name="total_sca_label">Total SCA:</string>
+    <string name="total_holder_label">Total Assuré:</string>
+    <string name="scan_qr_code">Scan a QR code</string>
+    <string name="policy_members">Policy Members</string>
+
+    <!-- MISCELLANEOUS -->
+    <string name="back_button">Back</string>
+
+    <!-- ERRORS -->
+    <string name="err_invalid_credentials">Username or password incorrect.</string>
+    <string name="err_connection_offline">Network unavailable.</string>
+    <string name="err_unknown_error">Unknown error. Please try again later.</string>
 </resources>

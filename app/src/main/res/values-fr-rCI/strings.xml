@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ScaInter</string>
+    <string name="company_name">SCA INTER A</string>
+
+    <!-- LOGIN -->
+    <string name="welcome_message">Bienvenue à mySCA Inter Partners</string>
+    <string name="username_label">Identifiant</string>
+    <string name="password_label">Mot de passe</string>
+    <string name="password_forgotten">Mot de passe oublié?</string>
+    <string name="remember_me">Sauvegarder</string>
+    <string name="login">Se connecter</string>
+    <string name="forgotten_password_title">Mot de passe oublié</string>
+    <string name="forgotten_password_text">Veuillez utiliser le numero WhatsApp ci-dessous afin de contacter l\'équipe de support technique.</string>
+
+    <!-- SUPPORT PAGE -->
+    <string name="contact_hours">Lundi au Vendredi de 08h00 à 18h00</string>
+    <string name="sca_technical_support">SCA Inter A Support Technique</string>
+
+    <!-- HOME PAGE -->
+    <string name="logout">Se déconnecter</string>
+    <string name="health_care">Centre de Santé</string>
+    <string name="welcome_header">Bienvenue, %s</string>
+    <string name="dashboard">Tableau de Bord</string>
+    <string name="consultation_menu_title">Mes Consultations</string>
+    <string name="examination_menu_title">Mes Examens</string>
+    <string name="hospitalisation_menu_title">Mes Hospitalisations</string>
+    <string name="new_care_sheet">Etablir une feuille de soins</string>
+    <string name="new_examination">Etablir un examen</string>
+    <string name="new_hospitalisation">Etablir une hospitalisation</string>
+    <string name="view_care_sheet">Voir mes feuilles de soins</string>
+    <string name="view_examinations">Voir mes examens</string>
+    <string name="view_hospitalisations">Voir mes hospitalisations</string>
+
+    <!-- DESTINATIONS -->
+    <string name="page_home">Accueil</string>
+    <string name="page_support">Aide et assistance</string>
+
+    <!-- CONSULTATION PAGE -->
+    <string name="act_label">Acte:</string>
+    <string name="consultation_info_title">Consultation</string>
+    <string name="date_label">Date:</string>
+    <string name="profile_image">Profile image</string>
+    <string name="coverage_label">Couverture:</string>
+    <string name="total_cost_title">Montants</string>
+    <string name="total_cost_label">Total:</string>
+    <string name="total_sca_label">Total SCA:</string>
+    <string name="total_holder_label">Total Assuré:</string>
+    <string name="policy_members">Membres Assurés</string>
+
+    <!-- MISCELLANEOUS -->
+    <string name="back_button">Retour</string>
+
+    <!-- ERRORS -->
+    <string name="scan_qr_code">Scanner un QR code</string>
+    <string name="err_invalid_credentials">Identifiant ou mot de passe incorrect.</string>
+    <string name="err_connection_offline">Connexion réseau indisponible.</string>
+    <string name="err_unknown_error">Une erreur est survenue. Veuillez réessayer.</string>
+</resources>

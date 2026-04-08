@@ -48,6 +48,16 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+
+    // view model
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+    // extra icons
+    implementation(libs.androidx.compose.material.icons.extended)
+
+    // navigation
+    implementation(libs.androidx.navigation.compose)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
