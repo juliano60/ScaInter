@@ -1,15 +1,18 @@
 package com.nanoporetech.scainter.ui
 
+import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.data.AppUiState
 import com.nanoporetech.scainter.network.ApiServiceRepository
 import com.nanoporetech.scainter.network.LoginResult
+import com.nanoporetech.scainter.network.NetworkApiRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -81,5 +84,15 @@ class AppViewModel(
                 }
             }
         }
+    }
+}
+
+class AppViewModelFactory(
+    private val appContext: Context
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return AppViewModel(
+                repository = NetworkApiRepository()
+        ) as T
     }
 }

@@ -4,7 +4,7 @@
     <string name="company_name">SCA INTER A</string>
 
     <!-- LOGIN -->
-    <string name="welcome_message">mySCA Inter Prestataires</string>
+    <string name="welcome_message">Bienvenue sur mySCA Inter Prestataires</string>
     <string name="username_label">Identifiant</string>
     <string name="password_label">Mot de passe</string>
     <string name="password_forgotten">Mot de passe oublié?</string>

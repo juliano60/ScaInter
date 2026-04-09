@@ -6,7 +6,7 @@ import java.io.IOException
 private const val TAG = "NetworkApiRepository"
 
 class NetworkApiRepository(
-    private val service: ScaApiService
+    private val service: ScaApiService = ScaApi.retrofitService
 ): ApiServiceRepository {
     override suspend fun login(
         username: String,
