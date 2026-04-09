@@ -35,15 +35,19 @@ fun ScaInterApp(
     )
 ) {
     val uiState by model.uiState.collectAsState()
+    val isLoggedIn = uiState.isLoggedIn
 
     LaunchedEffect(Unit) {
         model.events.collect { event ->
             when (event) {
                 UiEvent.Success -> {
-                    navController.navigate(ScaDestination.TabScreen.name) {
+                    navController.navigate(route = ScaDestination.TabScreen.name) {
                         // remove LoginScreen from the stack
                         popUpTo(ScaDestination.Login.name) { inclusive = true }
                     }
+                }
+                UiEvent.Logout -> {
+                    navController.navigate(route = ScaDestination.Login.name)
                 }
                 else -> {
                     // display snack
@@ -55,9 +59,6 @@ fun ScaInterApp(
     Scaffold(
         containerColor = AppConstants.lightGreen
     ) { innerPadding ->
-
-
-        val isLoggedIn = uiState.isLoggedIn
 
         NavHost(
             navController = navController,
@@ -86,6 +87,9 @@ fun ScaInterApp(
 
             composable(ScaDestination.TabScreen.name) {
                 TabScreen(
+                    onLogout = {
+                        model.logout()
+                    },
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(dimensionResource(R.dimen.padding_medium))

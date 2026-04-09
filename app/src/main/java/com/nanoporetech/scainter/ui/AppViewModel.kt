@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 sealed interface UiEvent {
     object Success: UiEvent
     data class Error(@StringRes val errorId: Int): UiEvent
+    object Logout: UiEvent
 }
 
 class AppViewModel(
@@ -83,6 +84,20 @@ class AppViewModel(
                     _events.emit(UiEvent.Error(R.string.err_unknown_error))
                 }
             }
+        }
+    }
+
+    fun reset() {
+        username = ""
+        password = ""
+        _uiState.value = AppUiState()
+    }
+
+    fun logout() {
+        reset()
+
+        viewModelScope.launch {
+            _events.emit(UiEvent.Logout)
         }
     }
 }
