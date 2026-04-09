@@ -1,5 +1,6 @@
 package com.nanoporetech.scainter.ui
 
+import com.nanoporetech.scainter.model.Provider
 import com.nanoporetech.scainter.network.FakeApiRepository
 import com.nanoporetech.scainter.network.LoginResult
 import kotlinx.coroutines.Dispatchers
@@ -10,8 +11,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestWatcher
@@ -44,7 +44,12 @@ class AppViewModelTest {
     @Test
     fun login_WithValidCredentials_LogsInSuccessfully() = runTest {
         // arrange
-        fakeRepository.loginResult = LoginResult.Success
+        val provider = Provider(
+            id = 620,
+            role = "etablissement",
+            name = "TestName"
+        )
+        fakeRepository.loginResult = LoginResult.Success(provider = provider)
         model.username = "620"
         model.password = "admin1"
 
@@ -56,6 +61,10 @@ class AppViewModelTest {
         val uiState = model.uiState.value
         assertTrue(uiState.isLoggedIn)
         assertFalse(uiState.isLoginError)
+        assertEquals(provider.id, uiState.provider?.id)
+        assertEquals(provider.name, uiState.provider?.name)
+        assertEquals(provider.role, uiState.provider?.role)
+
     }
 
     @Test

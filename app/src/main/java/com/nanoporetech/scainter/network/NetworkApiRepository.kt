@@ -22,7 +22,9 @@ class NetworkApiRepository(
             val response = service.loginProvider(request)
 
             if (response.isSuccessful) {
-                LoginResult.Success
+                response.body()?.let {
+                    LoginResult.Success(provider = it)
+                } ?: LoginResult.UnknownError
             } else {
                 when (response.code()) {
                     in 400..499 -> LoginResult.InvalidCredentials

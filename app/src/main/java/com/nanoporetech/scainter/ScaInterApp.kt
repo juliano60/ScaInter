@@ -35,7 +35,6 @@ fun ScaInterApp(
     )
 ) {
     val uiState by model.uiState.collectAsState()
-    val isLoggedIn = uiState.isLoggedIn
 
     LaunchedEffect(Unit) {
         model.events.collect { event ->

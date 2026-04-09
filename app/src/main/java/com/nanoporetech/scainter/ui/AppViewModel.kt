@@ -40,17 +40,18 @@ class AppViewModel(
 
     fun login() {
         viewModelScope.launch {
-            when(
+            when( val result =
               repository.login(
                   username = username,
                   password = password
               )
             ) {
-                LoginResult.Success -> {
+                is LoginResult.Success -> {
                     _uiState.update {
                         it.copy(
                             isLoggedIn = true,
-                            isLoginError = false
+                            isLoginError = false,
+                            provider = result.provider
                         )
                     }
                     _events.emit(UiEvent.Success)
