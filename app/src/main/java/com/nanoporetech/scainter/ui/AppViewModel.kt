@@ -1,28 +1,87 @@
 package com.nanoporetech.scainter.ui
 
-import androidx.compose.runtime.MutableState
+import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.data.AppUiState
+import com.nanoporetech.scainter.network.ApiServiceRepository
+import com.nanoporetech.scainter.network.LoginResult
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class AppViewModel(): ViewModel() {
+private const val TAG = "AppViewModel"
+
+sealed interface UiEvent {
+    object Success: UiEvent
+    data class Error(@StringRes val errorId: Int): UiEvent
+}
+
+class AppViewModel(
+    private val repository: ApiServiceRepository
+): ViewModel() {
     private val _uiState = MutableStateFlow(AppUiState())
     val uiState = _uiState.asStateFlow()
+
+    private val _events = MutableSharedFlow<UiEvent>()
+    val events = _events.asSharedFlow()
 
     var username by mutableStateOf("")
     var password by mutableStateOf("")
 
     fun login() {
-        _uiState.update { currentState ->
-            currentState.copy(
-                isLoggedIn = true
-            )
+        viewModelScope.launch {
+            when(
+              repository.login(
+                  username = username,
+                  password = password
+              )
+            ) {
+                LoginResult.Success -> {
+                    _uiState.update {
+                        it.copy(
+                            isLoggedIn = true,
+                            isLoginError = false
+                        )
+                    }
+                    _events.emit(UiEvent.Success)
+                }
+                LoginResult.InvalidCredentials -> {
+                    _uiState.update {
+                        it.copy(
+                            isLoggedIn = false,
+                            isLoginError = true
+                        )
+                    }
+                    _events.emit(UiEvent.Error(R.string.err_invalid_credentials))
+                }
+                LoginResult.NetworkError -> {
+                    _uiState.update {
+                        it.copy(
+                            isLoggedIn = false,
+                            isLoginError = false
+                        )
+                    }
+                    _events.emit(UiEvent.Error(R.string.err_connection_offline))
+                }
+
+                LoginResult.UnknownError -> {
+                    _uiState.update {
+                        it.copy(
+                            isLoggedIn = false,
+                            isLoginError = false
+                        )
+                    }
+                    _events.emit(UiEvent.Error(R.string.err_unknown_error))
+                }
+            }
         }
     }
 }

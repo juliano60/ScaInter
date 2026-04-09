@@ -58,6 +58,25 @@ dependencies {
     // navigation
     implementation(libs.androidx.navigation.compose)
 
+    // coroutine testing
+    testImplementation(libs.kotlinx.coroutines.test)
+
+    // Retrofit
+    implementation(libs.retrofit)
+
+    // Kotlin serialization
+    implementation(libs.kotlinx.serialization.json)
+
+    // Retrofit with Kotlin serialization Converter
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
+
+    // Retrofit Gson converter
+    implementation(libs.converter.gson)
+    implementation(libs.okhttp)
+
+    // Logging interceptor
+    implementation(libs.logging.interceptor)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
