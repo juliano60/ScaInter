@@ -1,6 +1,9 @@
 package com.nanoporetech.scainter.network
 
+import android.util.Log
 import java.io.IOException
+
+private const val TAG = "NetworkApiRepository"
 
 class NetworkApiRepository(
     private val service: ScaApiService
@@ -27,6 +30,7 @@ class NetworkApiRepository(
                 }
             }
         } catch (e: IOException) {
+            Log.d(TAG, e.toString())
             LoginResult.NetworkError
         }
     }

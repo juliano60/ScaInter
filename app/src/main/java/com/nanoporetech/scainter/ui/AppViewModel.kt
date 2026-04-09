@@ -17,8 +17,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-private const val TAG = "AppViewModel"
-
 sealed interface UiEvent {
     object Success: UiEvent
     data class Error(@StringRes val errorId: Int): UiEvent

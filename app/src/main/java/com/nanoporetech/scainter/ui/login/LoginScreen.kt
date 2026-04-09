@@ -1,4 +1,4 @@
-package com.nanoporetech.scainter.ui
+package com.nanoporetech.scainter.ui.login
 
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -59,6 +59,7 @@ fun LoginScreen(
     onUsernameChanged: (String) -> Unit = {},
     password: String = "",
     onPasswordChanged: (String) -> Unit = {},
+    isLoginError: Boolean = false,
 ) {
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
     val largePadding = dimensionResource(R.dimen.padding_large)
@@ -90,6 +91,7 @@ fun LoginScreen(
             password = password,
             onPasswordChanged = onPasswordChanged,
             onLogin = onLogin,
+            isError = isLoginError,
             modifier = Modifier
                 .fillMaxWidth()
         )
@@ -110,6 +112,7 @@ fun LoginScreen(
             colors = ButtonDefaults.buttonColors(
                 containerColor = ScaInterTheme.extendedColors.mainGreen.color,
             ),
+            enabled = username.isNotBlank() && password.isNotBlank(),
             modifier = Modifier
                 .fillMaxWidth()
         ) {
@@ -156,6 +159,7 @@ fun CredentialsSection(
     password: String,
     onPasswordChanged: (String) -> Unit,
     onLogin: () -> Unit,
+    isError: Boolean,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -184,7 +188,7 @@ fun CredentialsSection(
                 disabledIndicatorColor =  MaterialTheme.colorScheme.outlineVariant,
             ),
             onValueChange = { onUsernameChanged(it) },
-            isError = false,
+            isError = isError,
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Next
             ),
@@ -220,7 +224,7 @@ fun CredentialsSection(
                 disabledIndicatorColor =  MaterialTheme.colorScheme.outlineVariant,
             ),
             onValueChange = { onPasswordChanged(it) },
-            isError = false,
+            isError = isError,
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Done,
                 keyboardType = KeyboardType.Password
