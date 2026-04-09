@@ -13,7 +13,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -25,9 +24,11 @@ import com.nanoporetech.scainter.ui.AppViewModelFactory
 import com.nanoporetech.scainter.ui.login.LoginScreen
 import com.nanoporetech.scainter.ui.TabScreen
 import com.nanoporetech.scainter.ui.UiEvent
+import com.nanoporetech.scainter.ui.login.ForgottenPasswordScreen
 
 enum class ScaDestination {
-    Login,
+    LoginScreen,
+    ForgottenPasswordScreen,
     TabScreen
 }
 
@@ -48,11 +49,11 @@ fun ScaInterApp(
                 UiEvent.Success -> {
                     navController.navigate(route = ScaDestination.TabScreen.name) {
                         // remove LoginScreen from the stack
-                        popUpTo(ScaDestination.Login.name) { inclusive = true }
+                        popUpTo(ScaDestination.LoginScreen.name) { inclusive = true }
                     }
                 }
                 UiEvent.Logout -> {
-                    navController.navigate(route = ScaDestination.Login.name)
+                    navController.navigate(route = ScaDestination.LoginScreen.name)
                 }
                 is UiEvent.Error -> {
                     snackbarHostState.showSnackbar(
@@ -73,11 +74,11 @@ fun ScaInterApp(
 
         NavHost(
             navController = navController,
-            startDestination = ScaDestination.Login.name,
+            startDestination = ScaDestination.LoginScreen.name,
             modifier = Modifier
                 .padding(innerPadding)
         ) {
-            composable(ScaDestination.Login.name) {
+            composable(ScaDestination.LoginScreen.name) {
                 LoginScreen(
                     username = model.username,
                     onUsernameChanged = {
@@ -91,12 +92,24 @@ fun ScaInterApp(
                         model.login()
                     },
                     isLoginError = uiState.isLoginError,
+                    onForgottenPassword = {
+                        navController.navigate(route = ScaDestination.ForgottenPasswordScreen.name)
+                    },
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(dimensionResource(R.dimen.padding_medium))
                 )
             }
-
+            composable(ScaDestination.ForgottenPasswordScreen.name) {
+                ForgottenPasswordScreen(
+                    onBack = {
+                        navController.popBackStack()
+                    },
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(dimensionResource(R.dimen.padding_medium))
+                )
+            }
             composable(ScaDestination.TabScreen.name) {
                 TabScreen(
                     onLogout = {

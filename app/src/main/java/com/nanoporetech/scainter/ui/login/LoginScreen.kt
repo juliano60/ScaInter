@@ -1,5 +1,6 @@
 package com.nanoporetech.scainter.ui.login
 
+import android.R.attr.password
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -59,6 +60,7 @@ fun LoginScreen(
     onUsernameChanged: (String) -> Unit = {},
     password: String = "",
     onPasswordChanged: (String) -> Unit = {},
+    onForgottenPassword: () -> Unit = {},
     isLoginError: Boolean = false,
 ) {
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
@@ -100,6 +102,7 @@ fun LoginScreen(
 
         // FORGOTTEN PASSWORD SECTION
         ForgottenPasswordSection(
+            onForgottenPassword = onForgottenPassword,
             modifier = Modifier
                 .fillMaxWidth()
         )
@@ -256,6 +259,7 @@ fun WelcomeMessage(
 
 @Composable
 fun ForgottenPasswordSection(
+    onForgottenPassword: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(horizontalArrangement = Arrangement.SpaceBetween,
@@ -286,9 +290,7 @@ fun ForgottenPasswordSection(
                 .clickable(
                     //interactionSource = remember { MutableInteractionSource() },
                     //indication = LocalIndication.current,
-                    onClick = {
-                        Log.d(TAG, "connecting")
-                    }
+                    onClick = onForgottenPassword
                 )
         )
     }
