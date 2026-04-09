@@ -3,13 +3,17 @@ package com.nanoporetech.scainter
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -35,6 +39,8 @@ fun ScaInterApp(
     )
 ) {
     val uiState by model.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         model.events.collect { event ->
@@ -48,15 +54,21 @@ fun ScaInterApp(
                 UiEvent.Logout -> {
                     navController.navigate(route = ScaDestination.Login.name)
                 }
-                else -> {
-                    // display snack
+                is UiEvent.Error -> {
+                    snackbarHostState.showSnackbar(
+                        message = context.getString(event.errorId),
+                        withDismissAction = true
+                    )
                 }
             }
         }
     }
 
     Scaffold(
-        containerColor = AppConstants.lightGreen
+        containerColor = AppConstants.lightGreen,
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
+        }
     ) { innerPadding ->
 
         NavHost(
@@ -78,6 +90,7 @@ fun ScaInterApp(
                     onLogin = {
                         model.login()
                     },
+                    isLoginError = uiState.isLoginError,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(dimensionResource(R.dimen.padding_medium))
