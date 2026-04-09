@@ -55,6 +55,9 @@ dependencies {
     // extra icons
     implementation(libs.androidx.compose.material.icons.extended)
 
+    // fontawesome icons
+    implementation(libs.font.awesome)
+
     // navigation
     implementation(libs.androidx.navigation.compose)
 

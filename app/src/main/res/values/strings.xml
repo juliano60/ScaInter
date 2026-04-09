@@ -10,7 +10,7 @@
     <string name="remember_me">Remember me</string>
     <string name="login">Login</string>
     <string name="forgotten_password_title">Forgotten Password</string>
-    <string name="forgotten_password_text">lease use the number below to contact the technical support team.</string>
+    <string name="forgotten_password_text">Please use the number below to contact the technical support team.</string>
 
     <!-- SUPPORT PAGE -->
     <string name="contact_hours">Monday to Friday from 08h00 to 18h00</string>
@@ -33,7 +33,7 @@
 
     <!-- DESTINATIONS -->
     <string name="page_home">Home</string>
-    <string name="page_support">Help and support</string>
+    <string name="page_support">Support</string>
 
     <!-- CONSULTATION PAGE -->
     <string name="act_label">Act:</string>
