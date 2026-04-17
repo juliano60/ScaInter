@@ -60,6 +60,10 @@ dependencies {
 
     // navigation
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.datastore.core)
+
+    // Credentials Store
+    implementation(libs.androidx.security.crypto)
 
     // coroutine testing
     testImplementation(libs.kotlinx.coroutines.test)

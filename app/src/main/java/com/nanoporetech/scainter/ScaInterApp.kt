@@ -47,13 +47,13 @@ fun ScaInterApp(
     LaunchedEffect(Unit) {
         model.events.collect { event ->
             when (event) {
-                UiEvent.Success -> {
+                UiEvent.LoginSucceeded -> {
                     navController.navigate(route = ScaDestination.TabScreen.name) {
                         // remove LoginScreen from the stack
                         popUpTo(ScaDestination.LoginScreen.name) { inclusive = true }
                     }
                 }
-                UiEvent.Logout -> {
+                UiEvent.LoggedOut -> {
                     navController.navigate(route = ScaDestination.LoginScreen.name)
                 }
                 is UiEvent.Error -> {
@@ -81,13 +81,13 @@ fun ScaInterApp(
         ) {
             composable(ScaDestination.LoginScreen.name) {
                 LoginScreen(
-                    username = model.username,
+                    username = uiState.username,
                     onUsernameChanged = {
-                        model.username = it
+                        model.setUsername(it)
                     },
-                    password = model.password,
+                    password = uiState.password,
                     onPasswordChanged = {
-                        model.password = it
+                        model.setPassword(it)
                     },
                     onLogin = {
                         model.login()
@@ -95,6 +95,10 @@ fun ScaInterApp(
                     isLoginError = uiState.isLoginError,
                     onForgottenPassword = {
                         navController.navigate(route = ScaDestination.ForgottenPasswordScreen.name)
+                    },
+                    rememberMe = uiState.rememberMe,
+                    onRememberMeChanged = {
+                        model.setRememberMe(it)
                     },
                     modifier = Modifier
                         .fillMaxSize()

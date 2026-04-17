@@ -2,9 +2,6 @@ package com.nanoporetech.scainter.ui
 
 import android.content.Context
 import androidx.annotation.StringRes
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -13,6 +10,7 @@ import com.nanoporetech.scainter.data.AppUiState
 import com.nanoporetech.scainter.network.ApiServiceRepository
 import com.nanoporetech.scainter.network.LoginResult
 import com.nanoporetech.scainter.network.NetworkApiRepository
+import com.nanoporetech.scainter.ui.login.CredentialsStore
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -21,13 +19,14 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 sealed interface UiEvent {
-    object Success: UiEvent
+    object LoginSucceeded: UiEvent
     data class Error(@StringRes val errorId: Int): UiEvent
-    object Logout: UiEvent
+    object LoggedOut: UiEvent
 }
 
 class AppViewModel(
-    private val repository: ApiServiceRepository
+    private val repository: ApiServiceRepository,
+    private val credentialsStore: CredentialsStore
 ): ViewModel() {
     private val _uiState = MutableStateFlow(AppUiState())
     val uiState = _uiState.asStateFlow()
@@ -35,15 +34,27 @@ class AppViewModel(
     private val _events = MutableSharedFlow<UiEvent>()
     val events = _events.asSharedFlow()
 
-    var username by mutableStateOf("")
-    var password by mutableStateOf("")
+    init {
+        viewModelScope.launch {
+            val credentials = credentialsStore.loadCredentials()
+            if (credentials != null) {
+                _uiState.update {
+                    it.copy(
+                        username = credentials.username,
+                        password = credentials.password,
+                        rememberMe = true
+                    )
+                }
+            }
+        }
+    }
 
     fun login() {
         viewModelScope.launch {
             when( val result =
               repository.login(
-                  username = username,
-                  password = password
+                  username = _uiState.value.username,
+                  password = _uiState.value.password
               )
             ) {
                 is LoginResult.Success -> {
@@ -54,7 +65,14 @@ class AppViewModel(
                             provider = result.provider
                         )
                     }
-                    _events.emit(UiEvent.Success)
+                    val state = _uiState.value
+
+                    if (state.rememberMe) {
+                        credentialsStore.saveCredentials(state.username, state.password)
+                    } else {
+                        credentialsStore.clearCredentials()
+                    }
+                    _events.emit(UiEvent.LoginSucceeded)
                 }
                 LoginResult.InvalidCredentials -> {
                     _uiState.update {
@@ -89,8 +107,6 @@ class AppViewModel(
     }
 
     fun reset() {
-        username = ""
-        password = ""
         _uiState.value = AppUiState()
     }
 
@@ -98,7 +114,35 @@ class AppViewModel(
         reset()
 
         viewModelScope.launch {
-            _events.emit(UiEvent.Logout)
+            _events.emit(UiEvent.LoggedOut)
+        }
+    }
+
+    fun setRememberMe(newValue: Boolean) {
+       _uiState.update { currentState ->
+           currentState.copy(
+               rememberMe = newValue
+           )
+       }
+
+        if (!newValue) {
+            credentialsStore.clearCredentials()
+        }
+    }
+
+    fun setUsername(username: String) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                username = username
+            )
+        }
+    }
+
+    fun setPassword(password: String) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                password = password
+            )
         }
     }
 }
@@ -108,7 +152,8 @@ class AppViewModelFactory(
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AppViewModel(
-                repository = NetworkApiRepository()
+                repository = NetworkApiRepository(),
+                credentialsStore = CredentialsStore(appContext)
         ) as T
     }
 }

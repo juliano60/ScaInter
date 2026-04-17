@@ -63,6 +63,8 @@ fun LoginScreen(
     onPasswordChanged: (String) -> Unit = {},
     onForgottenPassword: () -> Unit = {},
     isLoginError: Boolean = false,
+    rememberMe: Boolean = false,
+    onRememberMeChanged: (value: Boolean) -> Unit = {},
 ) {
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
     val largePadding = dimensionResource(R.dimen.padding_large)
@@ -108,6 +110,8 @@ fun LoginScreen(
 
             // FORGOTTEN PASSWORD SECTION
             ForgottenPasswordSection(
+                rememberMe = rememberMe,
+                onRememberMeChanged = onRememberMeChanged,
                 onForgottenPassword = onForgottenPassword,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -266,8 +270,10 @@ fun WelcomeMessage(
 
 @Composable
 fun ForgottenPasswordSection(
+    rememberMe: Boolean,
+    onRememberMeChanged: (value: Boolean) -> Unit,
     onForgottenPassword: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -277,8 +283,8 @@ fun ForgottenPasswordSection(
             horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
         ) {
             Switch(
-                checked = false,
-                onCheckedChange = {},
+                checked = rememberMe,
+                onCheckedChange = onRememberMeChanged
             )
 
             Text(

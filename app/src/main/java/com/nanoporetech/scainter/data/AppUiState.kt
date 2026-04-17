@@ -9,4 +9,10 @@ data class AppUiState(
     val isLoginError: Boolean = false,
     /** data for the Logged in provider */
     val provider: Provider = Provider(),
+    /** the user's id */
+    val username: String = "",
+    /** the user's password */
+    val password: String = "",
+    /** the rememberMe state */
+    val rememberMe: Boolean = false,
 )
