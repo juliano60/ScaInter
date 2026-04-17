@@ -1,0 +1,38 @@
+package com.nanoporetech.scainter.model
+
+import com.nanoporetech.scainter.conf.appConfig
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class Consultation(
+    val id: Int,
+    val policyHolderId: Int,
+    val fullname: String,
+    val subscriberName: String,
+    val contractType: String,
+    val act: String,
+    val creationDate: String,
+    val doctor: String? = null,
+    val affliction: String? = null,
+    val prescription: String? = null,
+    val quantity: Int,
+    val prescription1: String? = null,
+    val quantity1: Int,
+    val prescription2: String? = null,
+    val quantity2: Int,
+    val prescription3: String? = null,
+    val quantity3: Int,
+    val total: Double,
+    val totalSca: Double,
+    val totalUser: Double,
+    val internalId: String,
+    val percentageCoverage: String,
+    val dateOfBirth: String
+)
+
+// imageUrl returns the image URL (as a String) for the policy holder.
+val Consultation.imageUrl: String
+    get() {
+        return "${appConfig.httpProtocol}://${appConfig.hostname}${appConfig.imagesPath}/$internalId.jpg"
+    }
+

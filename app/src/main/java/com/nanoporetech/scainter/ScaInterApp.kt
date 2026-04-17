@@ -1,5 +1,6 @@
 package com.nanoporetech.scainter
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -97,6 +98,7 @@ fun ScaInterApp(
                     },
                     modifier = Modifier
                         .fillMaxSize()
+                        .background(AppConstants.lightGreen)
                         .padding(dimensionResource(R.dimen.padding_medium))
                 )
             }
@@ -115,9 +117,9 @@ fun ScaInterApp(
                     onLogout = {
                         model.logout()
                     },
+                    uiState = uiState,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(dimensionResource(R.dimen.padding_medium))
                 )
             }
         }

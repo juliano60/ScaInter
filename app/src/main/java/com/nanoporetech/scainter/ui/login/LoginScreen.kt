@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -66,62 +67,68 @@ fun LoginScreen(
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
     val largePadding = dimensionResource(R.dimen.padding_large)
 
-    Column(
-        verticalArrangement = Arrangement.Center,
-        modifier = modifier) {
-
-        // HEADER SECTION
-        HeaderAndLogo(
+    Box(
+        modifier = modifier
+    ) {
+        Column(
+            verticalArrangement = Arrangement.Center,
             modifier = Modifier
-                .fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(largePadding))
-
-        // WELCOME MESSAGE SECTION
-        WelcomeMessage(
-            modifier = Modifier
-                .fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(largePadding))
-
-        // CREDENTIALS SECTION
-        CredentialsSection(
-            username = username,
-            onUsernameChanged = onUsernameChanged,
-            password = password,
-            onPasswordChanged = onPasswordChanged,
-            onLogin = onLogin,
-            isError = isLoginError,
-            modifier = Modifier
-                .fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(largePadding))
-
-        // FORGOTTEN PASSWORD SECTION
-        ForgottenPasswordSection(
-            onForgottenPassword = onForgottenPassword,
-            modifier = Modifier
-                .fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(largePadding))
-
-        // LOGIN BUTTON
-        Button(
-            onClick = onLogin,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = ScaInterTheme.extendedColors.mainGreen.color,
-            ),
-            enabled = username.isNotBlank() && password.isNotBlank(),
-            modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
         ) {
-            Text(
-                text = stringResource(R.string.login)
+
+            // HEADER SECTION
+            HeaderAndLogo(
+                modifier = Modifier
+                    .fillMaxWidth()
             )
+
+            Spacer(modifier = Modifier.height(largePadding))
+
+            // WELCOME MESSAGE SECTION
+            WelcomeMessage(
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(largePadding))
+
+            // CREDENTIALS SECTION
+            CredentialsSection(
+                username = username,
+                onUsernameChanged = onUsernameChanged,
+                password = password,
+                onPasswordChanged = onPasswordChanged,
+                onLogin = onLogin,
+                isError = isLoginError,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(largePadding))
+
+            // FORGOTTEN PASSWORD SECTION
+            ForgottenPasswordSection(
+                onForgottenPassword = onForgottenPassword,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(largePadding))
+
+            // LOGIN BUTTON
+            Button(
+                onClick = onLogin,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = ScaInterTheme.extendedColors.mainGreen.color,
+                ),
+                enabled = username.isNotBlank() && password.isNotBlank(),
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = stringResource(R.string.login)
+                )
+            }
         }
     }
 }

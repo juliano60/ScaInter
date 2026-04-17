@@ -14,11 +14,11 @@ enum class ProviderRole {
 @Serializable
 data class Provider(
     @SerializedName("id")
-    val id: Int,
+    val id: Int = 0,
     @SerializedName("role")
-    val role: String,
+    val role: String = "",
     @SerializedName("name")
-    val name: String
+    val name: String = ""
 ) {
 }
 

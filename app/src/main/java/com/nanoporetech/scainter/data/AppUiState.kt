@@ -8,5 +8,5 @@ data class AppUiState(
     /** whether there was an error logging in */
     val isLoginError: Boolean = false,
     /** data for the Logged in provider */
-    val provider: Provider? = null,
+    val provider: Provider = Provider(),
 )
