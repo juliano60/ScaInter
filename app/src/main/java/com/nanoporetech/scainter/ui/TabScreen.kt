@@ -107,8 +107,10 @@ fun TabScreen(
         topBar = {
             ScaTopBar(
                 currentScreen = currentScreen,
-                showBackButton = false,
-                onNavigateUp = {},
+                showBackButton = navController.previousBackStackEntry != null,
+                onNavigateUp = {
+                    navController.popBackStack()
+                },
                 onLogout = onLogout,
             )
         },
