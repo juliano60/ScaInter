@@ -109,7 +109,7 @@ fun TabScreen(
                 currentScreen = currentScreen,
                 showBackButton = false,
                 onNavigateUp = {},
-                onLogout = {},
+                onLogout = onLogout,
             )
         },
         bottomBar = {
