@@ -57,4 +57,7 @@
     <string name="err_connection_offline">Connexion réseau indisponible.</string>
     <string name="err_unknown_error">Une erreur est survenue. Veuillez réessayer.</string>
     <string name="page_health_care">Centre de Santé</string>
+    <string name="page_consultation_list">Mes Consultations</string>
+    <string name="page_examination_list">Mes Examinations</string>
+    <string name="page_hospitalisation_list">Mes Hospitalisations</string>
 </resources>

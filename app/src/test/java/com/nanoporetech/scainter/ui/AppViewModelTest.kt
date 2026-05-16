@@ -3,6 +3,9 @@ package com.nanoporetech.scainter.ui
 import com.nanoporetech.scainter.model.Provider
 import com.nanoporetech.scainter.network.FakeApiRepository
 import com.nanoporetech.scainter.network.LoginResult
+import com.nanoporetech.scainter.notification.DeviceTokenRegistrar
+import com.nanoporetech.scainter.ui.login.CredentialsStoreBase
+import com.nanoporetech.scainter.ui.login.RememberedCredentials
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -35,9 +38,13 @@ class AppViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    val fakeRepository = FakeApiRepository()
-    val model: AppViewModel = AppViewModel(
+    private val fakeRepository = FakeApiRepository()
+    private val fakeCredentialsStore = FakeCredentialsStore()
+    private val fakeTokenRegistrar = FakeDeviceTokenRegistrar()
+    private val model: AppViewModel = AppViewModel(
         repository = fakeRepository,
+        credentialsStore = fakeCredentialsStore,
+        deviceTokenRegistrar = fakeTokenRegistrar
     )
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -50,8 +57,8 @@ class AppViewModelTest {
             name = "TestName"
         )
         fakeRepository.loginResult = LoginResult.Success(provider = provider)
-        model.username = "620"
-        model.password = "admin1"
+        model.setUsername("620")
+        model.setPassword("admin1")
 
         // act
         model.login()
@@ -64,15 +71,15 @@ class AppViewModelTest {
         assertEquals(provider.id, uiState.provider?.id)
         assertEquals(provider.name, uiState.provider?.name)
         assertEquals(provider.role, uiState.provider?.role)
-
+        assertEquals(provider.id.toString(), fakeTokenRegistrar.lastRegisteredUserId)
     }
 
     @Test
     fun login_WhenInvalidCredentials_SetsLoginErrorFlag() = runTest {
         // arrange
         fakeRepository.loginResult = LoginResult.InvalidCredentials
-        model.username = "620"
-        model.password = "admin1"
+        model.setUsername("620")
+        model.setPassword("admin1")
 
         // act
         model.login()
@@ -88,8 +95,8 @@ class AppViewModelTest {
     fun login_WhenNetworkError_SetsLoginErrorFlag() = runTest {
         // arrange
         fakeRepository.loginResult = LoginResult.NetworkError
-        model.username = "620"
-        model.password = "admin1"
+        model.setUsername("620")
+        model.setPassword("admin1")
 
         // act
         model.login()
@@ -99,5 +106,21 @@ class AppViewModelTest {
         val uiState = model.uiState.value
         assertFalse(uiState.isLoggedIn)
         assertFalse(uiState.isLoginError)
+    }
+}
+
+private class FakeCredentialsStore : CredentialsStoreBase {
+    override fun saveCredentials(username: String, password: String) = Unit
+
+    override fun clearCredentials() = Unit
+
+    override fun loadCredentials(): RememberedCredentials? = null
+}
+
+private class FakeDeviceTokenRegistrar : DeviceTokenRegistrar {
+    var lastRegisteredUserId: String? = null
+
+    override suspend fun registerDeviceToken(userId: String) {
+        lastRegisteredUserId = userId
     }
 }

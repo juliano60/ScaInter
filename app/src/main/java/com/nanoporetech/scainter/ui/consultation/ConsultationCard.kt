@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Assignment
+import androidx.compose.material.icons.outlined.MedicalServices
 import androidx.compose.material.icons.outlined.MonitorHeart
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Surface
@@ -50,7 +52,8 @@ fun ConsultationCard(
         ) {
             CardHeader(
                 title = stringResource(R.string.consultation_menu_title),
-                iconImg = Icons.Outlined.MonitorHeart,
+                //iconImg = Icons.Outlined.MonitorHeart,
+                iconImg = Icons.Outlined.MedicalServices,
                 color = Color.White,
                 modifier = Modifier
             )

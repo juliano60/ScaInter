@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "957064132120",
+    "project_id": "notificationsdemo2-ce4c1",
+    "storage_bucket": "notificationsdemo2-ce4c1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:957064132120:android:c5cd8402e28485e9ad356d",
+        "android_client_info": {
+          "package_name": "com.nanoporetech.scainter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQw2qIxrlAx6fv2IUGAdYexKD7wE05J5c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

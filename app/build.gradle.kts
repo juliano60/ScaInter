@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    // add the Google services Gradle plugin
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -64,6 +66,7 @@ dependencies {
 
     // Credentials Store
     implementation(libs.androidx.security.crypto)
+    implementation(libs.play.services.base)
 
     // coroutine testing
     testImplementation(libs.kotlinx.coroutines.test)
@@ -83,6 +86,12 @@ dependencies {
 
     // Logging interceptor
     implementation(libs.logging.interceptor)
+
+    // Import the Firebase BoM
+    implementation(platform(libs.firebase.bom))
+
+    // Firebase Cloud Messaging
+    implementation(libs.firebase.messaging)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

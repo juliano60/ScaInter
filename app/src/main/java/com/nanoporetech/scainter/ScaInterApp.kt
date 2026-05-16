@@ -54,7 +54,12 @@ fun ScaInterApp(
                     }
                 }
                 UiEvent.LoggedOut -> {
-                    navController.navigate(route = ScaDestination.LoginScreen.name)
+                    navController.navigate(ScaDestination.LoginScreen.name) {
+                        popUpTo(ScaDestination.TabScreen.name) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
                 }
                 is UiEvent.Error -> {
                     snackbarHostState.showSnackbar(

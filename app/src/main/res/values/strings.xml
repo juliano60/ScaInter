@@ -56,4 +56,7 @@
     <string name="err_connection_offline">Network unavailable.</string>
     <string name="err_unknown_error">Unknown error. Please try again later.</string>
     <string name="page_health_care">Health Centre</string>
+    <string name="page_consultation_list">Consultations</string>
+    <string name="page_examination_list">Examinations</string>
+    <string name="page_hospitalisation_list">Hospitalisations</string>
 </resources>

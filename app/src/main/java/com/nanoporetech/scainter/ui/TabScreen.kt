@@ -56,6 +56,7 @@ import kotlin.collections.forEach
 
 enum class ScaAppScreen(@StringRes val title: Int) {
     HealthCareScreen(R.string.page_health_care),
+    ConsultationListScreen(R.string.page_consultation_list),
     SupportScreen(title = R.string.page_support)
 }
 private data class TabSpec(
@@ -149,6 +150,9 @@ fun TabScreen(
                         modifier = Modifier
                             .fillMaxSize()
                     )
+                }
+                composable(route = ScaAppScreen.ConsultationListScreen.name) {
+
                 }
             }
         }

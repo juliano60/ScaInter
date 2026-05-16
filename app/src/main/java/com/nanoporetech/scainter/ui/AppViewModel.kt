@@ -10,7 +10,10 @@ import com.nanoporetech.scainter.data.AppUiState
 import com.nanoporetech.scainter.network.ApiServiceRepository
 import com.nanoporetech.scainter.network.LoginResult
 import com.nanoporetech.scainter.network.NetworkApiRepository
+import com.nanoporetech.scainter.notification.DeviceTokenRegistrar
+import com.nanoporetech.scainter.notification.FirebaseDeviceTokenRegistrar
 import com.nanoporetech.scainter.ui.login.CredentialsStore
+import com.nanoporetech.scainter.ui.login.CredentialsStoreBase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -26,7 +29,8 @@ sealed interface UiEvent {
 
 class AppViewModel(
     private val repository: ApiServiceRepository,
-    private val credentialsStore: CredentialsStore
+    private val credentialsStore: CredentialsStoreBase,
+    private val deviceTokenRegistrar: DeviceTokenRegistrar
 ): ViewModel() {
     private val _uiState = MutableStateFlow(AppUiState())
     val uiState = _uiState.asStateFlow()
@@ -72,6 +76,8 @@ class AppViewModel(
                     } else {
                         credentialsStore.clearCredentials()
                     }
+
+                    deviceTokenRegistrar.registerDeviceToken(result.provider.id.toString())
                     _events.emit(UiEvent.LoginSucceeded)
                 }
                 LoginResult.InvalidCredentials -> {
@@ -145,6 +151,7 @@ class AppViewModel(
             )
         }
     }
+
 }
 
 class AppViewModelFactory(
@@ -153,7 +160,8 @@ class AppViewModelFactory(
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AppViewModel(
                 repository = NetworkApiRepository(),
-                credentialsStore = CredentialsStore(appContext)
+                credentialsStore = CredentialsStore(appContext),
+                deviceTokenRegistrar = FirebaseDeviceTokenRegistrar(appContext)
         ) as T
     }
 }
