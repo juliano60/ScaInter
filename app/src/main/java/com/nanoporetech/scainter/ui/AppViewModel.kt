@@ -14,8 +14,8 @@ import com.nanoporetech.scainter.data.FetchProviderResult
 import com.nanoporetech.scainter.data.ScaDataRepository
 import com.nanoporetech.scainter.notification.DeviceTokenRegistrar
 import com.nanoporetech.scainter.notification.FirebaseDeviceTokenRegistrar
-import com.nanoporetech.scainter.ui.login.CredentialsStore
-import com.nanoporetech.scainter.ui.login.CredentialsStoreBase
+import com.nanoporetech.scainter.credentials.CredentialsStore
+import com.nanoporetech.scainter.credentials.CredentialsStoreBase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -41,16 +41,18 @@ class AppViewModel(
     val events = _events.asSharedFlow()
 
     init {
-        viewModelScope.launch {
-            val credentials = credentialsStore.loadCredentials()
-            if (credentials != null) {
-                _uiState.update {
-                    it.copy(
-                        username = credentials.username,
-                        password = credentials.password,
-                        rememberMe = true
-                    )
-                }
+        loadCredentials()
+    }
+
+    private fun loadCredentials() {
+        val credentials = credentialsStore.loadCredentials()
+        if (credentials != null) {
+            _uiState.update {
+                it.copy(
+                    username = credentials.username,
+                    password = credentials.password,
+                    rememberMe = true
+                )
             }
         }
     }
@@ -104,6 +106,7 @@ class AppViewModel(
 
     fun reset() {
         _uiState.value = AppUiState()
+        loadCredentials()
     }
 
     fun logout() {

@@ -1,4 +1,4 @@
-package com.nanoporetech.scainter.ui.login
+package com.nanoporetech.scainter.credentials
 
 interface CredentialsStoreBase {
     fun saveCredentials(username: String, password: String)

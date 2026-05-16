@@ -1,4 +1,4 @@
-package com.nanoporetech.scainter.ui.login
+package com.nanoporetech.scainter.credentials
 
 import android.content.Context
 import androidx.security.crypto.EncryptedSharedPreferences
