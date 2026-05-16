@@ -21,11 +21,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.ui.AppViewModel
-import com.nanoporetech.scainter.ui.AppViewModelFactory
-import com.nanoporetech.scainter.ui.login.LoginScreen
 import com.nanoporetech.scainter.ui.TabScreen
 import com.nanoporetech.scainter.ui.UiEvent
 import com.nanoporetech.scainter.ui.login.ForgottenPasswordScreen
+import com.nanoporetech.scainter.ui.login.LoginScreen
 
 enum class ScaDestination {
     LoginScreen,
@@ -37,7 +36,7 @@ enum class ScaDestination {
 fun ScaInterApp(
     navController: NavHostController = rememberNavController(),
     model: AppViewModel = viewModel(
-        factory = AppViewModelFactory(LocalContext.current)
+        factory = AppViewModel.Factory
     )
 ) {
     val uiState by model.uiState.collectAsState()

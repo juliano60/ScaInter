@@ -1,15 +1,17 @@
 package com.nanoporetech.scainter.ui
 
-import android.content.Context
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.nanoporetech.scainter.R
+import com.nanoporetech.scainter.ScaInterApplication
 import com.nanoporetech.scainter.data.AppUiState
-import com.nanoporetech.scainter.network.ApiServiceRepository
-import com.nanoporetech.scainter.network.LoginResult
-import com.nanoporetech.scainter.network.NetworkApiRepository
+import com.nanoporetech.scainter.data.FetchProviderResult
+import com.nanoporetech.scainter.data.ScaDataRepository
 import com.nanoporetech.scainter.notification.DeviceTokenRegistrar
 import com.nanoporetech.scainter.notification.FirebaseDeviceTokenRegistrar
 import com.nanoporetech.scainter.ui.login.CredentialsStore
@@ -28,7 +30,7 @@ sealed interface UiEvent {
 }
 
 class AppViewModel(
-    private val repository: ApiServiceRepository,
+    private val repository: ScaDataRepository,
     private val credentialsStore: CredentialsStoreBase,
     private val deviceTokenRegistrar: DeviceTokenRegistrar
 ): ViewModel() {
@@ -55,60 +57,48 @@ class AppViewModel(
 
     fun login() {
         viewModelScope.launch {
-            when( val result =
-              repository.login(
+              when(val result = repository.fetchProvider(
                   username = _uiState.value.username,
-                  password = _uiState.value.password
-              )
-            ) {
-                is LoginResult.Success -> {
-                    _uiState.update {
-                        it.copy(
-                            isLoggedIn = true,
-                            isLoginError = false,
-                            provider = result.provider
-                        )
-                    }
-                    val state = _uiState.value
+                  password = _uiState.value.password)) {
 
-                    if (state.rememberMe) {
-                        credentialsStore.saveCredentials(state.username, state.password)
-                    } else {
-                        credentialsStore.clearCredentials()
-                    }
+                  is FetchProviderResult.Success -> {
+                      _uiState.update {
+                          it.copy(
+                              isLoggedIn = true,
+                              isLoginError = false,
+                              provider = result.provider
+                          )
+                      }
+                      val state = _uiState.value
 
-                    deviceTokenRegistrar.registerDeviceToken(result.provider.id.toString())
-                    _events.emit(UiEvent.LoginSucceeded)
-                }
-                LoginResult.InvalidCredentials -> {
-                    _uiState.update {
-                        it.copy(
-                            isLoggedIn = false,
-                            isLoginError = true
-                        )
-                    }
-                    _events.emit(UiEvent.Error(R.string.err_invalid_credentials))
-                }
-                LoginResult.NetworkError -> {
-                    _uiState.update {
-                        it.copy(
-                            isLoggedIn = false,
-                            isLoginError = false
-                        )
-                    }
-                    _events.emit(UiEvent.Error(R.string.err_connection_offline))
-                }
+                      if (state.rememberMe) {
+                          credentialsStore.saveCredentials(state.username, state.password)
+                      } else {
+                          credentialsStore.clearCredentials()
+                      }
 
-                LoginResult.UnknownError -> {
-                    _uiState.update {
-                        it.copy(
-                            isLoggedIn = false,
-                            isLoginError = false
-                        )
-                    }
-                    _events.emit(UiEvent.Error(R.string.err_unknown_error))
-                }
-            }
+                      deviceTokenRegistrar.registerDeviceToken(result.provider.id.toString())
+                      _events.emit(UiEvent.LoginSucceeded)
+                  }
+                  is FetchProviderResult.AuthenticationFailed -> {
+                      _uiState.update {
+                          it.copy(
+                              isLoggedIn = false,
+                              isLoginError = true
+                          )
+                      }
+                      _events.emit(UiEvent.Error(R.string.err_invalid_credentials))
+                  }
+                  is FetchProviderResult.NetworkError -> {
+                      _uiState.update {
+                          it.copy(
+                              isLoggedIn = false,
+                              isLoginError = false
+                          )
+                      }
+                      _events.emit(UiEvent.Error(R.string.err_connection_offline))
+                  }
+              }
         }
     }
 
@@ -152,16 +142,18 @@ class AppViewModel(
         }
     }
 
-}
-
-class AppViewModelFactory(
-    private val appContext: Context
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return AppViewModel(
-                repository = NetworkApiRepository(),
-                credentialsStore = CredentialsStore(appContext),
-                deviceTokenRegistrar = FirebaseDeviceTokenRegistrar(appContext)
-        ) as T
+    companion object {
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val application = (this[APPLICATION_KEY] as ScaInterApplication)
+                val repository = application.container.scaDataRepository
+                val credentialsStore = CredentialsStore(application.applicationContext)
+                val deviceTokenRegistrar = FirebaseDeviceTokenRegistrar(application.applicationContext)
+                AppViewModel(
+                    repository = repository,
+                    credentialsStore = credentialsStore,
+                    deviceTokenRegistrar = deviceTokenRegistrar)
+            }
+        }
     }
 }
