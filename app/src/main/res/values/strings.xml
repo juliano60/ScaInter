@@ -59,4 +59,5 @@
     <string name="page_consultation_list">Consultations</string>
     <string name="page_examination_list">Examinations</string>
     <string name="page_hospitalisation_list">Hospitalisations</string>
+    <string name="consultation_details_title">Consultation Details</string>
 </resources>

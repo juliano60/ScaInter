@@ -31,6 +31,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,23 +41,30 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.data.AppUiState
 import com.nanoporetech.scainter.data.DataSource
+import com.nanoporetech.scainter.ui.consultation.ConsultationDetailsScreen
+import com.nanoporetech.scainter.ui.consultation.ConsultationListScreen
 import com.nanoporetech.scainter.ui.support.SupportScreen
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.theme.ScaInterTheme
+import kotlinx.coroutines.launch
 import kotlin.collections.forEach
 
 
 enum class ScaAppScreen(@StringRes val title: Int) {
-    HealthCareScreen(R.string.page_health_care),
-    ConsultationListScreen(R.string.page_consultation_list),
+    HealthCareScreen(title = R.string.page_health_care),
+    ConsultationListScreen(title = R.string.page_consultation_list),
+
+    ConsultationDetailsScreen(title = R.string.consultation_details_title),
     SupportScreen(title = R.string.page_support)
 }
 private data class TabSpec(
@@ -74,6 +82,7 @@ fun TabScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     onLogout: () -> Unit = {},
+    onFetchConsultations: suspend () -> Boolean = { false },
 ) {
     val tabs = listOf(
         TabSpec(
@@ -90,7 +99,11 @@ fun TabScreen(
 
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route ?: ScaAppScreen.HealthCareScreen.name
-    val currentScreen = ScaAppScreen.valueOf(currentRoute)
+    val currentScreen = when {
+        currentRoute.startsWith(ScaAppScreen.ConsultationDetailsScreen.name)  ->
+            ScaAppScreen.ConsultationDetailsScreen
+        else -> ScaAppScreen.entries.firstOrNull { it.name == currentRoute } ?: ScaAppScreen.HealthCareScreen
+    }
     val currentTab = tabs.find { it.route == currentRoute }
 
     fun onTabPressed(route: String) {
@@ -125,6 +138,8 @@ fun TabScreen(
         modifier = modifier
     ) { innerPadding ->
 
+        val scope = rememberCoroutineScope()
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -139,6 +154,14 @@ fun TabScreen(
                 composable(route = ScaAppScreen.HealthCareScreen.name) {
                     HealthCareScreen(
                         provider = uiState.provider,
+                        onViewConsultations = {
+                            scope.launch {
+                                val success = onFetchConsultations()
+                                if (success) {
+                                    navController.navigate(ScaAppScreen.ConsultationListScreen.name)
+                                }
+                            }
+                        },
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(dimensionResource(R.dimen.padding_medium))
@@ -152,7 +175,33 @@ fun TabScreen(
                     )
                 }
                 composable(route = ScaAppScreen.ConsultationListScreen.name) {
-
+                    ConsultationListScreen(
+                        consultations = uiState.consultations,
+                        onRowClick = { consultation ->
+                            navController.navigate(
+                                route = "${ScaAppScreen.ConsultationDetailsScreen.name}/${consultation.id}"
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(dimensionResource(R.dimen.padding_medium))
+                    )
+                }
+                composable(
+                    route = "${ScaAppScreen.ConsultationDetailsScreen.name}/{consultationId}",
+                    arguments = listOf(
+                        navArgument("consultationId") {
+                            type = NavType.IntType
+                        }
+                    )
+                ) { backStackEntry ->
+                    val consultationId = backStackEntry.arguments?.getInt("consultationId")
+                    ConsultationDetailsScreen(
+                        consultation = uiState.consultations.first { it.id == consultationId },
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(dimensionResource(R.dimen.padding_medium))
+                    )
                 }
             }
         }

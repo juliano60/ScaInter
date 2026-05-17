@@ -32,7 +32,7 @@ import com.nanoporetech.scainter.ui.theme.ScaInterTheme
 fun ConsultationCard(
     modifier: Modifier = Modifier,
     onNewConsultation: () -> Unit = {},
-    onViewConsultation: () -> Unit = {},
+    onViewConsultations: () -> Unit = {},
 ) {
     Card(
         shape = RectangleShape,
@@ -67,7 +67,7 @@ fun ConsultationCard(
             CardRow(
                 title = stringResource(R.string.view_care_sheet),
                 iconImg = Icons.AutoMirrored.Outlined.Assignment,
-                onClickButton = onViewConsultation
+                onClickButton = onViewConsultations
             )
         }
     }

@@ -30,7 +30,9 @@ import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 @Composable
 fun HealthCareScreen(
     provider: Provider,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNewConsultation: () -> Unit = {},
+    onViewConsultations: () -> Unit = {},
 ) {
     Box(
         modifier = modifier
@@ -60,7 +62,7 @@ fun HealthCareScreen(
             // CONSULTATION MENU
             ConsultationCard(
                 onNewConsultation = {},
-                onViewConsultation = {},
+                onViewConsultations = onViewConsultations,
                 modifier = Modifier
                     .fillMaxWidth()
             )

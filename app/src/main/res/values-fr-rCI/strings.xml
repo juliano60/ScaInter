@@ -60,4 +60,5 @@
     <string name="page_consultation_list">Mes Consultations</string>
     <string name="page_examination_list">Mes Examinations</string>
     <string name="page_hospitalisation_list">Mes Hospitalisations</string>
+    <string name="consultation_details_title">Détails Consultation</string>
 </resources>

@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     // add the Google services Gradle plugin
     id("com.google.gms.google-services")
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.3.21"
 }
 
 android {
@@ -92,6 +93,9 @@ dependencies {
 
     // Firebase Cloud Messaging
     implementation(libs.firebase.messaging)
+
+    // coil
+    implementation(libs.coil.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

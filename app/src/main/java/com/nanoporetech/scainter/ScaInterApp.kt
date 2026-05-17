@@ -21,6 +21,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.ui.AppViewModel
+import com.nanoporetech.scainter.ui.ScaAppScreen
 import com.nanoporetech.scainter.ui.TabScreen
 import com.nanoporetech.scainter.ui.UiEvent
 import com.nanoporetech.scainter.ui.login.ForgottenPasswordScreen
@@ -122,9 +123,8 @@ fun ScaInterApp(
             }
             composable(ScaDestination.TabScreen.name) {
                 TabScreen(
-                    onLogout = {
-                        model.logout()
-                    },
+                    onLogout = model::logout,
+                    onFetchConsultations = model::fetchConsultations,
                     uiState = uiState,
                     modifier = Modifier
                         .fillMaxSize()

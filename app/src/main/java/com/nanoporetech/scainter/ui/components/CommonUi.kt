@@ -1,6 +1,8 @@
 package com.nanoporetech.scainter.ui.components
 
+import android.R.attr.text
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -53,6 +56,68 @@ fun CardHeader(
             color = color,
             fontWeight = FontWeight.Bold,
         )
+    }
+}
+
+@Composable
+fun CardHeaderDrawable(
+    title: String,
+    iconImg: Painter,
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.onPrimaryContainer,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier,
+    ) {
+        Icon(
+            painter = iconImg,
+            contentDescription = null,
+            tint = color,
+            modifier = Modifier.size(dimensionResource(R.dimen.icon_small))
+        )
+        Spacer(modifier = Modifier.width(dimensionResource(R.dimen.padding_small)))
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            //style = MaterialTheme.typography.headlineMedium,
+            color = color,
+            fontWeight = FontWeight.Bold,
+        )
+    }
+}
+
+data class CardItem(
+    val label: String = "",
+    val value: String = ""
+)
+
+@Composable
+fun CardBody(
+    items: List<CardItem>,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier) {
+        for (item in items) {
+            Row() {
+                if (item.label != "") {
+                    Text(
+                        text = item.label,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier
+                            .weight(1.0f)
+                    )
+                    Text(
+                        text = item.value,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier
+                            .weight(1.0f)
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -135,7 +200,19 @@ fun CommonUiPreview() {
                 .fillMaxSize()
                 .padding(dimensionResource(R.dimen.padding_medium))
         ) {
-            ConsultationCard(
+            val items = listOf<CardItem>(
+                CardItem(
+                    label = "Label 1",
+                    value = "Value 1"
+                ),
+                CardItem(
+                    label = "Label 2",
+                    value = "Value 2"
+                )
+            )
+
+            CardBody(
+                items = items
             )
         }
     }

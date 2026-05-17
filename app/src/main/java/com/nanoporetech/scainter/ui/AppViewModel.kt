@@ -16,6 +16,8 @@ import com.nanoporetech.scainter.notification.DeviceTokenRegistrar
 import com.nanoporetech.scainter.notification.FirebaseDeviceTokenRegistrar
 import com.nanoporetech.scainter.credentials.CredentialsStore
 import com.nanoporetech.scainter.credentials.CredentialsStoreBase
+import com.nanoporetech.scainter.data.FetchConsultationsResult
+import com.nanoporetech.scainter.model.Consultation
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -104,6 +106,27 @@ class AppViewModel(
         }
     }
 
+    suspend fun fetchConsultations(): Boolean {
+        return when (val result = repository.fetchConsultationsFor(_uiState.value.provider.name)) {
+            is FetchConsultationsResult.Success -> {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        consultations = result.consultations
+                    )
+                }
+                true
+            }
+            is FetchConsultationsResult.NetworkError -> {
+                _events.emit(UiEvent.Error(R.string.err_connection_offline))
+                false
+            }
+            else -> {
+                _events.emit(UiEvent.Error(R.string.err_unknown_error))
+                false
+            }
+        }
+    }
+
     fun reset() {
         _uiState.value = AppUiState()
         loadCredentials()
@@ -144,6 +167,7 @@ class AppViewModel(
             )
         }
     }
+
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {

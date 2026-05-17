@@ -1,5 +1,6 @@
 package com.nanoporetech.scainter.ui.consultation
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -7,12 +8,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -24,7 +24,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.data.DataSource
 import com.nanoporetech.scainter.model.Consultation
@@ -33,10 +32,10 @@ import com.nanoporetech.scainter.ui.utils.displayedDateAndTime
 @Composable
 fun ConsultationListScreen(
     consultations: List<Consultation>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onRowClick: (Consultation) -> Unit = {},
 ) {
-    Column(modifier =
-        Modifier.fillMaxSize()
+    Column(modifier = modifier
     ) {
         if (consultations.isEmpty()) {
             Text(text = "noRecentConsultation")
@@ -52,7 +51,8 @@ fun ConsultationListScreen(
                         consultation = consultation,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(dimensionResource(R.dimen.padding_small))
+                            .padding(dimensionResource(R.dimen.padding_small)),
+                        onRowClick = onRowClick
                     )
                     HorizontalDivider()
                 }
@@ -64,35 +64,56 @@ fun ConsultationListScreen(
 @Composable
 fun ConsultationRowItem(
     consultation: Consultation,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onRowClick: (Consultation) -> Unit,
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_xsmall)),
-        modifier = modifier
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-        ) {
-            Icon(Icons.Default.Person,
-                contentDescription = null)
+    val padding_xsmall = dimensionResource(R.dimen.padding_xsmall)
 
-            Spacer(Modifier.width(dimensionResource(R.dimen.padding_small)))
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .clickable(
+                onClick = { onRowClick(consultation) }
+            )
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(padding_xsmall)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    //.border(1.dp, color = Color.Yellow)
+            ) {
+                Icon(
+                    Icons.Default.Person,
+                    contentDescription = null
+                )
+                Spacer(Modifier.width(padding_xsmall))
+
+                Text(
+                    text = consultation.fullname,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1
+                )
+            }
 
             Text(
-                text = consultation.fullname,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                text = consultation.act,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+
+            Text(
+                text = displayedDateAndTime(consultation.creationDate),
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 
-        Text(
-            text = consultation.act,
-            color = MaterialTheme.colorScheme.onPrimaryContainer
-        )
+        Spacer(Modifier.weight(1.0f))
 
-        Text(
-            text = displayedDateAndTime(consultation.creationDate),
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            contentDescription = null
         )
     }
 }
@@ -108,6 +129,7 @@ fun ConsultationListPreview() {
     ) {
         ConsultationListScreen(
             consultations = DataSource.consultations()
+            //consultations = emptyList()
         )
     }
 }
