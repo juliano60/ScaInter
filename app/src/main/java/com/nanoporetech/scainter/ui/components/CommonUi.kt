@@ -52,7 +52,7 @@ fun CardHeader(
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,
-            //style = MaterialTheme.typography.headlineMedium,
+            fontSize = 18.sp,
             color = color,
             fontWeight = FontWeight.Bold,
         )
@@ -80,9 +80,9 @@ fun CardHeaderDrawable(
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,
-            //style = MaterialTheme.typography.headlineMedium,
+            fontSize = 18.sp,
             color = color,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.SemiBold,
         )
     }
 }
@@ -103,17 +103,17 @@ fun CardBody(
                 if (item.label != "") {
                     Text(
                         text = item.label,
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier
                             .weight(1.0f)
                     )
                     Text(
                         text = item.value,
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier
-                            .weight(1.0f)
+                            .weight(1.5f)
                     )
                 }
             }
@@ -139,7 +139,7 @@ fun CardRow(
         Icon(
             imageVector = iconImg,
             contentDescription = null,
-            tint = Color.White,
+            tint = MaterialTheme.colorScheme.surfaceContainerLowest,
             modifier = Modifier.size(dimensionResource(R.dimen.icon_small))
         )
 
@@ -147,8 +147,8 @@ fun CardRow(
 
         Text(
             text = title,
-            color = Color.White,
-            //fontSize = 18.sp
+            color = MaterialTheme.colorScheme.surfaceContainerLowest,
+            style = MaterialTheme.typography.bodyLarge
         )
 
         Spacer(modifier = Modifier
@@ -157,7 +157,7 @@ fun CardRow(
         Icon(
             imageVector = Icons.Filled.ChevronRight,
             contentDescription = null,
-            tint = Color.White
+            tint = MaterialTheme.colorScheme.surfaceContainerLowest,
         )
     }
 }

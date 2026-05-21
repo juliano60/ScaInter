@@ -67,7 +67,7 @@ fun ConsultationRowItem(
     modifier: Modifier = Modifier,
     onRowClick: (Consultation) -> Unit,
 ) {
-    val padding_xsmall = dimensionResource(R.dimen.padding_xsmall)
+    val paddingSmall = dimensionResource(R.dimen.padding_xsmall)
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -77,7 +77,7 @@ fun ConsultationRowItem(
             )
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(padding_xsmall)
+            verticalArrangement = Arrangement.spacedBy(paddingSmall)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -88,7 +88,7 @@ fun ConsultationRowItem(
                     Icons.Default.Person,
                     contentDescription = null
                 )
-                Spacer(Modifier.width(padding_xsmall))
+                Spacer(Modifier.width(paddingSmall))
 
                 Text(
                     text = consultation.fullname,

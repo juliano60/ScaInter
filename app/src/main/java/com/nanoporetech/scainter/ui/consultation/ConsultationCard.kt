@@ -14,16 +14,19 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.ui.components.CardHeader
+import com.nanoporetech.scainter.ui.components.CardHeaderDrawable
 import com.nanoporetech.scainter.ui.components.CardRow
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.theme.ScaInterTheme
@@ -50,11 +53,10 @@ fun ConsultationCard(
             modifier = Modifier
                 .padding(dimensionResource(R.dimen.padding_medium))
         ) {
-            CardHeader(
+            CardHeaderDrawable(
                 title = stringResource(R.string.consultation_menu_title),
-                //iconImg = Icons.Outlined.MonitorHeart,
-                iconImg = Icons.Outlined.MedicalServices,
-                color = Color.White,
+                iconImg = painterResource(R.drawable.stethoscope),
+                color = MaterialTheme.colorScheme.surfaceContainerLowest,
                 modifier = Modifier
             )
 

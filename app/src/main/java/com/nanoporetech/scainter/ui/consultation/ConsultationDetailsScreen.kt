@@ -1,10 +1,10 @@
 package com.nanoporetech.scainter.ui.consultation
 
-import android.R.attr.maxLines
-import android.R.attr.text
+import android.R.attr.fontWeight
+import android.R.attr.scaleX
+import android.R.attr.scaleY
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,7 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MedicalServices
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,7 +28,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
@@ -37,7 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import androidx.compose.ui.unit.max
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.nanoporetech.scainter.R
@@ -45,13 +48,15 @@ import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.data.DataSource
 import com.nanoporetech.scainter.model.Consultation
 import com.nanoporetech.scainter.model.imageUrl
+import com.nanoporetech.scainter.ui.ScaAppScreen
 import com.nanoporetech.scainter.ui.components.CardBody
-import com.nanoporetech.scainter.ui.components.CardHeader
 import com.nanoporetech.scainter.ui.components.CardHeaderDrawable
 import com.nanoporetech.scainter.ui.components.CardItem
 import com.nanoporetech.scainter.ui.theme.ScaInterTheme
 import com.nanoporetech.scainter.ui.utils.displayedDate
 import com.nanoporetech.scainter.ui.utils.displayedDateAndTime
+
+private const val TAG = "ConsultationDetailsScreen"
 
 @Composable
 fun ConsultationDetailsScreen(
@@ -66,7 +71,7 @@ fun ConsultationDetailsScreen(
                 .fillMaxWidth()
         )
 
-        Spacer(modifier.height(dimensionResource(R.dimen.padding_medium)))
+        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
 
         // CONSULTATION DETAILS
         ConsultationInfo(
@@ -82,6 +87,9 @@ fun ConsultationDetailsScreen(
     }
 }
 
+//@Composable
+//fun
+
 @Composable
 fun ConsultationInfo(
     consultation: Consultation,
@@ -95,20 +103,20 @@ fun ConsultationInfo(
         CardItem(stringResource(R.string.coverage_label), consultation.percentageCoverage)
     )
 
-    val padding_medium = dimensionResource(R.dimen.padding_medium)
+    val paddingMedium = dimensionResource(R.dimen.padding_medium)
 
     Card(
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
         modifier = modifier
     ) {
         Column(modifier = Modifier
-            .padding(padding_medium)) {
+            .padding(paddingMedium)) {
             CardHeaderDrawable(
                 title = stringResource(R.string.consultation_info_title),
                 iconImg = painterResource(R.drawable.stethoscope),
                 modifier = Modifier
-                    .padding(bottom = padding_medium)
+                    .padding(bottom = paddingMedium)
             )
 
             CardBody(items = items)
@@ -131,7 +139,7 @@ fun SubscriberInfo(
                 //.border(1.dp, color = Color.Yellow)
         )
 
-        Spacer(modifier.height(dimensionResource(R.dimen.padding_medium)))
+        Spacer(modifier.height(dimensionResource(R.dimen.padding_small)))
 
         Column(
             //verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_xsmall)),
@@ -141,13 +149,14 @@ fun SubscriberInfo(
             ) {
             Text(
                 text = consultation.fullname,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
 
-            if (consultation.internalId != "") {
+            if (consultation.internalId.isNotBlank()) {
                 Text(
                     text = consultation.internalId,
                     color = Color.Red,
@@ -157,12 +166,16 @@ fun SubscriberInfo(
 
             Text(
                 text = displayedDate(consultation.dateOfBirth),
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
             )
 
             Text(
                 text = "${consultation.subscriberName} (${consultation.contractType})",
-                style = MaterialTheme.typography.bodyLarge
+                maxLines = 1,
+                overflow = TextOverflow.MiddleEllipsis,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
             )
         }
     }
@@ -173,34 +186,52 @@ fun SubscriberAvatar(
     imgUrl: String,
     modifier: Modifier = Modifier
 ) {
-    Box(modifier) {
+    Box(contentAlignment = Alignment.Center,
+        modifier = modifier
+        .size(dimensionResource(R.dimen.profile_icon_size)),
+    ) {
         SubcomposeAsyncImage(
             model = ImageRequest.Builder(context = LocalContext.current)
                 .data(imgUrl)
                 .crossfade(true)
                 .build(),
-            contentDescription = null,
+            contentDescription = stringResource(R.string.profile_image),
             contentScale = ContentScale.Crop,
             loading = {
                 Icon(
-                    imageVector = Icons.Default.Person,
+                    imageVector = Icons.Default.AccountCircle,
                     contentDescription = null,
-                    tint = Color.Gray,
+                    tint = MaterialTheme.colorScheme.outline,
                     modifier = Modifier
-                        .size(175.dp)
+                        .matchParentSize()
+                        .clip(CircleShape)
+                        .graphicsLayer {
+                            scaleX = 1.2f
+                            scaleY = 1.2f
+                        }
                 )
             },
             error = {
                 Icon(
-                    imageVector = Icons.Default.Person,
+                    imageVector = Icons.Default.AccountCircle,
                     contentDescription = null,
-                    tint = Color.Gray,
+                    tint = MaterialTheme.colorScheme.outline,
                     modifier = Modifier
-                        .size(175.dp)
+                        .matchParentSize()
+                        .clip(CircleShape)
+                        .graphicsLayer {
+                            scaleX = 1.2f
+                            scaleY = 1.2f
+                        }
                 )
             },
             modifier = Modifier
-                .size(175.dp)
+                .matchParentSize()
+                .shadow(
+                    elevation = 10.dp,
+                    shape = CircleShape,
+                    clip = false
+                )
                 .clip(CircleShape)
         )
     }
