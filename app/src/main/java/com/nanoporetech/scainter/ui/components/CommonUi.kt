@@ -95,7 +95,8 @@ data class CardItem(
 @Composable
 fun CardBody(
     items: List<CardItem>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    indentRight: Boolean = false,
 ) {
     Column(modifier) {
         for (item in items) {
@@ -105,6 +106,7 @@ fun CardBody(
                         text = item.label,
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        fontWeight = FontWeight.SemiBold,
                         modifier = Modifier
                             .weight(1.0f)
                     )
@@ -113,7 +115,8 @@ fun CardBody(
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier
-                            .weight(1.5f)
+                            .weight(1.5f),
+                        textAlign = if (indentRight) TextAlign.End else TextAlign.Start
                     )
                 }
             }

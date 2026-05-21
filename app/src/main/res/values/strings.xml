@@ -60,4 +60,8 @@
     <string name="page_examination_list">Examinations</string>
     <string name="page_hospitalisation_list">Hospitalisations</string>
     <string name="consultation_details_title">Consultation Details</string>
+    <string name="medical_prescription_title">Medical Prescription</string>
+    <string name="prescriber_label">Prescriber:</string>
+    <string name="affection_label">Affection code:</string>
+    <string name="add_prescription">Add prescription</string>
 </resources>

@@ -36,3 +36,19 @@ val Consultation.imageUrl: String
         return "${appConfig.httpProtocol}://${appConfig.hostname}${appConfig.imagesPath}/$internalId.jpg"
     }
 
+val Consultation.prescriptions: List<String>
+    get() {
+        val result = mutableListOf<String>()
+
+        fun appendIfNotEmpty(value: String?) {
+            if (!value.isNullOrEmpty()) {
+                result.add(value)
+            }
+        }
+
+        appendIfNotEmpty(prescription)
+        appendIfNotEmpty(prescription1)
+        appendIfNotEmpty(prescription2)
+        appendIfNotEmpty(prescription3)
+        return result
+    }

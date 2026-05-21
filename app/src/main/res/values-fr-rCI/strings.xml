@@ -61,4 +61,8 @@
     <string name="page_examination_list">Mes Examinations</string>
     <string name="page_hospitalisation_list">Mes Hospitalisations</string>
     <string name="consultation_details_title">Détails Consultation</string>
+    <string name="medical_prescription_title">Prescription médicale</string>
+    <string name="prescriber_label">Prescripteur:</string>
+    <string name="affection_label">Code affection:</string>
+    <string name="add_prescription">Saisir une prescription</string>
 </resources>
