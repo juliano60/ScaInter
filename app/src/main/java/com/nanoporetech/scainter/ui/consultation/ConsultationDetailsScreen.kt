@@ -69,6 +69,7 @@ import com.nanoporetech.scainter.ui.components.CardHeader
 import com.nanoporetech.scainter.ui.components.CardHeaderDrawable
 import com.nanoporetech.scainter.ui.components.CardItem
 import com.nanoporetech.scainter.ui.theme.ScaInterTheme
+import com.nanoporetech.scainter.ui.utils.capitalized
 import com.nanoporetech.scainter.ui.utils.displayedDate
 import com.nanoporetech.scainter.ui.utils.displayedDateAndTime
 import com.nanoporetech.scainter.ui.utils.formatCurrency
@@ -124,58 +125,6 @@ fun ConsultationDetailsScreen(
 }
 
 @Composable
-fun PrescriptionSection(
-    consultation: Consultation,
-    modifier: Modifier = Modifier
-) {
-    val paddingMedium = dimensionResource(R.dimen.padding_medium)
-    val items = listOf<CardItem>(
-        CardItem(stringResource(R.string.prescriber_label), formatDoctorName(consultation.doctor ?: "")),
-        CardItem(stringResource(R.string.affection_label), consultation.affliction ?: "")
-    )
-
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
-        elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.elevation_small)),
-        modifier = modifier
-    ) {
-        Column(
-            modifier = Modifier
-            .padding(paddingMedium)) {
-            CardHeader(
-                title = stringResource(R.string.medical_prescription_title),
-                iconImg = Icons.AutoMirrored.Filled.Assignment,
-                modifier = Modifier
-                    .padding(bottom = paddingMedium)
-            )
-
-            CardBody(items = items)
-
-            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
-
-            if (consultation.prescriptions.isNotEmpty()) {
-                PrescriptionDetails(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-            } else {
-                AddPrescriptionButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun PrescriptionDetails(
-    modifier: Modifier = Modifier
-) {
-
-}
-
-@Composable
 fun CostsSection(
     consultation: Consultation,
     modifier: Modifier = Modifier
@@ -211,6 +160,82 @@ fun CostsSection(
     }
 }
 
+@Composable
+fun PrescriptionSection(
+    consultation: Consultation,
+    modifier: Modifier = Modifier
+) {
+    val paddingMedium = dimensionResource(R.dimen.padding_medium)
+    val items = listOf<CardItem>(
+        CardItem(stringResource(R.string.prescriber_label), formatDoctorName(consultation.doctor ?: "")),
+        CardItem(stringResource(R.string.affection_label), consultation.affliction ?: "")
+    )
+
+    if (!consultation.doctor.isNullOrBlank()) {
+        Card(
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
+            elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.elevation_small)),
+            modifier = modifier
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(paddingMedium)
+            ) {
+                CardHeader(
+                    title = stringResource(R.string.medical_prescription_title),
+                    iconImg = Icons.AutoMirrored.Filled.Assignment,
+                    modifier = Modifier
+                        .padding(bottom = paddingMedium)
+                )
+
+                CardBody(items = items)
+
+                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
+
+                if (consultation.prescriptions.isNotEmpty()) {
+                    PrescriptionDetails(
+                        consultation = consultation,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                } else {
+                    AddPrescriptionButton(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun PrescriptionDetails(
+    consultation: Consultation,
+    modifier: Modifier = Modifier
+) {
+    val items = mutableListOf<CardItem>()
+
+    fun addIfNotEmpty(key: String?, value: Int) {
+        if (!key.isNullOrBlank()) {
+            items.add(CardItem(label = key.capitalized(), value.toString()))
+        }
+    }
+
+    addIfNotEmpty(consultation.prescription, consultation.quantity)
+    addIfNotEmpty(consultation.prescription1, consultation.quantity1)
+    addIfNotEmpty(consultation.prescription2, consultation.quantity2)
+    addIfNotEmpty(consultation.prescription3, consultation.quantity3)
+
+    CardBody(
+        items = items,
+        firstColumnWeight = 0.9f,
+        secondColumnWeight = 0.1f,
+        keyIsBold = false,
+        indentRight = true,
+        modifier = modifier
+    )
+}
 @Composable
 fun AddPrescriptionButton(
     modifier: Modifier = Modifier
@@ -409,7 +434,9 @@ fun ConsultationDetailsScreenPreview() {
                 .padding(dimensionResource(R.dimen.padding_medium))
         ) {
             ConsultationDetailsScreen(
-                consultation = DataSource.consultations().first()
+                // 0-1 - with prescriptions
+                // 2 - without prescriptions
+                consultation = DataSource.consultations()[1]
             )
         }
     }

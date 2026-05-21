@@ -61,7 +61,7 @@ private fun formatDate(
 }
 
 fun String.capitalized(): String {
-    val words = this.split(" ")
+    val words = this.lowercase().split(" ")
     return words.joinToString(separator = " ") { word ->
         word.replaceFirstChar {  it.uppercase() }
     }

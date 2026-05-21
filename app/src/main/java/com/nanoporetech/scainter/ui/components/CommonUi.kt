@@ -25,6 +25,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.nanoporetech.scainter.R
@@ -97,25 +98,30 @@ fun CardBody(
     items: List<CardItem>,
     modifier: Modifier = Modifier,
     indentRight: Boolean = false,
+    keyIsBold: Boolean = true,
+    firstColumnWeight: Float = 0.4f,
+    secondColumnWeight: Float = 0.6f
 ) {
     Column(modifier) {
         for (item in items) {
             Row() {
-                if (item.label != "") {
+                if (item.label.isNotBlank()) {
                     Text(
                         text = item.label,
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        fontWeight = FontWeight.SemiBold,
+                        fontWeight = if (keyIsBold) FontWeight.SemiBold else FontWeight.Normal,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                         modifier = Modifier
-                            .weight(1.0f)
+                            .weight(firstColumnWeight)
                     )
                     Text(
                         text = item.value,
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier
-                            .weight(1.5f),
+                            .weight(secondColumnWeight),
                         textAlign = if (indentRight) TextAlign.End else TextAlign.Start
                     )
                 }
