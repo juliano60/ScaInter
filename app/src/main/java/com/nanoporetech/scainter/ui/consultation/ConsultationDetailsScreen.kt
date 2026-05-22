@@ -1,7 +1,6 @@
 package com.nanoporetech.scainter.ui.consultation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,26 +15,15 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Assignment
-import androidx.compose.material.icons.automirrored.outlined.Assignment
-import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.AttachMoney
-import androidx.compose.material.icons.filled.Attachment
-import androidx.compose.material.icons.filled.Calculate
-import androidx.compose.material.icons.filled.ControlPoint
-import androidx.compose.material.icons.filled.Exposure
-import androidx.compose.material.icons.filled.ExposurePlus1
-import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material.icons.filled.Payments
-import androidx.compose.material.icons.filled.PriceChange
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -59,7 +47,6 @@ import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
-import com.nanoporetech.scainter.data.AppUiState
 import com.nanoporetech.scainter.data.DataSource
 import com.nanoporetech.scainter.model.Consultation
 import com.nanoporetech.scainter.model.imageUrl
@@ -68,7 +55,8 @@ import com.nanoporetech.scainter.ui.components.CardBody
 import com.nanoporetech.scainter.ui.components.CardHeader
 import com.nanoporetech.scainter.ui.components.CardHeaderDrawable
 import com.nanoporetech.scainter.ui.components.CardItem
-import com.nanoporetech.scainter.ui.theme.ScaInterTheme
+import com.nanoporetech.scainter.ui.components.LargeButton
+import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.utils.capitalized
 import com.nanoporetech.scainter.ui.utils.displayedDate
 import com.nanoporetech.scainter.ui.utils.displayedDateAndTime
@@ -80,7 +68,8 @@ private const val TAG = "ConsultationDetailsScreen"
 @Composable
 fun ConsultationDetailsScreen(
     consultation: Consultation,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNewPrescription: () -> Unit = {},
 ) {
     Column(
         modifier = modifier
@@ -107,6 +96,7 @@ fun ConsultationDetailsScreen(
         // PRESCRIPTION SECTION
         PrescriptionSection(
             consultation = consultation,
+            onNewPrescription = onNewPrescription,
             modifier = Modifier
                 .fillMaxWidth()
         )
@@ -163,7 +153,8 @@ fun CostsSection(
 @Composable
 fun PrescriptionSection(
     consultation: Consultation,
-    modifier: Modifier = Modifier
+    onNewPrescription: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val paddingMedium = dimensionResource(R.dimen.padding_medium)
     val items = listOf<CardItem>(
@@ -171,42 +162,42 @@ fun PrescriptionSection(
         CardItem(stringResource(R.string.affection_label), consultation.affliction ?: "")
     )
 
-    if (!consultation.doctor.isNullOrBlank()) {
-        Card(
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
-            elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.elevation_small)),
-            modifier = modifier
+    Card(
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
+        elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.elevation_small)),
+        modifier = modifier
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(paddingMedium)
         ) {
-            Column(
+            CardHeader(
+                title = stringResource(R.string.medical_prescription_title),
+                iconImg = Icons.AutoMirrored.Filled.Assignment,
                 modifier = Modifier
-                    .padding(paddingMedium)
-            ) {
-                CardHeader(
-                    title = stringResource(R.string.medical_prescription_title),
-                    iconImg = Icons.AutoMirrored.Filled.Assignment,
+                    .padding(bottom = paddingMedium)
+            )
+
+            CardBody(items = items)
+
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
+
+            if (consultation.prescriptions.isEmpty()) {
+                AddPrescriptionButton(
+                    onNewPrescription = onNewPrescription,
                     modifier = Modifier
-                        .padding(bottom = paddingMedium)
+                        .fillMaxWidth()
                 )
-
-                CardBody(items = items)
-
-                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
-
-                if (consultation.prescriptions.isNotEmpty()) {
-                    PrescriptionDetails(
-                        consultation = consultation,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
-                } else {
-                    AddPrescriptionButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
-                }
+            } else {
+                PrescriptionDetails(
+                    consultation = consultation,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
             }
         }
     }
+
 }
 
 @Composable
@@ -238,37 +229,15 @@ fun PrescriptionDetails(
 }
 @Composable
 fun AddPrescriptionButton(
+    onNewPrescription: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier
-            .fillMaxWidth()
-    ) {
-        Button(
-            onClick = {},
-            colors = ButtonDefaults.buttonColors(
-                containerColor = AppConstants.mainGreen,
-            )
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .padding(dimensionResource(R.dimen.padding_xsmall))
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.AddCircle,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(end = dimensionResource(R.dimen.padding_xsmall))
-                )
-                Text(
-                    text = stringResource(R.string.add_prescription),
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
-        }
-    }
+    LargeButton(
+        iconImg = Icons.Filled.AddCircle,
+        buttonId = R.string.add_prescription_button,
+        modifier = modifier,
+        onClick = onNewPrescription
+    )
 }
 
 @Composable
@@ -423,21 +392,23 @@ fun SubscriberAvatar(
     showBackground = true)
 @Composable
 fun ConsultationDetailsScreenPreview() {
-    Surface(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        Box(
+    ScaInterAppTheme() {
+        Surface(
             modifier = Modifier
                 .fillMaxSize()
-                .background(AppConstants.lightGreen)
-                .padding(dimensionResource(R.dimen.padding_medium))
         ) {
-            ConsultationDetailsScreen(
-                // 0-1 - with prescriptions
-                // 2 - without prescriptions
-                consultation = DataSource.consultations()[1]
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(AppConstants.lightGreen)
+                    .padding(dimensionResource(R.dimen.padding_medium))
+            ) {
+                ConsultationDetailsScreen(
+                    // 0-1 - with prescriptions
+                    // 2 - without prescriptions
+                    consultation = DataSource.consultations()[1]
+                )
+            }
         }
     }
 }

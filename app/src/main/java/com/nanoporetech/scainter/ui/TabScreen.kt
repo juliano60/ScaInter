@@ -1,6 +1,5 @@
 package com.nanoporetech.scainter.ui
 
-import android.R.attr.navigationIcon
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -53,6 +52,8 @@ import com.nanoporetech.scainter.data.AppUiState
 import com.nanoporetech.scainter.data.DataSource
 import com.nanoporetech.scainter.ui.consultation.ConsultationDetailsScreen
 import com.nanoporetech.scainter.ui.consultation.ConsultationListScreen
+import com.nanoporetech.scainter.ui.consultation.MedicalPrescriptionContent
+import com.nanoporetech.scainter.ui.consultation.MedicalPrescriptionScreen
 import com.nanoporetech.scainter.ui.support.SupportScreen
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.theme.ScaInterTheme
@@ -63,8 +64,8 @@ import kotlin.collections.forEach
 enum class ScaAppScreen(@StringRes val title: Int) {
     HealthCareScreen(title = R.string.page_health_care),
     ConsultationListScreen(title = R.string.page_consultation_list),
-
     ConsultationDetailsScreen(title = R.string.consultation_details_title),
+    ConsultationNewPrescriptionScreen(title = R.string.medical_prescription_title),
     SupportScreen(title = R.string.page_support)
 }
 private data class TabSpec(
@@ -198,6 +199,16 @@ fun TabScreen(
                     val consultationId = backStackEntry.arguments?.getInt("consultationId")
                     ConsultationDetailsScreen(
                         consultation = uiState.consultations.first { it.id == consultationId },
+                        onNewPrescription = {
+                            navController.navigate(ScaAppScreen.ConsultationNewPrescriptionScreen.name)
+                        },
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(dimensionResource(R.dimen.padding_medium))
+                    )
+                }
+                composable(route = ScaAppScreen.ConsultationNewPrescriptionScreen.name) {
+                    MedicalPrescriptionScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(dimensionResource(R.dimen.padding_medium))

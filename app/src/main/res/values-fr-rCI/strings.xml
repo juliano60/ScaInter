@@ -61,8 +61,17 @@
     <string name="page_examination_list">Mes Examinations</string>
     <string name="page_hospitalisation_list">Mes Hospitalisations</string>
     <string name="consultation_details_title">Détails Consultation</string>
-    <string name="medical_prescription_title">Prescription médicale</string>
+    <string name="medical_prescription_title">Prescription Médicale</string>
     <string name="prescriber_label">Prescripteur:</string>
     <string name="affection_label">Code affection:</string>
-    <string name="add_prescription">Saisir une prescription</string>
+    <string name="add_prescription_button">Saisir une prescription</string>
+    <string name="add_medication_button">Ajouter un médicament</string>
+    <string name="prescriber_hint">Médecin prescripteur</string>
+    <string name="affection_hint">Code affection</string>
+    <string name="medication_hint">Médicament</string>
+    <string name="posology_hint">Posologie</string>
+    <string name="add_button">Ajouter</string>
+    <string name="consultation_details_sub">Détails consultation</string>
+    <string name="confirm_button">Valider</string>
+    <string name="medical_prescription_sub">Prescription médicale</string>
 </resources>

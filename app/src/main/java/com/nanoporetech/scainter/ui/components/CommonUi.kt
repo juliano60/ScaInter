@@ -1,16 +1,27 @@
 package com.nanoporetech.scainter.ui.components
 
+import android.R.attr.onClick
 import android.R.attr.text
+import androidx.annotation.StringRes
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -27,8 +38,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nanoporetech.scainter.R
+import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.ui.consultation.ConsultationCard
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 
@@ -198,6 +211,54 @@ fun SubHeader(
     }
 }
 
+@Composable
+fun LargeButton(
+    @StringRes buttonId: Int,
+    modifier: Modifier = Modifier,
+    iconImg: ImageVector? = null,
+    onClick: () -> Unit = {},
+    isEnabled: Boolean = true
+) {
+    val paddingMedium = dimensionResource(R.dimen.padding_medium)
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .fillMaxWidth(),
+    ) {
+        Button(
+            onClick = onClick,
+            shape = RoundedCornerShape(8.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = AppConstants.mainGreen,
+            ),
+            contentPadding = PaddingValues(
+                horizontal = paddingMedium,
+                vertical = paddingMedium,
+            ),
+            enabled = isEnabled
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (iconImg != null) {
+                    Icon(
+                        imageVector = iconImg,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(end = dimensionResource(R.dimen.padding_small))
+                    )
+                }
+
+                Text(
+                    text = stringResource(buttonId),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+        }
+    }
+}
+
 @Preview(
     locale = "fr-rCI",
     showBackground = true)
@@ -209,7 +270,11 @@ fun CommonUiPreview() {
                 .fillMaxSize()
                 .padding(dimensionResource(R.dimen.padding_medium))
         ) {
-            val items = listOf<CardItem>(
+            LargeButton(
+                iconImg = Icons.Filled.AddCircle,
+                buttonId = R.string.add_medication_button,
+            )
+            /*val items = listOf<CardItem>(
                 CardItem(
                     label = "Label 1",
                     value = "Value 1"
@@ -222,7 +287,7 @@ fun CommonUiPreview() {
 
             CardBody(
                 items = items
-            )
+            )*/
         }
     }
 }

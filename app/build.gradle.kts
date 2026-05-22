@@ -68,6 +68,7 @@ dependencies {
     // Credentials Store
     implementation(libs.androidx.security.crypto)
     implementation(libs.play.services.base)
+    implementation(libs.androidx.ui)
 
     // coroutine testing
     testImplementation(libs.kotlinx.coroutines.test)

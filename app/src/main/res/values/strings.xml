@@ -63,5 +63,14 @@
     <string name="medical_prescription_title">Medical Prescription</string>
     <string name="prescriber_label">Prescriber:</string>
     <string name="affection_label">Affection code:</string>
-    <string name="add_prescription">Add prescription</string>
+    <string name="add_prescription_button">Add prescription</string>
+    <string name="add_medication_button">Add medication</string>
+    <string name="prescriber_hint">Prescribing Physician</string>
+    <string name="affection_hint">Affection code</string>
+    <string name="medication_hint">Medication</string>
+    <string name="posology_hint">Posology</string>
+    <string name="add_button">Add</string>
+    <string name="consultation_details_sub">Consultation details</string>
+    <string name="confirm_button">Confirm</string>
+    <string name="medical_prescription_sub">Medical prescription</string>
 </resources>
