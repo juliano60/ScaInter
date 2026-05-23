@@ -1,7 +1,5 @@
 package com.nanoporetech.scainter.ui.login
 
-import android.R.attr.password
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,12 +19,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -50,6 +45,7 @@ import androidx.compose.ui.unit.sp
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.ui.components.PrimaryButton
+import com.nanoporetech.scainter.ui.components.PrimarySwitch
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.theme.ScaInterTheme
 
@@ -65,7 +61,7 @@ fun LoginScreen(
     onForgottenPassword: () -> Unit = {},
     isLoginError: Boolean = false,
     rememberMe: Boolean = false,
-    onRememberMeChanged: (value: Boolean) -> Unit = {},
+    onRememberMeChange: (value: Boolean) -> Unit = {},
 ) {
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
     val largePadding = dimensionResource(R.dimen.padding_large)
@@ -112,7 +108,7 @@ fun LoginScreen(
             // FORGOTTEN PASSWORD SECTION
             ForgottenPasswordSection(
                 rememberMe = rememberMe,
-                onRememberMeChanged = onRememberMeChanged,
+                onRememberMeChange = onRememberMeChange,
                 onForgottenPassword = onForgottenPassword,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -266,7 +262,7 @@ fun WelcomeMessage(
 @Composable
 fun ForgottenPasswordSection(
     rememberMe: Boolean,
-    onRememberMeChanged: (value: Boolean) -> Unit,
+    onRememberMeChange: (value: Boolean) -> Unit,
     onForgottenPassword: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -277,9 +273,9 @@ fun ForgottenPasswordSection(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
         ) {
-            Switch(
+            PrimarySwitch(
                 checked = rememberMe,
-                onCheckedChange = onRememberMeChanged
+                onCheckedChange = onRememberMeChange,
             )
 
             Text(
