@@ -180,7 +180,7 @@ fun PrescriptionSection(
             Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
 
             if (consultation.prescriptions.isEmpty()) {
-                AddPrescriptionButton(
+                PrescriptionButton(
                     onNewPrescription = onNewPrescription,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -225,7 +225,7 @@ fun PrescriptionDetails(
     )
 }
 @Composable
-fun AddPrescriptionButton(
+fun PrescriptionButton(
     onNewPrescription: () -> Unit,
     modifier: Modifier = Modifier
 ) {

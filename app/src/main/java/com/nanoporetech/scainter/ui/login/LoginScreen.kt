@@ -63,7 +63,6 @@ fun LoginScreen(
     rememberMe: Boolean = false,
     onRememberMeChange: (value: Boolean) -> Unit = {},
 ) {
-    val mediumPadding = dimensionResource(R.dimen.padding_medium)
     val largePadding = dimensionResource(R.dimen.padding_large)
 
     Box(

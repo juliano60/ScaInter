@@ -36,6 +36,7 @@ import androidx.compose.ui.window.Dialog
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.ui.components.PrimaryButton
+import com.nanoporetech.scainter.ui.components.PrimaryOutlinedTextField
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 
 @Composable
@@ -94,25 +95,19 @@ fun PrescriptionDialog(
                     }
 
                     // DOCTOR
-                    OutlinedTextField(
-                        value = doctor,
-                        onValueChange = onDoctorChanged,
-                        label = {
-                            Text(stringResource(R.string.prescriber_hint))
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
+                    PrimaryOutlinedTextField(
+                        text = doctor,
+                        placeholder = stringResource(R.string.prescriber_hint),
+                        onValueChanged = onDoctorChanged,
+                        modifier = Modifier.fillMaxWidth()
                     )
 
                     // CODE AFFECTION
-                    OutlinedTextField(
-                        value = affection,
-                        onValueChange = onAffectionChanged,
-                        label = {
-                            Text(stringResource(R.string.affection_hint))
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
+                    PrimaryOutlinedTextField(
+                        text = affection,
+                        placeholder = stringResource(R.string.affection_hint),
+                        onValueChanged = onAffectionChanged,
+                        modifier = Modifier.fillMaxWidth()
                     )
 
                     Spacer(modifier = Modifier.height(paddingMedium))
@@ -130,14 +125,11 @@ fun PrescriptionDialog(
                     Spacer(modifier = Modifier.height(paddingSmall))
 
                     // MEDICATION
-                    OutlinedTextField(
-                        value = medication,
-                        onValueChange = onMedicationChanged,
-                        label = {
-                            Text(stringResource(R.string.medication_hint))
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
+                    PrimaryOutlinedTextField(
+                        text = medication,
+                        placeholder = stringResource(R.string.medication_hint),
+                        onValueChanged = onMedicationChanged,
+                        modifier = Modifier.fillMaxWidth()
                     )
 
                     Spacer(modifier = Modifier.height(paddingSmall))
@@ -150,14 +142,11 @@ fun PrescriptionDialog(
                     )
 
                     // POSOLOGY
-                    OutlinedTextField(
-                        value = posology,
-                        onValueChange = onPosologyChanged,
-                        label = {
-                            Text(stringResource(R.string.posology_hint))
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
+                    PrimaryOutlinedTextField(
+                        text = posology,
+                        placeholder = stringResource(R.string.posology_hint),
+                        onValueChanged = onPosologyChanged,
+                        modifier = Modifier.fillMaxWidth()
                     )
 
                     Spacer(modifier = Modifier.height(paddingMedium))
