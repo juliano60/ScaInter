@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.ChevronRight
@@ -46,6 +48,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -230,7 +233,7 @@ fun PredictiveTextField(
     placeholder: String,
     suggestions: List<String>,
     modifier: Modifier = Modifier,
-    onValueChanged: (String) -> Unit
+    onValueChanged: (String) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
     val filteredSuggestions = suggestions
@@ -278,7 +281,9 @@ fun PrimaryOutlinedTextField(
     value: String,
     placeholder: String,
     modifier: Modifier = Modifier,
-    onValueChanged: (String) -> Unit = {}
+    onValueChanged: (String) -> Unit = {},
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default
 ) {
     OutlinedTextField(
         value = value,
@@ -295,7 +300,10 @@ fun PrimaryOutlinedTextField(
             unfocusedIndicatorColor = MaterialTheme.colorScheme.outlineVariant,
             disabledIndicatorColor =  MaterialTheme.colorScheme.outlineVariant,
         ),
-        modifier = modifier
+        modifier = modifier,
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
+        visualTransformation = VisualTransformation.None,
     )
 }
 
