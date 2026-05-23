@@ -1,32 +1,32 @@
 package com.nanoporetech.scainter.ui.components
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
@@ -34,6 +34,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -55,6 +56,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nanoporetech.scainter.R
+import com.nanoporetech.scainter.ui.consultation.Prescription
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.theme.ScaInterTheme
 
@@ -364,6 +366,92 @@ fun PrimaryButton(
     }
 }
 
+@Composable
+fun PrescriptionRow(
+    item: Prescription,
+    modifier: Modifier = Modifier,
+    onRemovePrescription: (Prescription) -> Unit = {},
+    onChangePrescription: (Prescription) -> Unit = {}
+) {
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+    ) {
+        Text("(x${item.quantityIndex + 1})")
+        Spacer(modifier = Modifier.width(dimensionResource(R.dimen.padding_small)))
+        Text(
+            text = item.name,
+            maxLines = 1,
+            overflow = TextOverflow.MiddleEllipsis,
+            modifier = Modifier
+                .weight(0.6f)
+        )
+        IconButton(
+            onClick = {
+                onChangePrescription(item)
+            }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Edit,
+                contentDescription = stringResource(R.string.edit_prescription_button),
+                tint = ScaInterTheme.extendedColors.mainGreen.color
+            )
+        }
+        IconButton(
+            onClick = {
+                //onRemovePrescription(item)
+                showDeleteDialog = true
+            }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = stringResource(R.string.remove_medication_button),
+                tint = ScaInterTheme.extendedColors.mainGreen.color
+            )
+        }
+    }
+
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showDeleteDialog = false
+            },
+            title = {
+                Text(stringResource(R.string.remove_medication_prompt))
+            },
+            text = {
+                Text(
+                    stringResource(
+                        R.string.confirmation_prompt,
+                        item.name
+                    )
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onRemovePrescription(item)
+                        showDeleteDialog = false
+                    }
+                ) {
+                    Text(stringResource(R.string.confirm_button))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteDialog = false
+                    }
+                ) {
+                    Text(stringResource(R.string.cancel_button))
+                }
+            }
+        )
+    }
+}
+
 @Preview(
     locale = "fr-rCI",
     showBackground = true)
@@ -375,7 +463,28 @@ fun CommonUiPreview() {
                 .fillMaxSize()
                 .padding(dimensionResource(R.dimen.padding_medium))
         ) {
-            Column(modifier = Modifier
+            val items = listOf<Prescription>(
+                Prescription(
+                    name = "Medicament 1",
+                    quantityIndex = 1,
+                    posology = "",
+                ),
+                Prescription(
+                    name = "Medicament 2",
+                    quantityIndex = 2,
+                    posology = "",
+                )
+            )
+
+            LazyColumn() {
+                items(items) { item ->
+                    PrescriptionRow(
+                        item
+                    )
+                }
+            }
+
+            /*Column(modifier = Modifier
                 .padding(dimensionResource(R.dimen.padding_medium))
             ) {
                 Card(
@@ -406,7 +515,7 @@ fun CommonUiPreview() {
                     modifier = Modifier
                         .fillMaxWidth()
                 )
-            }
+            }*/
             /*val items = listOf<CardItem>(
                 CardItem(
                     label = "Label 1",

@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.filled.AddCircle
@@ -29,6 +31,7 @@ import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.data.PrescriptionUiState
 import com.nanoporetech.scainter.ui.components.CardHeader
+import com.nanoporetech.scainter.ui.components.PrescriptionRow
 import com.nanoporetech.scainter.ui.components.PrimaryButton
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 
@@ -50,6 +53,8 @@ fun MedicalPrescriptionScreen(
         onQuantityChanged = viewModel::setQuantity,
         onMedicationChanged = viewModel::setMedication,
         onAddPrescription = viewModel::addPrescription,
+        onRemovePrescription = viewModel::removePrescription,
+        onChangePrescription = { viewModel.editPrescription(it) },
         canAddPrescription = viewModel.canAddPrescription(),
         isFormValid = viewModel.isFormValid(),
         onOpenDialog = viewModel::openDialog,
@@ -68,6 +73,8 @@ fun MedicalPrescriptionContent(
     onQuantityChanged: (Int) -> Unit = {},
     onMedicationChanged: (String) -> Unit = {},
     onAddPrescription: () -> Unit = {},
+    onRemovePrescription: (Prescription) -> Unit = {},
+    onChangePrescription: (Prescription) -> Unit = {},
     canAddPrescription: Boolean = false,
     isFormValid: Boolean = false,
     onOpenDialog: () -> Unit = {},
@@ -93,6 +100,23 @@ fun MedicalPrescriptionContent(
                         .padding(bottom = paddingMedium)
                 )
 
+                // DISPLAY PRESCRIPTIONS IF AVAILABLE
+                if (state.prescriptions.isNotEmpty()) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        items(state.prescriptions) { item ->
+                            PrescriptionRow(
+                                item = item,
+                                onRemovePrescription = onRemovePrescription,
+                                onChangePrescription = onChangePrescription
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(paddingMedium))
+                }
+
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
@@ -115,7 +139,7 @@ fun MedicalPrescriptionContent(
                 affection = state.affection,
                 medication = state.medication,
                 posology = state.posology,
-                selectedIndex = state.quantity,
+                selectedIndex = state.quantityIndex,
                 onDoctorChanged = onDoctorChanged,
                 onAffectionChanged = onAffectionChanged,
                 onPosologyChanged = onPosologyChanged,
@@ -154,7 +178,21 @@ fun MedicalPrescriptionContentPreview() {
                     .padding(dimensionResource(R.dimen.padding_medium))
             ) {
                 MedicalPrescriptionContent(
-                    state = PrescriptionUiState(),
+                    state = PrescriptionUiState(
+                        prescriptions = listOf<Prescription>(
+                            Prescription(
+                                name = "Medicament 1",
+                                quantityIndex = 1,
+                                posology = "",
+                            ),
+                            Prescription(
+                                name = "Medicament 2",
+                                quantityIndex = 2,
+                                posology = "",
+                            )
+                        )
+                    ),
+                    canAddPrescription = true,
                     modifier = Modifier
                         .fillMaxWidth(),
                 )

@@ -1,11 +1,5 @@
 package com.nanoporetech.scainter.ui.consultation
 
-import android.R.attr.name
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -20,7 +14,7 @@ import kotlinx.coroutines.flow.update
 
 data class Prescription (
     val name: String,
-    val quantity: Int,
+    val quantityIndex: Int,
     val posology: String
 )
 
@@ -53,7 +47,7 @@ class MedicalPrescriptionViewModel(
 
     fun setQuantity(index: Int) {
         _uiState.update {
-            it.copy(quantity = index)
+            it.copy(quantityIndex = index)
         }
     }
 
@@ -64,20 +58,35 @@ class MedicalPrescriptionViewModel(
     }
 
     fun addPrescription() {
-        if (!canAddPrescription()) {
-            return
-        }
+        val currentState = _uiState.value
 
         val prescription = Prescription(
             name = _uiState.value.medication,
-            quantity = _uiState.value.quantity,
+            quantityIndex = _uiState.value.quantityIndex,
             posology = _uiState.value.posology
         )
 
+        val updatedPrescriptions = currentState.prescriptions
+            // Overwrite old prescription with new one
+            .filterNot { it.name == prescription.name }
+            .plus(prescription)
+
+        if (updatedPrescriptions.size > MAX_PRESCRIPTIONS) {
+            return
+        }
+
         _uiState.update { currentState ->
             currentState.copy(
-                prescriptions = currentState.prescriptions.plus(prescription),
+                prescriptions = updatedPrescriptions,
                 isDialogOpen = false
+            )
+        }
+    }
+
+    fun removePrescription(item: Prescription) {
+        _uiState.update {
+            it.copy(
+                prescriptions = it.prescriptions - item
             )
         }
     }
@@ -99,6 +108,17 @@ class MedicalPrescriptionViewModel(
     fun closeDialog() {
         _uiState.update {
             it.copy(isDialogOpen = false)
+        }
+    }
+
+    fun editPrescription(prescription: Prescription) {
+        _uiState.update {
+            it.copy(
+                medication = prescription.name,
+                quantityIndex = prescription.quantityIndex,
+                posology = prescription.posology,
+                isDialogOpen = true
+            )
         }
     }
 

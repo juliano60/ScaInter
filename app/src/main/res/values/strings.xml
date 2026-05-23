@@ -77,4 +77,9 @@
     <string name="consultation_menu_sub">My consultations</string>
     <string name="examination_menu_sub">My examinations</string>
     <string name="hospitalisation_menu_sub">My hospitalisations</string>
+    <string name="edit_prescription_button">Modify</string>
+    <string name="confirmation_prompt">Proceed with change?</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="remove_medication_prompt">Remove medication?</string>
+    <string name="remove_medication_button">Remove medication</string>
 </resources>

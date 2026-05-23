@@ -9,8 +9,8 @@ data class PrescriptionUiState(
     val affection: String = "",
     /** Posology for current prescription */
     val posology: String = "",
-    /** Quantity index for current prescription */
-    val quantity: Int = 0,
+    /** Quantity index [0-3] for current prescription */
+    val quantityIndex: Int = 0,
     /** Medication name for current prescription */
     val medication: String = "",
     /** Whether to open the prescription dialog */

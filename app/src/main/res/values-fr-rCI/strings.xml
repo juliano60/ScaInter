@@ -78,4 +78,9 @@
     <string name="consultation_menu_sub">Mes consultations</string>
     <string name="examination_menu_sub">Mes examens</string>
     <string name="hospitalisation_menu_sub">Mes hospitalisations</string>
+    <string name="remove_medication_button">Supprimer le médicament</string>
+    <string name="edit_prescription_button">Modifier</string>
+    <string name="confirmation_prompt">Procéder avec le changement?</string>
+    <string name="cancel_button">Annuler</string>
+    <string name="remove_medication_prompt">Effacer le médicament?</string>
 </resources>
