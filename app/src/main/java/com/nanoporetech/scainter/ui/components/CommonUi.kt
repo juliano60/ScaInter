@@ -1,18 +1,14 @@
 package com.nanoporetech.scainter.ui.components
 
-import android.R.attr.onClick
-import android.R.attr.text
-import androidx.annotation.StringRes
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -22,6 +18,8 @@ import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -42,8 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
-import com.nanoporetech.scainter.ui.consultation.ConsultationCard
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
+import com.nanoporetech.scainter.ui.theme.ScaInterTheme
 
 @Composable
 fun CardHeader(
@@ -212,50 +210,42 @@ fun SubHeader(
 }
 
 @Composable
-fun LargeButton(
-    @StringRes buttonId: Int,
+fun PrimaryButton(
+    text: String,
     modifier: Modifier = Modifier,
     iconImg: ImageVector? = null,
     onClick: () -> Unit = {},
-    isEnabled: Boolean = true
+    enabled: Boolean = true
 ) {
     val paddingMedium = dimensionResource(R.dimen.padding_medium)
 
-    Box(
-        contentAlignment = Alignment.Center,
+    Button(
+        onClick = onClick,
+        shape = RoundedCornerShape(8.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = ScaInterTheme.extendedColors.mainGreen.color,
+            disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+        ),
+        contentPadding = PaddingValues(
+            horizontal = paddingMedium,
+            vertical = paddingMedium,
+        ),
+        enabled = enabled,
         modifier = modifier
-            .fillMaxWidth(),
     ) {
-        Button(
-            onClick = onClick,
-            shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = AppConstants.mainGreen,
-            ),
-            contentPadding = PaddingValues(
-                horizontal = paddingMedium,
-                vertical = paddingMedium,
-            ),
-            enabled = isEnabled
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                if (iconImg != null) {
-                    Icon(
-                        imageVector = iconImg,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .padding(end = dimensionResource(R.dimen.padding_small))
-                    )
-                }
-
-                Text(
-                    text = stringResource(buttonId),
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
+        if (iconImg != null) {
+            Icon(
+                imageVector = iconImg,
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(end = dimensionResource(R.dimen.padding_small))
+            )
         }
+
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyLarge
+        )
     }
 }
 
@@ -270,10 +260,37 @@ fun CommonUiPreview() {
                 .fillMaxSize()
                 .padding(dimensionResource(R.dimen.padding_medium))
         ) {
-            LargeButton(
-                iconImg = Icons.Filled.AddCircle,
-                buttonId = R.string.add_medication_button,
-            )
+            Column(modifier = Modifier
+                .padding(dimensionResource(R.dimen.padding_medium))
+            ) {
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
+                    elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.elevation_small)),
+                    modifier = Modifier
+                        .fillMaxWidth()
+
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .padding(dimensionResource(R.dimen.padding_medium))
+                    ) {
+                        PrimaryButton(
+                            iconImg = Icons.Filled.AddCircle,
+                            text = stringResource(R.string.add_medication_button),
+                            modifier = Modifier
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
+
+                PrimaryButton(
+                    text = stringResource(R.string.confirm_button),
+                    enabled = false,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+            }
             /*val items = listOf<CardItem>(
                 CardItem(
                     label = "Label 1",

@@ -49,6 +49,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
+import com.nanoporetech.scainter.ui.components.PrimaryButton
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.theme.ScaInterTheme
 
@@ -120,19 +121,13 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(largePadding))
 
             // LOGIN BUTTON
-            Button(
+            PrimaryButton(
+                text = stringResource(R.string.login),
                 onClick = onLogin,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = ScaInterTheme.extendedColors.mainGreen.color,
-                ),
                 enabled = username.isNotBlank() && password.isNotBlank(),
                 modifier = Modifier
                     .fillMaxWidth()
-            ) {
-                Text(
-                    text = stringResource(R.string.login)
-                )
-            }
+            )
         }
     }
 }

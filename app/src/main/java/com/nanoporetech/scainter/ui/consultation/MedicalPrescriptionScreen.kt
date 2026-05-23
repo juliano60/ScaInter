@@ -19,6 +19,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -28,7 +29,7 @@ import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.data.PrescriptionUiState
 import com.nanoporetech.scainter.ui.components.CardHeader
-import com.nanoporetech.scainter.ui.components.LargeButton
+import com.nanoporetech.scainter.ui.components.PrimaryButton
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 
 
@@ -78,6 +79,8 @@ fun MedicalPrescriptionContent(
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
             elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.elevation_small)),
+            modifier = Modifier
+                .fillMaxWidth()
         ) {
             Column(
                 modifier = Modifier
@@ -90,12 +93,18 @@ fun MedicalPrescriptionContent(
                         .padding(bottom = paddingMedium)
                 )
 
-                LargeButton(
-                    iconImg = Icons.Filled.AddCircle,
-                    buttonId = R.string.add_medication_button,
-                    isEnabled = canAddPrescription,
-                    onClick = onOpenDialog,
-                )
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                ) {
+                    PrimaryButton(
+                        iconImg = Icons.Filled.AddCircle,
+                        text = stringResource(R.string.add_medication_button),
+                        enabled = canAddPrescription,
+                        onClick = onOpenDialog,
+                    )
+                }
             }
         }
 
@@ -119,9 +128,9 @@ fun MedicalPrescriptionContent(
 
         Spacer(modifier = Modifier.height(paddingMedium))
 
-        LargeButton(
-            buttonId = R.string.confirm_button,
-            isEnabled = isFormValid,
+        PrimaryButton(
+            text = stringResource(R.string.confirm_button),
+            enabled = isFormValid,
             modifier = Modifier
                 .fillMaxWidth()
         )

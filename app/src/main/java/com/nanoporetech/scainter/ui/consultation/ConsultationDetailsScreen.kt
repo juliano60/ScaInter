@@ -3,7 +3,6 @@ package com.nanoporetech.scainter.ui.consultation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,8 +17,6 @@ import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Payments
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -55,7 +52,7 @@ import com.nanoporetech.scainter.ui.components.CardBody
 import com.nanoporetech.scainter.ui.components.CardHeader
 import com.nanoporetech.scainter.ui.components.CardHeaderDrawable
 import com.nanoporetech.scainter.ui.components.CardItem
-import com.nanoporetech.scainter.ui.components.LargeButton
+import com.nanoporetech.scainter.ui.components.PrimaryButton
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.utils.capitalized
 import com.nanoporetech.scainter.ui.utils.displayedDate
@@ -232,9 +229,9 @@ fun AddPrescriptionButton(
     onNewPrescription: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    LargeButton(
+    PrimaryButton(
         iconImg = Icons.Filled.AddCircle,
-        buttonId = R.string.add_prescription_button,
+        text = stringResource(R.string.add_prescription_button),
         modifier = modifier,
         onClick = onNewPrescription
     )

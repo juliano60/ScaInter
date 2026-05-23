@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
-import com.nanoporetech.scainter.ui.components.LargeButton
+import com.nanoporetech.scainter.ui.components.PrimaryButton
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 
 @Composable
@@ -165,10 +165,12 @@ fun PrescriptionDialog(
                     Spacer(modifier = Modifier.height(paddingMedium))
 
                     // ADD BUTTON
-                    LargeButton(
+                    PrimaryButton(
                         iconImg = Icons.Filled.AddCircle,
-                        buttonId = R.string.add_button,
-                        onClick = onAddPrescription
+                        text = stringResource(R.string.add_button),
+                        onClick = onAddPrescription,
+                        modifier = Modifier
+                            .fillMaxWidth()
                     )
                 }
 
