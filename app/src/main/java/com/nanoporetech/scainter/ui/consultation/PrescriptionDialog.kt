@@ -30,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -39,6 +40,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
+import com.nanoporetech.scainter.data.Medicine
+import com.nanoporetech.scainter.ui.components.PredictiveTextField
 import com.nanoporetech.scainter.ui.components.PrimaryButton
 import com.nanoporetech.scainter.ui.components.PrimaryOutlinedTextField
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
@@ -102,7 +105,7 @@ fun PrescriptionDialog(
 
                     // DOCTOR
                     PrimaryOutlinedTextField(
-                        text = doctor,
+                        value = doctor,
                         placeholder = stringResource(R.string.prescriber_hint),
                         onValueChanged = onDoctorChanged,
                         modifier = Modifier.fillMaxWidth()
@@ -110,7 +113,7 @@ fun PrescriptionDialog(
 
                     // CODE AFFECTION
                     PrimaryOutlinedTextField(
-                        text = affection,
+                        value = affection,
                         placeholder = stringResource(R.string.affection_hint),
                         onValueChanged = onAffectionChanged,
                         modifier = Modifier.fillMaxWidth()
@@ -131,9 +134,10 @@ fun PrescriptionDialog(
                     Spacer(modifier = Modifier.height(paddingSmall))
 
                     // MEDICATION
-                    PrimaryOutlinedTextField(
-                        text = medication,
+                    PredictiveTextField(
+                        value = medication,
                         placeholder = stringResource(R.string.medication_hint),
+                        suggestions = Medicine.load(context = LocalContext.current),
                         onValueChanged = onMedicationChanged,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -149,7 +153,7 @@ fun PrescriptionDialog(
 
                     // POSOLOGY
                     PrimaryOutlinedTextField(
-                        text = posology,
+                        value = posology,
                         placeholder = stringResource(R.string.posology_hint),
                         onValueChanged = onPosologyChanged,
                         modifier = Modifier.fillMaxWidth()
