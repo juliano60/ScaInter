@@ -74,4 +74,5 @@
     <string name="consultation_details_sub">Détails consultation</string>
     <string name="confirm_button">Valider</string>
     <string name="medical_prescription_sub">Prescription médicale</string>
+    <string name="close_button">Fermer</string>
 </resources>
