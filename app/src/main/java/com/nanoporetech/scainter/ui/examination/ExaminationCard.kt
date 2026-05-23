@@ -19,10 +19,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.ui.components.CardHeader
+import com.nanoporetech.scainter.ui.components.CardHeaderDrawable
 import com.nanoporetech.scainter.ui.components.CardRow
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.theme.ScaInterTheme
@@ -45,13 +47,13 @@ fun ExaminationCard(
         //.border(1.dp, color = Color.Red)
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.vertical_spacing_small)),
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.vertical_spacing_medium)),
             modifier = Modifier
                 .padding(dimensionResource(R.dimen.padding_medium))
         ) {
-            CardHeader(
-                title = stringResource(R.string.examination_menu_title),
-                iconImg = Icons.Outlined.GraphicEq,
+            CardHeaderDrawable(
+                title = stringResource(R.string.examination_menu_sub),
+                iconImg = painterResource(R.drawable.vital_signs),
                 color = Color.White,
                 modifier = Modifier
             )

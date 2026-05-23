@@ -49,12 +49,12 @@ fun ConsultationCard(
         //.border(1.dp, color = Color.Red)
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.vertical_spacing_small)),
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.vertical_spacing_medium)),
             modifier = Modifier
                 .padding(dimensionResource(R.dimen.padding_medium))
         ) {
             CardHeaderDrawable(
-                title = stringResource(R.string.consultation_menu_title),
+                title = stringResource(R.string.consultation_menu_sub),
                 iconImg = painterResource(R.drawable.stethoscope),
                 color = MaterialTheme.colorScheme.surfaceContainerLowest,
                 modifier = Modifier

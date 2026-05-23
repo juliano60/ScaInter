@@ -1,5 +1,6 @@
 package com.nanoporetech.scainter.ui.components
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -179,7 +180,8 @@ fun CardRow(
         Text(
             text = title,
             color = MaterialTheme.colorScheme.surfaceContainerLowest,
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyLarge,
+            fontSize = 18.sp
         )
 
         Spacer(modifier = Modifier
@@ -201,9 +203,10 @@ fun MainHeader(
     Row(modifier) {
         Text(
             text = stringResource(R.string.welcome_header, title),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
+            modifier = modifier
         )
     }
 }

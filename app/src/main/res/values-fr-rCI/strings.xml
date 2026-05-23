@@ -75,4 +75,7 @@
     <string name="confirm_button">Valider</string>
     <string name="medical_prescription_sub">Prescription médicale</string>
     <string name="close_button">Fermer</string>
+    <string name="consultation_menu_sub">Mes consultations</string>
+    <string name="examination_menu_sub">Mes examens</string>
+    <string name="hospitalisation_menu_sub">Mes hospitalisations</string>
 </resources>

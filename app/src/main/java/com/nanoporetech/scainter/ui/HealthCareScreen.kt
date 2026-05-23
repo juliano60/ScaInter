@@ -1,5 +1,6 @@
 package com.nanoporetech.scainter.ui
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,9 +13,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.data.DataSource
 import com.nanoporetech.scainter.model.Provider
@@ -48,7 +51,7 @@ fun HealthCareScreen(
                 title = provider.displayedName,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = dimensionResource(R.dimen.padding_medium))
+                    .padding(all = dimensionResource(R.dimen.padding_small))
             )
 
             // SUB HEADER SECTION
@@ -67,7 +70,7 @@ fun HealthCareScreen(
                     .fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.vertical_spacing_xsmall)))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.vertical_spacing_medium)))
 
             // EXAMINATION MENU
             ExaminationCard(
@@ -77,7 +80,7 @@ fun HealthCareScreen(
                     .fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.vertical_spacing_xsmall)))
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.vertical_spacing_medium)))
 
             // HOSPITALISATION MENU
             HospitalisationCard(

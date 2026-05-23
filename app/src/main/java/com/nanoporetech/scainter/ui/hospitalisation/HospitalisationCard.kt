@@ -47,12 +47,12 @@ fun HospitalisationCard(
         //.border(1.dp, color = Color.Red)
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.vertical_spacing_small)),
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.vertical_spacing_medium)),
             modifier = Modifier
                 .padding(dimensionResource(R.dimen.padding_medium))
         ) {
             CardHeader(
-                title = stringResource(R.string.hospitalisation_menu_title),
+                title = stringResource(R.string.hospitalisation_menu_sub),
                 iconImg = Icons.Filled.Bed,
                 color = Color.White,
                 modifier = Modifier
