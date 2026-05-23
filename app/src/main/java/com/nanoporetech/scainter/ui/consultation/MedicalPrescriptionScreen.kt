@@ -134,7 +134,7 @@ fun MedicalPrescriptionContent(
 
         if (state.isDialogOpen) {
             PrescriptionDialog(
-                act = "Neurologie",
+                act = "Neurology",
                 doctor = state.doctor,
                 affection = state.affection,
                 medication = state.medication,
@@ -166,7 +166,7 @@ fun MedicalPrescriptionContent(
     showBackground = true)
 @Composable
 fun MedicalPrescriptionContentPreview() {
-    ScaInterAppTheme() {
+    ScaInterAppTheme {
         Surface(
             modifier = Modifier
                 .fillMaxSize()
@@ -179,7 +179,7 @@ fun MedicalPrescriptionContentPreview() {
             ) {
                 MedicalPrescriptionContent(
                     state = PrescriptionUiState(
-                        prescriptions = listOf<Prescription>(
+                        prescriptions = listOf(
                             Prescription(
                                 name = "Medicament 1",
                                 quantityIndex = 1,

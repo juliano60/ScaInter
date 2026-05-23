@@ -132,7 +132,7 @@ fun CardBody(
 ) {
     Column(modifier) {
         for (item in items) {
-            Row() {
+            Row {
                 if (item.label.isNotBlank()) {
                     Text(
                         text = item.label,
@@ -457,13 +457,13 @@ fun PrescriptionRow(
     showBackground = true)
 @Composable
 fun CommonUiPreview() {
-    ScaInterAppTheme() {
+    ScaInterAppTheme {
         Surface(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(dimensionResource(R.dimen.padding_medium))
         ) {
-            val items = listOf<Prescription>(
+            val items = listOf(
                 Prescription(
                     name = "Medicament 1",
                     quantityIndex = 1,
@@ -476,7 +476,7 @@ fun CommonUiPreview() {
                 )
             )
 
-            LazyColumn() {
+            LazyColumn {
                 items(items) { item ->
                     PrescriptionRow(
                         item

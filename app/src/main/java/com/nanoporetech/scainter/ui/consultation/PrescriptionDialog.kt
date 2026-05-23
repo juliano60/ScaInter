@@ -79,7 +79,7 @@ fun PrescriptionDialog(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
             modifier = modifier
         ) {
-            Box() {
+            Box {
                 Column(
                     modifier = Modifier
                         .padding(paddingMedium)
@@ -251,13 +251,13 @@ fun QuantityPicker(
     showBackground = true)
 @Composable
 fun PrescriptionDialogPreview() {
-    ScaInterAppTheme() {
+    ScaInterAppTheme {
         Surface(
             modifier = Modifier
                 .fillMaxSize()
         ) {
             PrescriptionDialog(
-                act = "Neurologie",
+                act = "Neurology",
                 doctor = "",
                 affection = "",
                 medication = "",

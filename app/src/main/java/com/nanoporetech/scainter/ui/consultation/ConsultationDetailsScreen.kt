@@ -117,7 +117,7 @@ fun CostsSection(
     modifier: Modifier = Modifier
 ) {
     val paddingMedium = dimensionResource(R.dimen.padding_medium)
-    val items = listOf<CardItem>(
+    val items = listOf(
         CardItem(stringResource(R.string.total_cost_label), formatCurrency(consultation.total)),
         CardItem(stringResource(R.string.total_sca_label), formatCurrency(consultation.totalSca)),
         CardItem(stringResource(R.string.total_holder_label), formatCurrency(consultation.totalUser))
@@ -154,7 +154,7 @@ fun PrescriptionSection(
     modifier: Modifier = Modifier,
 ) {
     val paddingMedium = dimensionResource(R.dimen.padding_medium)
-    val items = listOf<CardItem>(
+    val items = listOf(
         CardItem(stringResource(R.string.prescriber_label), formatDoctorName(consultation.doctor ?: "")),
         CardItem(stringResource(R.string.affection_label), consultation.affliction ?: "")
     )
@@ -242,7 +242,7 @@ fun ConsultationInfo(
     consultation: Consultation,
     modifier: Modifier = Modifier
 ) {
-    val items = listOf<CardItem>(
+    val items = listOf(
         CardItem(stringResource(R.string.act_label), consultation.act),
         CardItem(stringResource(R.string.date_label),
             displayedDateAndTime(
@@ -389,7 +389,7 @@ fun SubscriberAvatar(
     showBackground = true)
 @Composable
 fun ConsultationDetailsScreenPreview() {
-    ScaInterAppTheme() {
+    ScaInterAppTheme {
         Surface(
             modifier = Modifier
                 .fillMaxSize()

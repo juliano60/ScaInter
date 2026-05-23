@@ -49,7 +49,6 @@ import com.nanoporetech.scainter.ui.components.PrimarySwitch
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.theme.ScaInterTheme
 
-private const val TAG = "LoginScreen"
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
@@ -305,7 +304,7 @@ fun ForgottenPasswordSection(
     showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    ScaInterAppTheme() {
+    ScaInterAppTheme {
         LoginScreen(
             modifier = Modifier
                 .fillMaxSize()
