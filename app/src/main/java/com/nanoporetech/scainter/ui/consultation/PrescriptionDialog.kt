@@ -1,5 +1,6 @@
 package com.nanoporetech.scainter.ui.consultation
 
+import android.R.attr.enabled
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -192,6 +193,9 @@ fun PrescriptionDialog(
                         iconImg = Icons.Filled.AddCircle,
                         text = stringResource(R.string.add_button),
                         onClick = onAddPrescription,
+                        enabled = doctor.isNotBlank() &&
+                                affection.isNotBlank() &&
+                                medication.isNotBlank(),
                         modifier = Modifier
                             .fillMaxWidth()
                     )
