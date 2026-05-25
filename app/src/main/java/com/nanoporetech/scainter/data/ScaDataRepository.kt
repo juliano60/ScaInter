@@ -1,9 +1,9 @@
 package com.nanoporetech.scainter.data
 
 import android.util.Log
-import com.nanoporetech.scainter.data.DataSource.consultations
 import com.nanoporetech.scainter.model.Consultation
 import com.nanoporetech.scainter.model.Examination
+import com.nanoporetech.scainter.model.Hospitalisation
 import com.nanoporetech.scainter.model.Provider
 import com.nanoporetech.scainter.network.FetchProviderRequest
 import com.nanoporetech.scainter.network.ScaApiService
@@ -31,10 +31,19 @@ sealed interface FetchExaminationsResult {
     object UnknownError : FetchExaminationsResult
 }
 
+sealed interface FetchHospitalisationsResult {
+    data class Success(val hospitalisations: List<Hospitalisation>) : FetchHospitalisationsResult
+
+    object NetworkError : FetchHospitalisationsResult
+    object ServerError: FetchHospitalisationsResult
+    object UnknownError : FetchHospitalisationsResult
+}
+
 interface ScaDataRepository {
     suspend fun fetchProvider(username: String, password: String): FetchProviderResult
     suspend fun fetchConsultationsFor(provider: String): FetchConsultationsResult
     suspend fun fetchExaminationsFor(provider: String): FetchExaminationsResult
+    suspend fun fetchHospitalisationsFor(provider: String): FetchHospitalisationsResult
 }
 
 private const val TAG = "ScaNetworkDataRepository"
@@ -115,6 +124,31 @@ class ScaNetworkDataRepository(
         } catch(e: IOException) {
             Log.d(TAG, e.toString())
             FetchExaminationsResult.NetworkError
+        }
+    }
+
+    override suspend fun fetchHospitalisationsFor(provider: String): FetchHospitalisationsResult {
+        return try {
+            val response = scaApiService.fetchHospitalisations(
+                action = "fetch",
+                provider = provider,
+            )
+            when {
+                response.isSuccessful -> {
+                    response.body()?.let {
+                        FetchHospitalisationsResult.Success(it)
+                    } ?: FetchHospitalisationsResult.UnknownError
+                }
+                response.code() in 500..599 -> {
+                    FetchHospitalisationsResult.ServerError
+                }
+                else -> {
+                    FetchHospitalisationsResult.UnknownError
+                }
+            }
+        } catch(e: IOException) {
+            Log.d(TAG, e.toString())
+            FetchHospitalisationsResult.NetworkError
         }
     }
 }

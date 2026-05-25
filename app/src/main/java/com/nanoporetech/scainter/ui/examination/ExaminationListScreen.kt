@@ -140,8 +140,10 @@ fun ExaminationListScreenPreview() {
             .fillMaxSize()
     ) {
         ExaminationListScreen(
-            examinations = DataSource.examinations()
-            //examinations = emptyList()
+            examinations = DataSource.examinations(),
+            //examinations = emptyList(),
+            modifier = Modifier
+                .padding(dimensionResource(R.dimen.padding_medium))
         )
     }
 }

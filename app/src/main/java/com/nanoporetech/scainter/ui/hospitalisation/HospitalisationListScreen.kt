@@ -1,4 +1,4 @@
-package com.nanoporetech.scainter.ui.consultation
+package com.nanoporetech.scainter.ui.hospitalisation
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,24 +29,25 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.nanoporetech.scainter.R
-import com.nanoporetech.scainter.model.Consultation
-import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
+import com.nanoporetech.scainter.data.DataSource
+import com.nanoporetech.scainter.model.Hospitalisation
+import com.nanoporetech.scainter.ui.utils.capitalized
 import com.nanoporetech.scainter.ui.utils.displayedDateAndTime
 
 @Composable
-fun ConsultationListScreen(
-    consultations: List<Consultation>,
+fun HospitalisationListScreen(
+    hospitalisations: List<Hospitalisation>,
     modifier: Modifier = Modifier,
-    onRowClick: (Consultation) -> Unit = {},
+    onRowClick: (Hospitalisation) -> Unit = {},
 ) {
-    if (consultations.isEmpty()) {
+    if (hospitalisations.isEmpty()) {
         Box(
             modifier = modifier
                 .fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = stringResource(R.string.no_recent_consultation),
+                text = stringResource(R.string.no_recent_hospitalisation),
                 style = MaterialTheme.typography.headlineMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
@@ -56,12 +57,12 @@ fun ConsultationListScreen(
         LazyColumn(
             modifier = modifier
                 .fillMaxSize()
-                //.safeContentPadding()
-                //.statusBarsPadding()
+            //.safeContentPadding()
+            //.statusBarsPadding()
         ) {
-            items(consultations) { consultation  ->
-                ConsultationRowItem(
-                    consultation = consultation,
+            items(hospitalisations) { hospitalisation  ->
+                HospitalisationRowItem(
+                    hospitalisation = hospitalisation,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(dimensionResource(R.dimen.padding_small)),
@@ -74,10 +75,10 @@ fun ConsultationListScreen(
 }
 
 @Composable
-fun ConsultationRowItem(
-    consultation: Consultation,
+fun HospitalisationRowItem(
+    hospitalisation: Hospitalisation,
     modifier: Modifier = Modifier,
-    onRowClick: (Consultation) -> Unit,
+    onRowClick: (Hospitalisation) -> Unit,
 ) {
     val paddingSmall = dimensionResource(R.dimen.padding_xsmall)
 
@@ -85,7 +86,7 @@ fun ConsultationRowItem(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .clickable(
-                onClick = { onRowClick(consultation) }
+                onClick = { onRowClick(hospitalisation) }
             )
     ) {
         Column(
@@ -94,7 +95,6 @@ fun ConsultationRowItem(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    //.border(1.dp, color = Color.Yellow)
             ) {
                 Icon(
                     Icons.Default.Person,
@@ -103,7 +103,7 @@ fun ConsultationRowItem(
                 Spacer(Modifier.width(paddingSmall))
 
                 Text(
-                    text = consultation.fullname,
+                    text = hospitalisation.fullname,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
@@ -112,12 +112,12 @@ fun ConsultationRowItem(
             }
 
             Text(
-                text = consultation.act,
+                text = "Hospitalisation ${hospitalisation.type.capitalized()}",
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
 
             Text(
-                text = displayedDateAndTime(consultation.creationDate),
+                text = displayedDateAndTime(hospitalisation.creationDate),
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
@@ -135,19 +135,16 @@ fun ConsultationRowItem(
     locale = "fr-rCI",
     showBackground = true)
 @Composable
-fun ConsultationListScreenPreview() {
-    ScaInterAppTheme {
-        Surface(
+fun HospitalisationListScreenPreview() {
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        HospitalisationListScreen(
+            hospitalisations = DataSource.hospitalisations(),
+            //hospitalisations = emptyList(),
             modifier = Modifier
-                .fillMaxSize()
                 .padding(dimensionResource(R.dimen.padding_medium))
-        ) {
-            ConsultationListScreen(
-                //consultations = DataSource.consultations(),
-                consultations = emptyList(),
-                modifier = Modifier
-                    .padding(dimensionResource(R.dimen.padding_medium))
-            )
-        }
+        )
     }
 }

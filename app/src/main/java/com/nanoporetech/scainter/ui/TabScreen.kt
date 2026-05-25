@@ -55,6 +55,7 @@ import com.nanoporetech.scainter.ui.consultation.ConsultationListScreen
 import com.nanoporetech.scainter.ui.consultation.MedicalPrescriptionContent
 import com.nanoporetech.scainter.ui.consultation.MedicalPrescriptionScreen
 import com.nanoporetech.scainter.ui.examination.ExaminationListScreen
+import com.nanoporetech.scainter.ui.hospitalisation.HospitalisationListScreen
 import com.nanoporetech.scainter.ui.support.SupportScreen
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.theme.ScaInterTheme
@@ -88,6 +89,7 @@ fun TabScreen(
     onLogout: () -> Unit = {},
     onFetchConsultations: suspend () -> Boolean = { false },
     onFetchExaminations: suspend () -> Boolean = { false },
+    onFetchHospitalisations: suspend () -> Boolean = { false }
 ) {
     val tabs = listOf(
         TabSpec(
@@ -175,6 +177,14 @@ fun TabScreen(
                                 }
                             }
                         },
+                        onViewHospitalisations = {
+                            scope.launch {
+                                val success = onFetchHospitalisations()
+                                if (success) {
+                                    navController.navigate(ScaAppScreen.HospitalisationListScreen.name)
+                                }
+                            }
+                        },
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(dimensionResource(R.dimen.padding_medium))
@@ -203,6 +213,19 @@ fun TabScreen(
                 composable(route = ScaAppScreen.ExaminationListScreen.name) {
                     ExaminationListScreen(
                         examinations = uiState.examinations,
+                        /*onRowClick = { consultation ->
+                            navController.navigate(
+                                route = "${ScaAppScreen.ExaminationDetailsScreen.name}/${consultation.id}"
+                            )
+                        },*/
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(dimensionResource(R.dimen.padding_medium))
+                    )
+                }
+                composable(route = ScaAppScreen.HospitalisationListScreen.name) {
+                    HospitalisationListScreen(
+                        hospitalisations = uiState.hospitalisations,
                         /*onRowClick = { consultation ->
                             navController.navigate(
                                 route = "${ScaAppScreen.ExaminationDetailsScreen.name}/${consultation.id}"

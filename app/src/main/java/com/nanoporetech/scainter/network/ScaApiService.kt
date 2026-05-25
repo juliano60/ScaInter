@@ -2,6 +2,7 @@ package com.nanoporetech.scainter.network
 
 import com.nanoporetech.scainter.model.Consultation
 import com.nanoporetech.scainter.model.Examination
+import com.nanoporetech.scainter.model.Hospitalisation
 import com.nanoporetech.scainter.model.Provider
 import retrofit2.Response
 import retrofit2.http.Body
@@ -24,4 +25,10 @@ interface ScaApiService {
         @Query(value = "action") action: String,
         @Query(value = "provider") provider: String
     ): Response<List<Examination>>
+
+    @GET("hospitalisation_api.php")
+    suspend fun fetchHospitalisations(
+        @Query(value = "action") action: String,
+        @Query(value = "provider") provider: String
+    ): Response<List<Hospitalisation>>
 }

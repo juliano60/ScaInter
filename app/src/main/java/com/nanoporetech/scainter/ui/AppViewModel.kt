@@ -18,6 +18,7 @@ import com.nanoporetech.scainter.credentials.CredentialsStore
 import com.nanoporetech.scainter.credentials.CredentialsStoreBase
 import com.nanoporetech.scainter.data.FetchConsultationsResult
 import com.nanoporetech.scainter.data.FetchExaminationsResult
+import com.nanoporetech.scainter.data.FetchHospitalisationsResult
 import com.nanoporetech.scainter.model.Consultation
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -149,6 +150,27 @@ class AppViewModel(
         }
     }
 
+    suspend fun fetchHospitalisations(): Boolean {
+        return when (val result = repository.fetchHospitalisationsFor(_uiState.value.provider.name)) {
+            is FetchHospitalisationsResult.Success -> {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        hospitalisations = result.hospitalisations
+                    )
+                }
+                true
+            }
+            is FetchHospitalisationsResult.NetworkError -> {
+                _events.emit(UiEvent.Error(R.string.err_connection_offline))
+                false
+            }
+            else -> {
+                _events.emit(UiEvent.Error(R.string.err_unknown_error))
+                false
+            }
+        }
+    }
+
     fun reset() {
         _uiState.value = AppUiState()
         loadCredentials()
@@ -189,7 +211,6 @@ class AppViewModel(
             )
         }
     }
-
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
