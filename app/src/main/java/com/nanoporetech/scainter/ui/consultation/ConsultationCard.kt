@@ -61,7 +61,7 @@ fun ConsultationCard(
             )
 
             CardRow(
-                title = stringResource(R.string.new_care_sheet),
+                title = stringResource(R.string.new_consultation),
                 iconImg = Icons.Outlined.Search,
                 onClickButton = onNewConsultation
             )

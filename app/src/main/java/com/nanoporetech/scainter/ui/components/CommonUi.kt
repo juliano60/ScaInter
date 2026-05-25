@@ -30,6 +30,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -294,13 +295,13 @@ fun PrimaryOutlinedTextField(
             Text(placeholder)
         },
         onValueChange = onValueChanged,
-        colors = TextFieldDefaults.colors(
+        colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.surface,
             unfocusedContainerColor = MaterialTheme.colorScheme.surface,
             disabledContainerColor = MaterialTheme.colorScheme.surface,
-            focusedIndicatorColor = MaterialTheme.colorScheme.outlineVariant,
-            unfocusedIndicatorColor = MaterialTheme.colorScheme.outlineVariant,
-            disabledIndicatorColor =  MaterialTheme.colorScheme.outlineVariant,
+            focusedBorderColor = ScaInterTheme.extendedColors.mainGreen.color,
+            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+            disabledBorderColor = MaterialTheme.colorScheme.outlineVariant,
         ),
         modifier = modifier,
         keyboardOptions = keyboardOptions,

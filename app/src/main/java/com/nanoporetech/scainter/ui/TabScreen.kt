@@ -1,8 +1,5 @@
 package com.nanoporetech.scainter.ui
 
-import android.R.attr.contentDescription
-import android.R.attr.label
-import android.R.attr.onClick
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -54,27 +51,31 @@ import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.data.AppUiState
 import com.nanoporetech.scainter.data.DataSource
+import com.nanoporetech.scainter.ui.consultation.CodeScannerScreen
 import com.nanoporetech.scainter.ui.consultation.ConsultationDetailsScreen
 import com.nanoporetech.scainter.ui.consultation.ConsultationListScreen
-import com.nanoporetech.scainter.ui.consultation.MedicalPrescriptionContent
 import com.nanoporetech.scainter.ui.consultation.MedicalPrescriptionScreen
+import com.nanoporetech.scainter.ui.consultation.NewConsultationScreen
 import com.nanoporetech.scainter.ui.examination.ExaminationListScreen
 import com.nanoporetech.scainter.ui.hospitalisation.HospitalisationListScreen
 import com.nanoporetech.scainter.ui.support.SupportScreen
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.theme.ScaInterTheme
 import kotlinx.coroutines.launch
+import okhttp3.Route
 import kotlin.collections.forEach
 
 
 enum class ScaAppScreen(@StringRes val title: Int) {
-    HealthCareScreen(title = R.string.page_health_care),
-    ConsultationListScreen(title = R.string.page_consultation_list),
-    ConsultationDetailsScreen(title = R.string.consultation_details_title),
-    ConsultationNewPrescriptionScreen(title = R.string.medical_prescription_title),
-    ExaminationListScreen(title = R.string.page_examination_list),
-    HospitalisationListScreen(title = R.string.page_hospitalisation_list),
-    SupportScreen(title = R.string.page_support)
+    HealthCareDashboard(title = R.string.page_health_care),
+    ConsultationList(title = R.string.page_consultation_list),
+    ConsultationDetails(title = R.string.consultation_details_title),
+    ConsultationNewPrescription(title = R.string.medical_prescription_title),
+    ConsultationNewConsultation(title = R.string.new_consultation),
+    ExaminationList(title = R.string.page_examination_list),
+    HospitalisationList(title = R.string.page_hospitalisation_list),
+    Support(title = R.string.page_support),
+    CodeScanner(title = R.string.code_scanner_title)
 }
 private data class TabSpec(
     /** route is the destination route **/
@@ -97,28 +98,28 @@ fun TabScreen(
 ) {
     val tabs = listOf(
         TabSpec(
-            route = ScaAppScreen.HealthCareScreen.name,
+            route = ScaAppScreen.HealthCareDashboard.name,
             label = stringResource(R.string.page_home),
             icon = Icons.Outlined.Home
         ),
         TabSpec(
-            route = ScaAppScreen.SupportScreen.name,
+            route = ScaAppScreen.Support.name,
             label = stringResource(R.string.page_support),
             icon = Icons.AutoMirrored.Outlined.HelpOutline
         )
     )
 
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = backStackEntry?.destination?.route ?: ScaAppScreen.HealthCareScreen.name
+    val currentRoute = backStackEntry?.destination?.route ?: ScaAppScreen.HealthCareDashboard.name
     val currentScreen = when {
-        currentRoute.startsWith(ScaAppScreen.ConsultationDetailsScreen.name)  ->
-            ScaAppScreen.ConsultationDetailsScreen
-        else -> ScaAppScreen.entries.firstOrNull { it.name == currentRoute } ?: ScaAppScreen.HealthCareScreen
+        currentRoute.startsWith(ScaAppScreen.ConsultationDetails.name)  ->
+            ScaAppScreen.ConsultationDetails
+        else -> ScaAppScreen.entries.firstOrNull { it.name == currentRoute } ?: ScaAppScreen.HealthCareDashboard
     }
 
     fun onTabPressed(route: String) {
         navController.navigate(route) {
-            popUpTo(ScaAppScreen.HealthCareScreen.name) {
+            popUpTo(ScaAppScreen.HealthCareDashboard.name) {
                 // keep HealthCareScreen
                 inclusive = false
             }
@@ -158,17 +159,17 @@ fun TabScreen(
         ) {
             NavHost(
                 navController = navController,
-                startDestination = ScaAppScreen.HealthCareScreen.name,
+                startDestination = ScaAppScreen.HealthCareDashboard.name,
                 modifier = Modifier
             ) {
-                composable(route = ScaAppScreen.HealthCareScreen.name) {
+                composable(route = ScaAppScreen.HealthCareDashboard.name) {
                     HealthCareScreen(
                         provider = uiState.provider,
                         onViewConsultations = {
                             scope.launch {
                                 val success = onFetchConsultations()
                                 if (success) {
-                                    navController.navigate(ScaAppScreen.ConsultationListScreen.name)
+                                    navController.navigate(ScaAppScreen.ConsultationList.name)
                                 }
                             }
                         },
@@ -176,7 +177,7 @@ fun TabScreen(
                             scope.launch {
                                 val success = onFetchExaminations()
                                 if (success) {
-                                    navController.navigate(ScaAppScreen.ExaminationListScreen.name)
+                                    navController.navigate(ScaAppScreen.ExaminationList.name)
                                 }
                             }
                         },
@@ -184,7 +185,7 @@ fun TabScreen(
                             scope.launch {
                                 val success = onFetchHospitalisations()
                                 if (success) {
-                                    navController.navigate(ScaAppScreen.HospitalisationListScreen.name)
+                                    navController.navigate(ScaAppScreen.HospitalisationList.name)
                                 }
                             }
                         },
@@ -193,19 +194,19 @@ fun TabScreen(
                             .padding(dimensionResource(R.dimen.padding_medium))
                     )
                 }
-                composable(route = ScaAppScreen.SupportScreen.name) {
+                composable(route = ScaAppScreen.Support.name) {
                     SupportScreen(
                         onBack = {},
                         modifier = Modifier
                             .fillMaxSize()
                     )
                 }
-                composable(route = ScaAppScreen.ConsultationListScreen.name) {
+                composable(route = ScaAppScreen.ConsultationList.name) {
                     ConsultationListScreen(
                         consultations = uiState.consultations,
                         onRowClick = { consultation ->
                             navController.navigate(
-                                route = "${ScaAppScreen.ConsultationDetailsScreen.name}/${consultation.id}"
+                                route = "${ScaAppScreen.ConsultationDetails.name}/${consultation.id}"
                             )
                         },
                         modifier = Modifier
@@ -213,7 +214,7 @@ fun TabScreen(
                             .padding(dimensionResource(R.dimen.padding_medium))
                     )
                 }
-                composable(route = ScaAppScreen.ExaminationListScreen.name) {
+                composable(route = ScaAppScreen.ExaminationList.name) {
                     ExaminationListScreen(
                         examinations = uiState.examinations,
                         /*onRowClick = { consultation ->
@@ -226,7 +227,7 @@ fun TabScreen(
                             .padding(dimensionResource(R.dimen.padding_medium))
                     )
                 }
-                composable(route = ScaAppScreen.HospitalisationListScreen.name) {
+                composable(route = ScaAppScreen.HospitalisationList.name) {
                     HospitalisationListScreen(
                         hospitalisations = uiState.hospitalisations,
                         /*onRowClick = { consultation ->
@@ -240,7 +241,7 @@ fun TabScreen(
                     )
                 }
                 composable(
-                    route = "${ScaAppScreen.ConsultationDetailsScreen.name}/{consultationId}",
+                    route = "${ScaAppScreen.ConsultationDetails.name}/{consultationId}",
                     arguments = listOf(
                         navArgument("consultationId") {
                             type = NavType.IntType
@@ -251,17 +252,51 @@ fun TabScreen(
                     ConsultationDetailsScreen(
                         consultation = uiState.consultations.first { it.id == consultationId },
                         onNewPrescription = {
-                            navController.navigate(ScaAppScreen.ConsultationNewPrescriptionScreen.name)
+                            navController.navigate(ScaAppScreen.ConsultationNewPrescription.name)
                         },
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(dimensionResource(R.dimen.padding_medium))
                     )
                 }
-                composable(route = ScaAppScreen.ConsultationNewPrescriptionScreen.name) {
+                composable(route = ScaAppScreen.ConsultationNewPrescription.name) {
                     MedicalPrescriptionScreen(
                         modifier = Modifier
                             .fillMaxSize()
+                            .padding(dimensionResource(R.dimen.padding_medium))
+                    )
+                }
+                composable(route = ScaAppScreen.ConsultationNewConsultation.name) {
+                    NewConsultationScreen(
+                        onScanQrCode = {
+                            navController.navigate(ScaAppScreen.CodeScanner.name)
+
+                            /*if (isEmulator()) {
+                                // manually update the model
+                                consultationModel.updateScanState(
+                                    BarScanState.ScanSuccess(
+                                        AppConstants.simulatedFamilyId
+                                    )
+                                )
+                                consultationModel.fetchFamilyMembers()
+
+                                // navigate
+                                navController.navigate(Route.FamilyMembersConsListScreen.name)
+
+                            } else {
+                                navController.navigate(ScaAppScreen.CodeScannerScreen.name)
+                            }*/
+                        },
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(color = AppConstants.lightGreen)
+                            .padding(dimensionResource(R.dimen.padding_medium)),
+                    )
+                }
+                composable(route = ScaAppScreen.CodeScanner.name) {
+                    CodeScannerScreen(
+                        modifier = Modifier
+                            .background(color = AppConstants.lightGreen)
                             .padding(dimensionResource(R.dimen.padding_medium))
                     )
                 }
@@ -339,8 +374,8 @@ private fun DockBottomNavigationBar(
                 tabs.forEach { tab ->
                     NavigationBarItem(
                         selected = when (tab.route) {
-                            ScaAppScreen.HealthCareScreen.name ->
-                                currentRoute != ScaAppScreen.SupportScreen.name
+                            ScaAppScreen.HealthCareDashboard.name ->
+                                currentRoute != ScaAppScreen.Support.name
                             else -> currentRoute == tab.route
                         },
                         onClick = { onTabPressed(tab.route) },

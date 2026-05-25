@@ -19,15 +19,21 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
@@ -39,7 +45,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.nanoporetech.scainter.R
@@ -63,6 +68,7 @@ fun LoginScreen(
     onRememberMeChange: (value: Boolean) -> Unit = {},
 ) {
     val largePadding = dimensionResource(R.dimen.padding_large)
+    val paddingMedium = dimensionResource(R.dimen.padding_medium)
 
     Box(
         modifier = modifier
@@ -72,56 +78,79 @@ fun LoginScreen(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-
             // HEADER SECTION
-            HeaderAndLogo(
+            Column(
+                verticalArrangement = Arrangement.Center,
                 modifier = Modifier
-                    .fillMaxWidth()
-            )
+                    .weight(9.0f)
+            ) {
+                HeaderAndLogo(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
 
-            Spacer(modifier = Modifier.height(largePadding))
+                Spacer(modifier = Modifier.height(largePadding))
 
-            // WELCOME MESSAGE SECTION
-            WelcomeMessage(
+                // WELCOME MESSAGE SECTION
+                WelcomeMessage(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(largePadding))
+
+                // CREDENTIALS SECTION
+                CredentialsSection(
+                    username = username,
+                    onUsernameChanged = onUsernameChanged,
+                    password = password,
+                    onPasswordChanged = onPasswordChanged,
+                    onLogin = onLogin,
+                    isError = isLoginError,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(paddingMedium))
+
+                // REMEMBER ME SECTION
+                RememberMeSection(
+                    rememberMe = rememberMe,
+                    onRememberMeChange = onRememberMeChange,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+            }
+
+            Column(
+                verticalArrangement = Arrangement.Center,
                 modifier = Modifier
-                    .fillMaxWidth()
-            )
+                    .weight(1.5f)
+            ) {
+                Text(
+                    text = stringResource(R.string.password_forgotten),
+                    style = MaterialTheme.typography.bodyLarge,
+                    //fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .clickable(
+                            onClick = onForgottenPassword
+                        )
+                )
 
-            Spacer(modifier = Modifier.height(largePadding))
+                Spacer(modifier = Modifier.height(paddingMedium))
 
-            // CREDENTIALS SECTION
-            CredentialsSection(
-                username = username,
-                onUsernameChanged = onUsernameChanged,
-                password = password,
-                onPasswordChanged = onPasswordChanged,
-                onLogin = onLogin,
-                isError = isLoginError,
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(largePadding))
-
-            // FORGOTTEN PASSWORD SECTION
-            ForgottenPasswordSection(
-                rememberMe = rememberMe,
-                onRememberMeChange = onRememberMeChange,
-                onForgottenPassword = onForgottenPassword,
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(largePadding))
-
-            // LOGIN BUTTON
-            PrimaryButton(
-                text = stringResource(R.string.login),
-                onClick = onLogin,
-                enabled = username.isNotBlank() && password.isNotBlank(),
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
+                // LOGIN BUTTON
+                PrimaryButton(
+                    text = stringResource(R.string.login),
+                    onClick = onLogin,
+                    enabled = username.isNotBlank() && password.isNotBlank(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+            }
         }
     }
 }
@@ -165,6 +194,8 @@ fun CredentialsSection(
     isError: Boolean,
     modifier: Modifier = Modifier
 ) {
+    var showPassword by rememberSaveable { mutableStateOf(false) }
+
     Column(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small)),
         modifier = modifier) {
@@ -182,13 +213,13 @@ fun CredentialsSection(
             label = {
                 Text(stringResource(R.string.username_label))
             },
-            colors = TextFieldDefaults.colors(
+            colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                 disabledContainerColor = MaterialTheme.colorScheme.surface,
-                focusedIndicatorColor = MaterialTheme.colorScheme.outlineVariant,
-                unfocusedIndicatorColor = MaterialTheme.colorScheme.outlineVariant,
-                disabledIndicatorColor =  MaterialTheme.colorScheme.outlineVariant,
+                focusedBorderColor = ScaInterTheme.extendedColors.mainGreen.color,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                disabledBorderColor = MaterialTheme.colorScheme.outlineVariant,
             ),
             onValueChange = { onUsernameChanged(it) },
             isError = isError,
@@ -201,7 +232,6 @@ fun CredentialsSection(
             visualTransformation = VisualTransformation.None,
             modifier = Modifier
                 .fillMaxWidth()
-                .shadow(dimensionResource(R.dimen.elevation_small))
         )
 
         OutlinedTextField(
@@ -213,18 +243,38 @@ fun CredentialsSection(
                     contentDescription = null
                 )
             },
+            trailingIcon = {
+                IconButton(
+                    onClick = {
+                        showPassword = !showPassword
+                    }
+                ) {
+                    Icon(
+                        imageVector = if (showPassword) {
+                            Icons.Default.VisibilityOff
+                        } else {
+                            Icons.Default.Visibility
+                        },
+                        contentDescription = if (showPassword) {
+                            stringResource(R.string.hide_password)
+                        } else {
+                            stringResource(R.string.show_password)
+                        }
+                    )
+                }
+            },
             label = {
                 Text(
                     text = stringResource(R.string.password_label)
                 )
             },
-            colors = TextFieldDefaults.colors(
+            colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                 disabledContainerColor = MaterialTheme.colorScheme.surface,
-                focusedIndicatorColor = MaterialTheme.colorScheme.outlineVariant,
-                unfocusedIndicatorColor = MaterialTheme.colorScheme.outlineVariant,
-                disabledIndicatorColor =  MaterialTheme.colorScheme.outlineVariant,
+                focusedBorderColor = ScaInterTheme.extendedColors.mainGreen.color,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                disabledBorderColor = MaterialTheme.colorScheme.outlineVariant,
             ),
             onValueChange = { onPasswordChanged(it) },
             isError = isError,
@@ -235,10 +285,13 @@ fun CredentialsSection(
             keyboardActions = KeyboardActions(
                 onDone = { onLogin() }
             ),
-            visualTransformation = PasswordVisualTransformation(),
+            visualTransformation = if (showPassword) {
+                VisualTransformation.None
+            } else  {
+                PasswordVisualTransformation()
+            },
             modifier = Modifier
                 .fillMaxWidth()
-                .shadow(dimensionResource(R.dimen.elevation_small))
         )
     }
 }
@@ -250,7 +303,7 @@ fun WelcomeMessage(
     Text(
         text = stringResource(R.string.welcome_message),
         color = ScaInterTheme.extendedColors.mainGreen.color,
-        style = MaterialTheme.typography.displayMedium,
+        style = MaterialTheme.typography.displaySmall,
         fontWeight = FontWeight.SemiBold,
         textAlign = TextAlign.Center,
         modifier = modifier
@@ -258,10 +311,9 @@ fun WelcomeMessage(
 }
 
 @Composable
-fun ForgottenPasswordSection(
+fun RememberMeSection(
     rememberMe: Boolean,
     onRememberMeChange: (value: Boolean) -> Unit,
-    onForgottenPassword: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(horizontalArrangement = Arrangement.SpaceBetween,
@@ -279,22 +331,10 @@ fun ForgottenPasswordSection(
             Text(
                 text = stringResource(R.string.remember_me),
                 color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.bodyLarge,
                 fontSize = 16.sp
             )
         }
-
-        Text(
-            text = stringResource(R.string.password_forgotten),
-            fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.primary,
-            textDecoration = TextDecoration.Underline,
-            modifier = Modifier
-                .clickable(
-                    //interactionSource = remember { MutableInteractionSource() },
-                    //indication = LocalIndication.current,
-                    onClick = onForgottenPassword
-                )
-        )
     }
 }
 

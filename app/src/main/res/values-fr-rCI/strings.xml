@@ -8,7 +8,7 @@
     <string name="username_label">Identifiant</string>
     <string name="password_label">Mot de passe</string>
     <string name="password_forgotten">Mot de passe oublié?</string>
-    <string name="remember_me">Sauvegarder</string>
+    <string name="remember_me">Mémoriser</string>
     <string name="login">Se connecter</string>
     <string name="forgotten_password_title">Mot de passe oublié</string>
     <string name="forgotten_password_text">N\'hésitez pas à utiliser le numero WhatsApp ci-dessous afin de contacter l\'équipe de support technique.</string>
@@ -25,7 +25,6 @@
     <string name="consultation_menu_title">Mes Consultations</string>
     <string name="examination_menu_title">Mes Examens</string>
     <string name="hospitalisation_menu_title">Mes Hospitalisations</string>
-    <string name="new_care_sheet">Etablir une feuille de soins</string>
     <string name="new_examination">Etablir un examen</string>
     <string name="new_hospitalisation">Etablir une hospitalisation</string>
     <string name="view_care_sheet">Voir mes feuilles de soins</string>
@@ -87,4 +86,9 @@
     <string name="no_recent_examination">Aucune examination récente</string>
     <string name="no_recent_hospitalisation">Aucune hospitalisation récente</string>
     <string name="not_available">N/A</string>
+    <string name="new_consultation">Etablir une feuille de soins</string>
+    <string name="code_scanner_title">Scanner un Code QR</string>
+    <string name="camera_overlay_hint">Placer le code-barres devant la caméra.</string>
+    <string name="show_password">Afficher le mot de passe</string>
+    <string name="hide_password">Masquer le mot de passe</string>
 </resources>

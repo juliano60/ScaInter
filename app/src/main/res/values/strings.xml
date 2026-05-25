@@ -24,7 +24,6 @@
     <string name="consultation_menu_title">My Consultations</string>
     <string name="examination_menu_title">My Examinations</string>
     <string name="hospitalisation_menu_title">My Hospitalisations</string>
-    <string name="new_care_sheet">New care sheet</string>
     <string name="new_examination">New examination</string>
     <string name="new_hospitalisation">New hospitalisation</string>
     <string name="view_care_sheet">View care sheets</string>
@@ -86,4 +85,9 @@
     <string name="no_recent_examination">No recent examination</string>
     <string name="no_recent_hospitalisation">No recent hospitalisation</string>
     <string name="not_available">N/A</string>
+    <string name="new_consultation">New care sheet</string>
+    <string name="code_scanner_title">Scan a QR Code</string>
+    <string name="camera_overlay_hint">Position the barcode in front of the camera.</string>
+    <string name="show_password">Show password</string>
+    <string name="hide_password">Hide password</string>
 </resources>
