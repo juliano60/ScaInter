@@ -54,6 +54,7 @@ import com.nanoporetech.scainter.ui.consultation.ConsultationDetailsScreen
 import com.nanoporetech.scainter.ui.consultation.ConsultationListScreen
 import com.nanoporetech.scainter.ui.consultation.MedicalPrescriptionContent
 import com.nanoporetech.scainter.ui.consultation.MedicalPrescriptionScreen
+import com.nanoporetech.scainter.ui.examination.ExaminationListScreen
 import com.nanoporetech.scainter.ui.support.SupportScreen
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.theme.ScaInterTheme
@@ -66,6 +67,8 @@ enum class ScaAppScreen(@StringRes val title: Int) {
     ConsultationListScreen(title = R.string.page_consultation_list),
     ConsultationDetailsScreen(title = R.string.consultation_details_title),
     ConsultationNewPrescriptionScreen(title = R.string.medical_prescription_title),
+    ExaminationListScreen(title = R.string.page_examination_list),
+    HospitalisationListScreen(title = R.string.page_hospitalisation_list),
     SupportScreen(title = R.string.page_support)
 }
 private data class TabSpec(
@@ -84,6 +87,7 @@ fun TabScreen(
     navController: NavHostController = rememberNavController(),
     onLogout: () -> Unit = {},
     onFetchConsultations: suspend () -> Boolean = { false },
+    onFetchExaminations: suspend () -> Boolean = { false },
 ) {
     val tabs = listOf(
         TabSpec(
@@ -163,6 +167,14 @@ fun TabScreen(
                                 }
                             }
                         },
+                        onViewExaminations = {
+                            scope.launch {
+                                val success = onFetchExaminations()
+                                if (success) {
+                                    navController.navigate(ScaAppScreen.ExaminationListScreen.name)
+                                }
+                            }
+                        },
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(dimensionResource(R.dimen.padding_medium))
@@ -183,6 +195,19 @@ fun TabScreen(
                                 route = "${ScaAppScreen.ConsultationDetailsScreen.name}/${consultation.id}"
                             )
                         },
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(dimensionResource(R.dimen.padding_medium))
+                    )
+                }
+                composable(route = ScaAppScreen.ExaminationListScreen.name) {
+                    ExaminationListScreen(
+                        examinations = uiState.examinations,
+                        /*onRowClick = { consultation ->
+                            navController.navigate(
+                                route = "${ScaAppScreen.ExaminationDetailsScreen.name}/${consultation.id}"
+                            )
+                        },*/
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(dimensionResource(R.dimen.padding_medium))

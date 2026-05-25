@@ -1,6 +1,7 @@
 package com.nanoporetech.scainter.data
 
 import com.nanoporetech.scainter.model.Consultation
+import com.nanoporetech.scainter.model.Examination
 import com.nanoporetech.scainter.model.Provider
 
 data class AppUiState(
@@ -17,5 +18,7 @@ data class AppUiState(
     /** the rememberMe state */
     val rememberMe: Boolean = false,
     /** list of consultations for that provider */
-    val consultations: List<Consultation> = emptyList()
+    val consultations: List<Consultation> = emptyList(),
+    /** list of examinations for that provider */
+    val examinations: List<Examination> = emptyList()
 )

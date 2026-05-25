@@ -83,4 +83,8 @@
     <string name="confirmation_prompt">Procéder avec le changement?</string>
     <string name="cancel_button">Annuler</string>
     <string name="remove_medication_prompt">Effacer le médicament?</string>
+    <string name="no_recent_consultation">Aucune consultation récente</string>
+    <string name="no_recent_examination">Aucune examination récente</string>
+    <string name="no_recent_hospitalisation">Aucune hospitalisation récente</string>
+    <string name="not_available">N/A</string>
 </resources>

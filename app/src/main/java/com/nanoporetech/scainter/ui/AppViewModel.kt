@@ -17,6 +17,7 @@ import com.nanoporetech.scainter.notification.FirebaseDeviceTokenRegistrar
 import com.nanoporetech.scainter.credentials.CredentialsStore
 import com.nanoporetech.scainter.credentials.CredentialsStoreBase
 import com.nanoporetech.scainter.data.FetchConsultationsResult
+import com.nanoporetech.scainter.data.FetchExaminationsResult
 import com.nanoporetech.scainter.model.Consultation
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -117,6 +118,27 @@ class AppViewModel(
                 true
             }
             is FetchConsultationsResult.NetworkError -> {
+                _events.emit(UiEvent.Error(R.string.err_connection_offline))
+                false
+            }
+            else -> {
+                _events.emit(UiEvent.Error(R.string.err_unknown_error))
+                false
+            }
+        }
+    }
+
+    suspend fun fetchExaminations(): Boolean {
+        return when (val result = repository.fetchExaminationsFor(_uiState.value.provider.name)) {
+            is FetchExaminationsResult.Success -> {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        examinations = result.examinations
+                    )
+                }
+                true
+            }
+            is FetchExaminationsResult.NetworkError -> {
                 _events.emit(UiEvent.Error(R.string.err_connection_offline))
                 false
             }

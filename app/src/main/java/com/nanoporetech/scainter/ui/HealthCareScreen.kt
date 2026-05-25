@@ -33,6 +33,8 @@ fun HealthCareScreen(
     modifier: Modifier = Modifier,
     onNewConsultation: () -> Unit = {},
     onViewConsultations: () -> Unit = {},
+    onViewExaminations: () -> Unit = {},
+    onViewHospitalisations: () -> Unit = {},
 ) {
     Box(
         modifier = modifier
@@ -72,7 +74,7 @@ fun HealthCareScreen(
             // EXAMINATION MENU
             ExaminationCard(
                 onNewExamination = {},
-                onViewExamination = {},
+                onViewExamination = onViewExaminations,
                 modifier = Modifier
                     .fillMaxWidth()
             )
@@ -82,7 +84,7 @@ fun HealthCareScreen(
             // HOSPITALISATION MENU
             HospitalisationCard(
                 onNewHospitalisation = {},
-                onViewHospitalisation = {},
+                onViewHospitalisation = onViewHospitalisations,
                 modifier = Modifier
                     .fillMaxWidth()
             )

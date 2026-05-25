@@ -1,4 +1,4 @@
-package com.nanoporetech.scainter.ui.consultation
+package com.nanoporetech.scainter.ui.examination
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,24 +29,24 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.nanoporetech.scainter.R
-import com.nanoporetech.scainter.model.Consultation
-import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
+import com.nanoporetech.scainter.data.DataSource
+import com.nanoporetech.scainter.model.Examination
 import com.nanoporetech.scainter.ui.utils.displayedDateAndTime
 
 @Composable
-fun ConsultationListScreen(
-    consultations: List<Consultation>,
+fun ExaminationListScreen(
+    examinations: List<Examination>,
     modifier: Modifier = Modifier,
-    onRowClick: (Consultation) -> Unit = {},
+    onRowClick: (Examination) -> Unit = {},
 ) {
-    if (consultations.isEmpty()) {
+    if (examinations.isEmpty()) {
         Box(
             modifier = modifier
                 .fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = stringResource(R.string.no_recent_consultation),
+                text = stringResource(R.string.no_recent_examination),
                 style = MaterialTheme.typography.headlineMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
@@ -56,12 +56,12 @@ fun ConsultationListScreen(
         LazyColumn(
             modifier = modifier
                 .fillMaxSize()
-                //.safeContentPadding()
-                //.statusBarsPadding()
+            //.safeContentPadding()
+            //.statusBarsPadding()
         ) {
-            items(consultations) { consultation  ->
-                ConsultationRowItem(
-                    consultation = consultation,
+            items(examinations) { examination  ->
+                ExaminationRowItem(
+                    examination = examination,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(dimensionResource(R.dimen.padding_small)),
@@ -74,10 +74,10 @@ fun ConsultationListScreen(
 }
 
 @Composable
-fun ConsultationRowItem(
-    consultation: Consultation,
+fun ExaminationRowItem(
+    examination: Examination,
     modifier: Modifier = Modifier,
-    onRowClick: (Consultation) -> Unit,
+    onRowClick: (Examination) -> Unit,
 ) {
     val paddingSmall = dimensionResource(R.dimen.padding_xsmall)
 
@@ -85,7 +85,7 @@ fun ConsultationRowItem(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .clickable(
-                onClick = { onRowClick(consultation) }
+                onClick = { onRowClick(examination) }
             )
     ) {
         Column(
@@ -94,7 +94,6 @@ fun ConsultationRowItem(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    //.border(1.dp, color = Color.Yellow)
             ) {
                 Icon(
                     Icons.Default.Person,
@@ -103,7 +102,7 @@ fun ConsultationRowItem(
                 Spacer(Modifier.width(paddingSmall))
 
                 Text(
-                    text = consultation.fullname,
+                    text = examination.fullname,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
@@ -112,12 +111,12 @@ fun ConsultationRowItem(
             }
 
             Text(
-                text = consultation.act,
+                text = examination.displayedReason.ifBlank { stringResource(R.string.not_available) },
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
 
             Text(
-                text = displayedDateAndTime(consultation.creationDate),
+                text = displayedDateAndTime(examination.creationDate),
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
@@ -135,19 +134,14 @@ fun ConsultationRowItem(
     locale = "fr-rCI",
     showBackground = true)
 @Composable
-fun ConsultationListScreenPreview() {
-    ScaInterAppTheme {
-        Surface(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(dimensionResource(R.dimen.padding_medium))
-        ) {
-            ConsultationListScreen(
-                //consultations = DataSource.consultations()
-                consultations = emptyList(),
-                modifier = Modifier
-                    .fillMaxSize()
-            )
-        }
+fun ExaminationListScreenPreview() {
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        ExaminationListScreen(
+            examinations = DataSource.examinations()
+            //examinations = emptyList()
+        )
     }
 }

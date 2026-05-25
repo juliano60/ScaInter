@@ -82,4 +82,8 @@
     <string name="cancel_button">Cancel</string>
     <string name="remove_medication_prompt">Remove medication?</string>
     <string name="remove_medication_button">Remove medication</string>
+    <string name="no_recent_consultation">No recent consultation</string>
+    <string name="no_recent_examination">No recent examination</string>
+    <string name="no_recent_hospitalisation">No recent hospitalisation</string>
+    <string name="not_available">N/A</string>
 </resources>
