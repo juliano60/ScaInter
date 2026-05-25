@@ -101,7 +101,11 @@ class MedicalPrescriptionViewModel(
 
     fun openDialog() {
         _uiState.update {
-            it.copy(isDialogOpen = true)
+            it.copy(
+                medication = "",
+                quantityIndex = 0,
+                posology = "",
+                isDialogOpen = true)
         }
     }
 
