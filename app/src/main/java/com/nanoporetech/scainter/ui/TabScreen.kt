@@ -1,5 +1,8 @@
 package com.nanoporetech.scainter.ui
 
+import android.R.attr.contentDescription
+import android.R.attr.label
+import android.R.attr.onClick
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -8,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -111,16 +115,15 @@ fun TabScreen(
             ScaAppScreen.ConsultationDetailsScreen
         else -> ScaAppScreen.entries.firstOrNull { it.name == currentRoute } ?: ScaAppScreen.HealthCareScreen
     }
-    val currentTab = tabs.find { it.route == currentRoute }
 
     fun onTabPressed(route: String) {
         navController.navigate(route) {
-            // do not create a copy if at top of the stack
+            popUpTo(ScaAppScreen.HealthCareScreen.name) {
+                // keep HealthCareScreen
+                inclusive = false
+            }
+            // prevent duplication
             launchSingleTop = true
-            // restore previous state if visited before
-            restoreState = true
-            // pop everything above start destination
-            popUpTo(tabs.first().route) { saveState = true }
         }
     }
 
@@ -335,9 +338,17 @@ private fun DockBottomNavigationBar(
             ) {
                 tabs.forEach { tab ->
                     NavigationBarItem(
-                        selected = currentRoute == tab.route,
+                        selected = when (tab.route) {
+                            ScaAppScreen.HealthCareScreen.name ->
+                                currentRoute != ScaAppScreen.SupportScreen.name
+                            else -> currentRoute == tab.route
+                        },
                         onClick = { onTabPressed(tab.route) },
-                        icon = { Icon(tab.icon, contentDescription = tab.label) },
+                        icon = { Icon(
+                            imageVector = tab.icon,
+                            contentDescription = tab.label,
+                            modifier = Modifier.size(28.dp)
+                        )},
                         label = { Text(tab.label) },
                         alwaysShowLabel = true
                     )
