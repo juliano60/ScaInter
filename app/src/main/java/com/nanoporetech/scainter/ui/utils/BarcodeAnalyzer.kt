@@ -1,5 +1,6 @@
 package com.nanoporetech.scainter.ui.utils
 
+import android.graphics.Rect
 import androidx.annotation.OptIn
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
@@ -40,6 +41,14 @@ class BarcodeAnalyzer(
         }
 
         isProcessing = true
+
+        val scanArea = Rect(
+            (imageProxy.width * 0.1f).toInt(),
+            (imageProxy.height * 0.25f).toInt(),
+            (imageProxy.width * 0.9f).toInt(),
+            (imageProxy.height * 0.75f).toInt()
+        )
+
         val image = InputImage.fromMediaImage(
             mediaImage,
             imageProxy.imageInfo.rotationDegrees
@@ -47,7 +56,12 @@ class BarcodeAnalyzer(
 
         scanner.process(image)
             .addOnSuccessListener { barcodes ->
-                val raw = barcodes.firstOrNull()?.rawValue
+                val barcode = barcodes.firstOrNull { barcode ->
+                    val box = barcode.boundingBox
+                    box != null && Rect.intersects(scanArea, box)
+                }
+
+                val raw = barcode?.rawValue
 
                 if (!raw.isNullOrBlank() && raw != lastScanned) {
                     lastScanned = raw

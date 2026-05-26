@@ -1,5 +1,7 @@
 package com.nanoporetech.scainter.ui
 
+import android.R.attr.name
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -31,7 +33,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -53,6 +58,7 @@ import com.nanoporetech.scainter.data.AppUiState
 import com.nanoporetech.scainter.data.DataSource
 import com.nanoporetech.scainter.ui.consultation.CodeScannerScreen
 import com.nanoporetech.scainter.ui.consultation.ConsultationDetailsScreen
+import com.nanoporetech.scainter.ui.consultation.ConsultationFamilyMembersListScreen
 import com.nanoporetech.scainter.ui.consultation.ConsultationListScreen
 import com.nanoporetech.scainter.ui.consultation.MedicalPrescriptionScreen
 import com.nanoporetech.scainter.ui.consultation.NewConsultationScreen
@@ -66,12 +72,16 @@ import okhttp3.Route
 import kotlin.collections.forEach
 
 
+private const val TAG = "TabScreen"
+
 enum class ScaAppScreen(@StringRes val title: Int) {
     HealthCareDashboard(title = R.string.page_health_care),
     ConsultationList(title = R.string.page_consultation_list),
     ConsultationDetails(title = R.string.consultation_details_title),
     ConsultationNewPrescription(title = R.string.medical_prescription_title),
     ConsultationNewConsultation(title = R.string.new_consultation),
+
+    ConsultationFamilyMembersList(title = R.string.new_consultation),
     ExaminationList(title = R.string.page_examination_list),
     HospitalisationList(title = R.string.page_hospitalisation_list),
     Support(title = R.string.page_support),
@@ -116,6 +126,7 @@ fun TabScreen(
             ScaAppScreen.ConsultationDetails
         else -> ScaAppScreen.entries.firstOrNull { it.name == currentRoute } ?: ScaAppScreen.HealthCareDashboard
     }
+    var scanResult by rememberSaveable { mutableStateOf("") }
 
     fun onTabPressed(route: String) {
         navController.navigate(route) {
@@ -188,6 +199,9 @@ fun TabScreen(
                                     navController.navigate(ScaAppScreen.HospitalisationList.name)
                                 }
                             }
+                        },
+                        onNewConsultation = {
+                            navController.navigate(ScaAppScreen.ConsultationNewConsultation.name)
                         },
                         modifier = Modifier
                             .fillMaxSize()
@@ -270,22 +284,6 @@ fun TabScreen(
                     NewConsultationScreen(
                         onScanQrCode = {
                             navController.navigate(ScaAppScreen.CodeScanner.name)
-
-                            /*if (isEmulator()) {
-                                // manually update the model
-                                consultationModel.updateScanState(
-                                    BarScanState.ScanSuccess(
-                                        AppConstants.simulatedFamilyId
-                                    )
-                                )
-                                consultationModel.fetchFamilyMembers()
-
-                                // navigate
-                                navController.navigate(Route.FamilyMembersConsListScreen.name)
-
-                            } else {
-                                navController.navigate(ScaAppScreen.CodeScannerScreen.name)
-                            }*/
                         },
                         modifier = Modifier
                             .fillMaxSize()
@@ -295,6 +293,26 @@ fun TabScreen(
                 }
                 composable(route = ScaAppScreen.CodeScanner.name) {
                     CodeScannerScreen(
+                        onScanResult = {
+                            scanResult = it
+                            Log.d(TAG, "QR scan result: $scanResult")
+                            navController.popBackStack()
+                            navController.navigate(ScaAppScreen.ConsultationFamilyMembersList.name)
+                        },
+                        modifier = Modifier
+                            .background(color = AppConstants.lightGreen)
+                            .padding(dimensionResource(R.dimen.padding_medium))
+                    )
+                }
+                composable(route = ScaAppScreen.ConsultationFamilyMembersList.name) {
+                    ConsultationFamilyMembersListScreen(
+                        familyId = scanResult,
+                        onMemberSelected = {
+                            navController.navigate(ScaAppScreen.ConsultationDetails.name)
+                        },
+                        onScanQrCode = {
+                            navController.navigate(ScaAppScreen.CodeScanner.name)
+                        },
                         modifier = Modifier
                             .background(color = AppConstants.lightGreen)
                             .padding(dimensionResource(R.dimen.padding_medium))

@@ -88,7 +88,9 @@
     <string name="not_available">N/A</string>
     <string name="new_consultation">Etablir une feuille de soins</string>
     <string name="code_scanner_title">Scanner un Code QR</string>
-    <string name="camera_overlay_hint">Placer le code-barres devant la caméra.</string>
+    <string name="camera_overlay_hint">Placer le code QR devant la caméra.</string>
     <string name="show_password">Afficher le mot de passe</string>
     <string name="hide_password">Masquer le mot de passe</string>
+    <string name="camera_permissions_prompt">L\'autorisation d\'utiliser la caméra est requise pour scanner les codes QR.</string>
+    <string name="camera_permissions_grant">Accorder l\'autorisation</string>
 </resources>

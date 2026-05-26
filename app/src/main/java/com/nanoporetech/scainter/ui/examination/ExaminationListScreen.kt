@@ -67,7 +67,9 @@ fun ExaminationListScreen(
                         .padding(dimensionResource(R.dimen.padding_small)),
                     onRowClick = onRowClick
                 )
-                HorizontalDivider()
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.surfaceDim
+                )
             }
         }
     }

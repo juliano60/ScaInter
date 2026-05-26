@@ -63,7 +63,7 @@ fun HealthCareScreen(
 
             // CONSULTATION MENU
             ConsultationCard(
-                onNewConsultation = {},
+                onNewConsultation = onNewConsultation,
                 onViewConsultations = onViewConsultations,
                 modifier = Modifier
                     .fillMaxWidth()

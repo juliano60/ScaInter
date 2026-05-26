@@ -3,6 +3,7 @@ package com.nanoporetech.scainter.data
 import android.util.Log
 import com.nanoporetech.scainter.model.Consultation
 import com.nanoporetech.scainter.model.Examination
+import com.nanoporetech.scainter.model.FamilyMember
 import com.nanoporetech.scainter.model.Hospitalisation
 import com.nanoporetech.scainter.model.Provider
 import com.nanoporetech.scainter.network.FetchProviderRequest
@@ -39,11 +40,21 @@ sealed interface FetchHospitalisationsResult {
     object UnknownError : FetchHospitalisationsResult
 }
 
+sealed interface FetchFamilyMembersResult {
+    data class Success(val members: List<FamilyMember>) : FetchFamilyMembersResult
+
+    object NetworkError : FetchFamilyMembersResult
+    object ServerError: FetchFamilyMembersResult
+    object UnknownError : FetchFamilyMembersResult
+}
+
 interface ScaDataRepository {
     suspend fun fetchProvider(username: String, password: String): FetchProviderResult
     suspend fun fetchConsultationsFor(provider: String): FetchConsultationsResult
     suspend fun fetchExaminationsFor(provider: String): FetchExaminationsResult
     suspend fun fetchHospitalisationsFor(provider: String): FetchHospitalisationsResult
+
+    suspend fun fetchFamilyMembers(familyId: String): FetchFamilyMembersResult
 }
 
 private const val TAG = "ScaNetworkDataRepository"
@@ -149,6 +160,31 @@ class ScaNetworkDataRepository(
         } catch(e: IOException) {
             Log.d(TAG, e.toString())
             FetchHospitalisationsResult.NetworkError
+        }
+    }
+
+    override suspend fun fetchFamilyMembers(familyId: String): FetchFamilyMembersResult {
+        return try {
+            val response = scaApiService.fetchFamilyMembers(
+                action = "fetch_family",
+                familyId = familyId,
+            )
+            when {
+                response.isSuccessful -> {
+                    response.body()?.let {
+                        FetchFamilyMembersResult.Success(it)
+                    } ?: FetchFamilyMembersResult.UnknownError
+                }
+                response.code() in 500..599 -> {
+                    FetchFamilyMembersResult.ServerError
+                }
+                else -> {
+                    FetchFamilyMembersResult.UnknownError
+                }
+            }
+        } catch(e: IOException) {
+            Log.d(TAG, e.toString())
+            FetchFamilyMembersResult.NetworkError
         }
     }
 }
