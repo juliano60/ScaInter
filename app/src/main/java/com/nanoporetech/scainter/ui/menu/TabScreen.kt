@@ -1,6 +1,5 @@
-package com.nanoporetech.scainter.ui
+package com.nanoporetech.scainter.ui.menu
 
-import android.R.attr.name
 import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
@@ -56,7 +55,7 @@ import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.data.AppUiState
 import com.nanoporetech.scainter.data.DataSource
-import com.nanoporetech.scainter.ui.consultation.CodeScannerScreen
+import com.nanoporetech.scainter.ui.qrcode.CodeScannerScreen
 import com.nanoporetech.scainter.ui.consultation.ConsultationDetailsScreen
 import com.nanoporetech.scainter.ui.consultation.ConsultationFamilyMembersListScreen
 import com.nanoporetech.scainter.ui.consultation.ConsultationListScreen
@@ -68,7 +67,6 @@ import com.nanoporetech.scainter.ui.support.SupportScreen
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.theme.ScaInterTheme
 import kotlinx.coroutines.launch
-import okhttp3.Route
 import kotlin.collections.forEach
 
 
@@ -83,7 +81,9 @@ enum class ScaAppScreen(@StringRes val title: Int) {
 
     ConsultationFamilyMembersList(title = R.string.new_consultation),
     ExaminationList(title = R.string.page_examination_list),
+    ExaminationNewExamination(title = R.string.new_examination),
     HospitalisationList(title = R.string.page_hospitalisation_list),
+    HospitalisationNewHospitalisation(title = R.string.new_hospitalisation),
     Support(title = R.string.page_support),
     CodeScanner(title = R.string.code_scanner_title)
 }
@@ -202,6 +202,12 @@ fun TabScreen(
                         },
                         onNewConsultation = {
                             navController.navigate(ScaAppScreen.ConsultationNewConsultation.name)
+                        },
+                        onNewExamination = {
+                            navController.navigate(ScaAppScreen.ExaminationNewExamination.name)
+                        },
+                        onNewHospitalisation = {
+                            navController.navigate(ScaAppScreen.HospitalisationNewHospitalisation.name)
                         },
                         modifier = Modifier
                             .fillMaxSize()

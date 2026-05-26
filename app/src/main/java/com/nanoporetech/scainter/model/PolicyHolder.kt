@@ -1,6 +1,7 @@
 package com.nanoporetech.scainter.model
 
 import com.nanoporetech.scainter.conf.appConfig
+import com.nanoporetech.scainter.ui.utils.capitalized
 import kotlinx.serialization.Serializable
 import java.net.URL
 
@@ -8,7 +9,7 @@ import java.net.URL
 data class PolicyHolder(
     val id: Int,
     val fullname: String,
-    val internalId: String?,
+    val internalId: String,
     val subscriberName: String,
     val contractType: String,
     val coverExternal: String,
@@ -29,15 +30,33 @@ data class PolicyHolder(
     val consultationList: List<String>,
     val costs: List<String>
 ) {
-
-    // Photos_SCA/<internalId>.jpg
-    val imageUrl: URL?
-        get() = try {
-            URL(
-                "${appConfig.httpProtocol}://${appConfig.hostname}" +
-                        "${appConfig.imagesPath}/${internalId ?: "dummy"}.jpg"
-            )
-        } catch (e: Exception) {
-            null
-        }
 }
+
+// imageUrl returns the image URL (as a String) for the PolicyHolder.
+val PolicyHolder.imageUrl: String
+    get() {
+        return "${appConfig.httpProtocol}://${appConfig.hostname}${appConfig.imagesPath}/$internalId.jpg"
+    }
+
+val PolicyHolder.providerDisplayedName: String
+    get() {
+        val fragments = providerName.split(
+            Regex("\\s+|'|’")
+        )
+
+        val result = buildString {
+            fragments.forEachIndexed { index, fragment ->
+                if (fragment.length == 1 && index != fragments.lastIndex) {
+                    append(fragment)
+                    append("'")
+                } else {
+                    append(fragment.capitalized())
+                    append(" ")
+                }
+            }
+        }
+
+        return result
+            .replace("De", "de")
+            .trim()
+    }

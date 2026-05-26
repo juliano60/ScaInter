@@ -92,4 +92,10 @@
     <string name="hide_password">Hide password</string>
     <string name="camera_permissions_prompt">Camera permission is required to scan QR codes.</string>
     <string name="camera_permissions_grant">Grant permission</string>
+    <string name="policy_status_title">Policy Status</string>
+    <string name="policy_status_label">Policy status:</string>
+    <string name="subscriber_status_label">Subscriber status:</string>
+    <string name="last_consultation_label">Last consultation:</string>
+    <string name="type_label">Type:</string>
+    <string name="provider_label">Provider:</string>
 </resources>

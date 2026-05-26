@@ -1,4 +1,4 @@
-package com.nanoporetech.scainter.ui
+package com.nanoporetech.scainter.ui.menu
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,6 +32,8 @@ fun HealthCareScreen(
     provider: Provider,
     modifier: Modifier = Modifier,
     onNewConsultation: () -> Unit = {},
+    onNewExamination: () -> Unit = {},
+    onNewHospitalisation: () -> Unit = {},
     onViewConsultations: () -> Unit = {},
     onViewExaminations: () -> Unit = {},
     onViewHospitalisations: () -> Unit = {},
@@ -73,7 +75,7 @@ fun HealthCareScreen(
 
             // EXAMINATION MENU
             ExaminationCard(
-                onNewExamination = {},
+                onNewExamination = onNewExamination,
                 onViewExamination = onViewExaminations,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -83,7 +85,7 @@ fun HealthCareScreen(
 
             // HOSPITALISATION MENU
             HospitalisationCard(
-                onNewHospitalisation = {},
+                onNewHospitalisation = onNewHospitalisation,
                 onViewHospitalisation = onViewHospitalisations,
                 modifier = Modifier
                     .fillMaxWidth()

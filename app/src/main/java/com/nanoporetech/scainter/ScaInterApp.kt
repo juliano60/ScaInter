@@ -21,7 +21,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.ui.AppViewModel
-import com.nanoporetech.scainter.ui.TabScreen
+import com.nanoporetech.scainter.ui.menu.TabScreen
 import com.nanoporetech.scainter.ui.UiEvent
 import com.nanoporetech.scainter.ui.login.ForgottenPasswordScreen
 import com.nanoporetech.scainter.ui.login.LoginScreen

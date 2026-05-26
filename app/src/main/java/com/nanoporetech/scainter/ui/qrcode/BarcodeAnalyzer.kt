@@ -1,4 +1,4 @@
-package com.nanoporetech.scainter.ui.utils
+package com.nanoporetech.scainter.ui.qrcode
 
 import android.graphics.Rect
 import androidx.annotation.OptIn

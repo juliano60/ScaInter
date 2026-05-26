@@ -1,21 +1,25 @@
 package com.nanoporetech.scainter.ui.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -44,9 +48,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -56,10 +65,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.SubcomposeAsyncImage
+import coil.request.ImageRequest
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.ui.consultation.Prescription
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.theme.ScaInterTheme
+import com.nanoporetech.scainter.ui.utils.displayedDate
 
 @Composable
 fun CardHeader(
@@ -133,7 +145,9 @@ fun CardBody(
 ) {
     Column(modifier) {
         for (item in items) {
-            Row {
+            Row(modifier = Modifier
+                .fillMaxWidth()
+            ) {
                 if (item.label.isNotBlank()) {
                     Text(
                         text = item.label,
@@ -449,6 +463,124 @@ fun PrescriptionRow(
                     Text(stringResource(R.string.cancel_button))
                 }
             }
+        )
+    }
+}
+
+@Composable
+fun PolicyHolderInfo(
+    imageUrl: String,
+    name: String,
+    internalId: String,
+    dateOfBirth: String,
+    subscriberName: String,
+    contractType: String,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
+        PolicyHolderAvatar(
+            imgUrl = imageUrl,
+            modifier = Modifier
+            //.border(1.dp, color = Color.Yellow)
+        )
+
+        Spacer(modifier.height(dimensionResource(R.dimen.padding_medium)))
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            Text(
+                text = name,
+                style = MaterialTheme.typography.titleMedium,
+                fontSize = 18.sp,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            if (internalId.isNotBlank()) {
+                Text(
+                    text = internalId,
+                    color = Color.Red,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+
+            Text(
+                text = displayedDate(dateOfBirth),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+
+            Text(
+                text = "$subscriberName ($contractType)",
+                maxLines = 1,
+                overflow = TextOverflow.MiddleEllipsis,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+        }
+    }
+}
+
+@Composable
+fun PolicyHolderAvatar(
+    imgUrl: String,
+    modifier: Modifier = Modifier
+) {
+    Box(contentAlignment = Alignment.Center,
+        modifier = modifier
+            .size(dimensionResource(R.dimen.profile_icon_size)),
+    ) {
+        SubcomposeAsyncImage(
+            model = ImageRequest.Builder(context = LocalContext.current)
+                .data(imgUrl)
+                .crossfade(true)
+                .build(),
+            contentDescription = stringResource(R.string.profile_image),
+            contentScale = ContentScale.Crop,
+            loading = {
+                Icon(
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.outline,
+                    modifier = Modifier
+                        .matchParentSize()
+                        .clip(CircleShape)
+                        .graphicsLayer {
+                            scaleX = 1.2f
+                            scaleY = 1.2f
+                        }
+                )
+            },
+            error = {
+                Icon(
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.outline,
+                    modifier = Modifier
+                        .matchParentSize()
+                        .clip(CircleShape)
+                        .graphicsLayer {
+                            scaleX = 1.2f
+                            scaleY = 1.2f
+                        }
+                )
+            },
+            modifier = Modifier
+                .matchParentSize()
+                .shadow(
+                    elevation = 10.dp,
+                    shape = CircleShape,
+                    clip = false
+                )
+                .clip(CircleShape)
         )
     }
 }

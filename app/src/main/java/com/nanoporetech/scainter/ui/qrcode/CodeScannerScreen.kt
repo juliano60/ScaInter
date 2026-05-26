@@ -1,9 +1,8 @@
-package com.nanoporetech.scainter.ui.consultation
+package com.nanoporetech.scainter.ui.qrcode
 
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.os.Build
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
@@ -55,7 +54,7 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.nanoporetech.scainter.BuildConfig
 import com.nanoporetech.scainter.R
-import com.nanoporetech.scainter.ui.utils.BarcodeAnalyzer
+import java.util.concurrent.Executors
 
 sealed interface BarScanState {
     data object Idle : BarScanState
@@ -301,7 +300,7 @@ private fun CameraPreview(
     onError: (String) -> Unit,
 ) {
     val cameraExecutor = remember { ContextCompat.getMainExecutor(context) }
-    val analysisExecutor = remember { java.util.concurrent.Executors.newSingleThreadExecutor() }
+    val analysisExecutor = remember { Executors.newSingleThreadExecutor() }
     val analyzer = remember {
         BarcodeAnalyzer(
             onBarcode = onBarcode
