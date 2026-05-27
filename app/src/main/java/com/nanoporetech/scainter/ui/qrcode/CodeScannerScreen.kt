@@ -139,7 +139,7 @@ fun CodeScannerScreen(
                             testBarcode = it
                         },
                         label = {
-                            Text("Test barcode")
+                            Text("Test QR code")
                         },
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedTextColor = Color.White,

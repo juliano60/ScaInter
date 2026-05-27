@@ -5,6 +5,7 @@ import com.nanoporetech.scainter.model.Consultation
 import com.nanoporetech.scainter.model.Examination
 import com.nanoporetech.scainter.model.FamilyMember
 import com.nanoporetech.scainter.model.Hospitalisation
+import com.nanoporetech.scainter.model.PolicyHolder
 import com.nanoporetech.scainter.model.Provider
 import com.nanoporetech.scainter.network.FetchProviderRequest
 import com.nanoporetech.scainter.network.ScaApiService
@@ -18,7 +19,6 @@ sealed interface FetchProviderResult {
 
 sealed interface FetchConsultationsResult {
     data class Success(val consultations: List<Consultation>) : FetchConsultationsResult
-
     object NetworkError : FetchConsultationsResult
     object ServerError: FetchConsultationsResult
     object UnknownError : FetchConsultationsResult
@@ -26,7 +26,6 @@ sealed interface FetchConsultationsResult {
 
 sealed interface FetchExaminationsResult {
     data class Success(val examinations: List<Examination>) : FetchExaminationsResult
-
     object NetworkError : FetchExaminationsResult
     object ServerError: FetchExaminationsResult
     object UnknownError : FetchExaminationsResult
@@ -34,7 +33,6 @@ sealed interface FetchExaminationsResult {
 
 sealed interface FetchHospitalisationsResult {
     data class Success(val hospitalisations: List<Hospitalisation>) : FetchHospitalisationsResult
-
     object NetworkError : FetchHospitalisationsResult
     object ServerError: FetchHospitalisationsResult
     object UnknownError : FetchHospitalisationsResult
@@ -42,10 +40,16 @@ sealed interface FetchHospitalisationsResult {
 
 sealed interface FetchFamilyMembersResult {
     data class Success(val members: List<FamilyMember>) : FetchFamilyMembersResult
-
     object NetworkError : FetchFamilyMembersResult
     object ServerError: FetchFamilyMembersResult
     object UnknownError : FetchFamilyMembersResult
+}
+
+sealed interface FetchPolicyHoldersResult {
+    data class Success(val members: List<PolicyHolder>) : FetchPolicyHoldersResult
+    object NetworkError : FetchPolicyHoldersResult
+    object ServerError: FetchPolicyHoldersResult
+    object UnknownError : FetchPolicyHoldersResult
 }
 
 interface ScaDataRepository {
@@ -53,8 +57,8 @@ interface ScaDataRepository {
     suspend fun fetchConsultationsFor(provider: String): FetchConsultationsResult
     suspend fun fetchExaminationsFor(provider: String): FetchExaminationsResult
     suspend fun fetchHospitalisationsFor(provider: String): FetchHospitalisationsResult
-
     suspend fun fetchFamilyMembers(familyId: String): FetchFamilyMembersResult
+    suspend fun fetchPolicyHolders(memberIds: String, providerName: String): FetchPolicyHoldersResult
 }
 
 private const val TAG = "ScaNetworkDataRepository"
@@ -185,6 +189,35 @@ class ScaNetworkDataRepository(
         } catch(e: IOException) {
             Log.d(TAG, e.toString())
             FetchFamilyMembersResult.NetworkError
+        }
+    }
+
+    override suspend fun fetchPolicyHolders(
+        memberIds: String,
+        providerName: String
+    ): FetchPolicyHoldersResult {
+        return try {
+            val response = scaApiService.fetchPolicyHolders(
+                action = "fetch_clients",
+                memberIds = memberIds,
+                providerName = providerName
+            )
+            when {
+                response.isSuccessful -> {
+                    response.body()?.let {
+                        FetchPolicyHoldersResult.Success(it)
+                    } ?: FetchPolicyHoldersResult.UnknownError
+                }
+                response.code() in 500..599 -> {
+                    FetchPolicyHoldersResult.ServerError
+                }
+                else -> {
+                    FetchPolicyHoldersResult.UnknownError
+                }
+            }
+        } catch(e: IOException) {
+            Log.d(TAG, e.toString())
+            FetchPolicyHoldersResult.NetworkError
         }
     }
 }

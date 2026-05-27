@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.data.DataSource
@@ -93,6 +94,7 @@ fun PolicyHolderDetailsScreen(
                 .fillMaxWidth()
         )
 
+        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
         Spacer(modifier = Modifier.weight(1.0f))
 
         PrimaryButton(
@@ -300,7 +302,7 @@ fun InsuranceInfo(
     showBackground = true,
 )
 @Composable
-fun PolicyHolderDetailsScreenPreview() {
+fun PolicyHolderDetailsContentPreview() {
     ScaInterAppTheme {
         Surface(
             modifier = Modifier

@@ -50,11 +50,14 @@ import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 @Composable
 fun ConsultationFamilyMembersListScreen(
     familyId: String,
+    providerName: String,
     modifier: Modifier = Modifier,
     viewModel: NewConsultationViewModel = viewModel(
-        factory = NewConsultationViewModel.provideFactory(familyId)
+        factory = NewConsultationViewModel.provideFactory(
+            familyId = familyId,
+            providerName = providerName)
     ),
-    onMemberSelected: () -> Unit = {},
+    onMemberSelected: (Int) -> Unit = {},
     onScanQrCode: () -> Unit = {},
 ) {
     val state by viewModel.uiState.collectAsState()
@@ -71,7 +74,7 @@ fun ConsultationFamilyMembersListScreen(
 fun ConsultationFamilyMembersListContent(
     members: List<FamilyMember>,
     modifier: Modifier = Modifier,
-    onMemberSelected: () -> Unit = {},
+    onMemberSelected: (Int) -> Unit = {},
     onScanQrCode: () -> Unit = {},
 ) {
     Column(modifier) {
@@ -148,11 +151,11 @@ fun ConsultationFamilyMembersListContent(
 fun MemberRowItem(
     member: FamilyMember,
     modifier: Modifier = Modifier,
-    onMemberSelected: () -> Unit = {},
+    onMemberSelected: (Int) -> Unit = {},
 ) {
     Card(
         shape = RectangleShape,
-        onClick = onMemberSelected,
+        onClick = { onMemberSelected(member.id) },
         colors = CardDefaults.cardColors(
             containerColor = Color.White
         ),

@@ -31,8 +31,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -44,6 +46,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -61,6 +64,8 @@ import com.nanoporetech.scainter.ui.consultation.ConsultationFamilyMembersListSc
 import com.nanoporetech.scainter.ui.consultation.ConsultationListScreen
 import com.nanoporetech.scainter.ui.consultation.MedicalPrescriptionScreen
 import com.nanoporetech.scainter.ui.consultation.NewConsultationScreen
+import com.nanoporetech.scainter.ui.consultation.NewConsultationViewModel
+import com.nanoporetech.scainter.ui.consultation.PolicyHolderDetailsScreen
 import com.nanoporetech.scainter.ui.examination.ExaminationListScreen
 import com.nanoporetech.scainter.ui.hospitalisation.HospitalisationListScreen
 import com.nanoporetech.scainter.ui.support.SupportScreen
@@ -78,8 +83,8 @@ enum class ScaAppScreen(@StringRes val title: Int) {
     ConsultationDetails(title = R.string.consultation_details_title),
     ConsultationNewPrescription(title = R.string.medical_prescription_title),
     ConsultationNewConsultation(title = R.string.new_consultation),
-
     ConsultationFamilyMembersList(title = R.string.new_consultation),
+    PolicyHolderDetails(title = R.string.new_consultation),
     ExaminationList(title = R.string.page_examination_list),
     ExaminationNewExamination(title = R.string.new_examination),
     HospitalisationList(title = R.string.page_hospitalisation_list),
@@ -124,6 +129,8 @@ fun TabScreen(
     val currentScreen = when {
         currentRoute.startsWith(ScaAppScreen.ConsultationDetails.name)  ->
             ScaAppScreen.ConsultationDetails
+        currentRoute.startsWith(ScaAppScreen.PolicyHolderDetails.name)  ->
+            ScaAppScreen.PolicyHolderDetails
         else -> ScaAppScreen.entries.firstOrNull { it.name == currentRoute } ?: ScaAppScreen.HealthCareDashboard
     }
     var scanResult by rememberSaveable { mutableStateOf("") }
@@ -313,14 +320,50 @@ fun TabScreen(
                 composable(route = ScaAppScreen.ConsultationFamilyMembersList.name) {
                     ConsultationFamilyMembersListScreen(
                         familyId = scanResult,
-                        onMemberSelected = {
-                            navController.navigate(ScaAppScreen.ConsultationDetails.name)
+                        providerName = uiState.provider.name,
+                        onMemberSelected = { policyHolderId ->
+                            navController.navigate(route = "${ScaAppScreen.PolicyHolderDetails.name}/${policyHolderId}")
                         },
                         onScanQrCode = {
                             navController.navigate(ScaAppScreen.CodeScanner.name)
                         },
                         modifier = Modifier
                             .background(color = AppConstants.lightGreen)
+                            .padding(dimensionResource(R.dimen.padding_medium))
+                    )
+                }
+                composable(
+                    route = "${ScaAppScreen.PolicyHolderDetails.name}/{policyHolderId}",
+                    arguments = listOf(
+                        navArgument("policyHolderId") {
+                            type = NavType.IntType
+                        }
+                    )
+                ) { backStackEntry ->
+                    val policyHolderId = backStackEntry.arguments?.getInt("policyHolderId")
+
+                    // grab parent's view model
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry(
+                            ScaAppScreen.ConsultationFamilyMembersList.name
+                        )
+                    }
+
+                    val viewModel: NewConsultationViewModel = viewModel(
+                        viewModelStoreOwner = parentEntry
+                    )
+
+                    val uiState by viewModel.uiState.collectAsState()
+                    val policyHolder = uiState.policyHolders.first { it.id == policyHolderId }
+
+                    PolicyHolderDetailsScreen(
+                        policyHolder = policyHolder,
+                        selectedConsultation = uiState.selectedConsultation,
+                        selectedCost = uiState.selectedCost,
+                        onConsultationSelected = viewModel::setConsultation,
+                        onCostSelected = viewModel::setCost,
+                        modifier = Modifier
+                            .fillMaxSize()
                             .padding(dimensionResource(R.dimen.padding_medium))
                     )
                 }

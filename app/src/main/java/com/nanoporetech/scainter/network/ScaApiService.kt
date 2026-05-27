@@ -4,6 +4,7 @@ import com.nanoporetech.scainter.model.Consultation
 import com.nanoporetech.scainter.model.Examination
 import com.nanoporetech.scainter.model.FamilyMember
 import com.nanoporetech.scainter.model.Hospitalisation
+import com.nanoporetech.scainter.model.PolicyHolder
 import com.nanoporetech.scainter.model.Provider
 import retrofit2.Response
 import retrofit2.http.Body
@@ -38,4 +39,11 @@ interface ScaApiService {
         @Query(value = "action") action: String,
         @Query(value = "family_id") familyId: String
     ): Response<List<FamilyMember>>
+
+    @GET("assure_api.php")
+    suspend fun fetchPolicyHolders(
+        @Query(value = "action") action: String,
+        @Query(value = "ids") memberIds: String,
+        @Query(value = "provider") providerName: String
+    ): Response<List<PolicyHolder>>
 }
