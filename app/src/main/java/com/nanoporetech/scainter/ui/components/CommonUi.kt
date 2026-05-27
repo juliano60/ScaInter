@@ -129,9 +129,11 @@ fun CardHeaderDrawable(
     }
 }
 
+
 data class CardItem(
     val label: String = "",
-    val value: String = ""
+    val value: String = "",
+    val valueColor: Color? = null,
 )
 
 @Composable
@@ -141,7 +143,7 @@ fun CardBody(
     indentRight: Boolean = false,
     keyIsBold: Boolean = true,
     firstColumnWeight: Float = 0.4f,
-    secondColumnWeight: Float = 0.6f
+    secondColumnWeight: Float = 0.6f,
 ) {
     Column(modifier) {
         for (item in items) {
@@ -162,7 +164,7 @@ fun CardBody(
                     Text(
                         text = item.value,
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        color = item.valueColor ?: MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier
                             .weight(secondColumnWeight),
                         textAlign = if (indentRight) TextAlign.End else TextAlign.Start

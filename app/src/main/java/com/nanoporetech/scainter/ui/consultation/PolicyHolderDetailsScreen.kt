@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -69,24 +70,44 @@ fun PolicyHolderDetailsScreen(
 }
 
 @Composable
+private fun getStatusColor(status: String) = when(status) {
+    "Actif" -> Color(0xFF19bd04)  // green
+    "Non-Actif" -> MaterialTheme.colorScheme.error
+    else -> MaterialTheme.colorScheme.onPrimaryContainer
+}
+
+@Composable
 fun InsuranceInfo(
     policyHolder: PolicyHolder,
     modifier: Modifier = Modifier
 ) {
     val items = listOf(
-        CardItem(stringResource(R.string.policy_status_label),
-            policyHolder.insuranceStatus),
-        CardItem(stringResource(R.string.subscriber_status_label),
-            policyHolder.providerStatus),
-        CardItem(stringResource(R.string.coverage_label),
-            policyHolder.coverExternal),
-        CardItem(stringResource(R.string.last_consultation_label),
+        CardItem(
+            label = stringResource(R.string.policy_status_label),
+            value = policyHolder.insuranceStatus,
+            valueColor = getStatusColor(policyHolder.insuranceStatus)
+        ),
+        CardItem(
+            label = stringResource(R.string.subscriber_status_label),
+            value = policyHolder.providerStatus,
+            valueColor = getStatusColor(policyHolder.providerStatus)
+        ),
+        CardItem(
+            stringResource(R.string.coverage_label),
+            policyHolder.coverExternal
+        ),
+        CardItem(
+            stringResource(R.string.last_consultation_label),
             displayedDate(policyHolder.lastConsultationDate)
         ),
-        CardItem(stringResource(R.string.type_label),
-            policyHolder.lastConsultationType),
-        CardItem(stringResource(R.string.provider_label),
-            policyHolder.providerDisplayedName)
+        CardItem(
+            stringResource(R.string.type_label),
+            policyHolder.lastConsultationType
+        ),
+        CardItem(
+            stringResource(R.string.provider_label),
+            policyHolder.providerDisplayedName
+        )
     )
 
     val paddingMedium = dimensionResource(R.dimen.padding_medium)
