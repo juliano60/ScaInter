@@ -99,4 +99,9 @@
     <string name="last_consultation_label">Dernière consultation:</string>
     <string name="type_label">Type:</string>
     <string name="provider_label">Prestataire:</string>
+    <string name="options_title">Options</string>
+    <string name="consumption_limit_reached_message">Vous avez atteint votre limite de consommations.</string>
+    <string name="status_inactive_message">Statut inactif ou dormant</string>
+    <string name="consultation_label">Consultation</string>
+    <string name="cost_label">Montant</string>
 </resources>

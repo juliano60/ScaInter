@@ -283,7 +283,7 @@ object DataSource {
                 isPriceFixed = false
             ),
 
-            // CONSOMMATION LIMIT IS REACHED
+            // CONSUMPTION LIMIT IS REACHED
             PolicyHolder(
                 id = 1,
                 fullname = "HOMA ANGELINE ELOGNE",
