@@ -1,5 +1,6 @@
 package com.nanoporetech.scainter
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -25,6 +26,7 @@ import com.nanoporetech.scainter.ui.menu.TabScreen
 import com.nanoporetech.scainter.ui.UiEvent
 import com.nanoporetech.scainter.ui.login.ForgottenPasswordScreen
 import com.nanoporetech.scainter.ui.login.LoginScreen
+import kotlinx.coroutines.flow.collectLatest
 
 enum class ScaDestination {
     LoginScreen,
@@ -32,6 +34,7 @@ enum class ScaDestination {
     TabScreen
 }
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun ScaInterApp(
     navController: NavHostController = rememberNavController(),
@@ -44,7 +47,7 @@ fun ScaInterApp(
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
-        model.events.collect { event ->
+        model.events.collectLatest { event ->
             when (event) {
                 UiEvent.LoginSucceeded -> {
                     navController.navigate(route = ScaDestination.TabScreen.name) {

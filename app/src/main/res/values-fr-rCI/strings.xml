@@ -104,4 +104,6 @@
     <string name="status_inactive_message">Statut inactif ou dormant</string>
     <string name="consultation_label">Consultation</string>
     <string name="cost_label">Montant</string>
+    <string name="new_consultation_success_message">Nouvelle feuille de soins établie.</string>
+    <string name="err_new_consultation_message">Erreur lors de l\'ajout d\'une nouvelle feuille de soin.</string>
 </resources>

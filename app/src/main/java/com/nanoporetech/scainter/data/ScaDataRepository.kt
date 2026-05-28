@@ -1,5 +1,6 @@
 package com.nanoporetech.scainter.data
 
+import android.R.attr.action
 import android.util.Log
 import com.nanoporetech.scainter.model.Consultation
 import com.nanoporetech.scainter.model.Examination
@@ -7,6 +8,7 @@ import com.nanoporetech.scainter.model.FamilyMember
 import com.nanoporetech.scainter.model.Hospitalisation
 import com.nanoporetech.scainter.model.PolicyHolder
 import com.nanoporetech.scainter.model.Provider
+import com.nanoporetech.scainter.model.isOk
 import com.nanoporetech.scainter.network.FetchProviderRequest
 import com.nanoporetech.scainter.network.ScaApiService
 import okio.IOException
@@ -15,6 +17,7 @@ sealed interface FetchProviderResult {
     data class Success(val provider: Provider) : FetchProviderResult
     object AuthenticationFailed : FetchProviderResult
     object NetworkError : FetchProviderResult
+    object UnknownError : FetchProviderResult
 }
 
 sealed interface FetchConsultationsResult {
@@ -59,6 +62,7 @@ interface ScaDataRepository {
     suspend fun fetchHospitalisationsFor(provider: String): FetchHospitalisationsResult
     suspend fun fetchFamilyMembers(familyId: String): FetchFamilyMembersResult
     suspend fun fetchPolicyHolders(memberIds: String, providerName: String): FetchPolicyHoldersResult
+    suspend fun newConsultation(provider: String, userId: String, cost: String, act: String): Boolean
 }
 
 private const val TAG = "ScaNetworkDataRepository"
@@ -89,6 +93,9 @@ class ScaNetworkDataRepository(
         } catch (e: IOException) {
             Log.d(TAG, e.toString())
             FetchProviderResult.NetworkError
+        } catch (e: Exception) {
+            Log.e(TAG, "Unknown error", e)
+            FetchProviderResult.UnknownError
         }
     }
 
@@ -114,6 +121,9 @@ class ScaNetworkDataRepository(
         } catch(e: IOException) {
             Log.d(TAG, e.toString())
             FetchConsultationsResult.NetworkError
+        } catch (e: Exception) {
+            Log.e(TAG, "Unknown error", e)
+            FetchConsultationsResult.UnknownError
         }
     }
 
@@ -139,6 +149,9 @@ class ScaNetworkDataRepository(
         } catch(e: IOException) {
             Log.d(TAG, e.toString())
             FetchExaminationsResult.NetworkError
+        } catch (e: Exception) {
+            Log.e(TAG, "Unknown error", e)
+            FetchExaminationsResult.UnknownError
         }
     }
 
@@ -165,6 +178,10 @@ class ScaNetworkDataRepository(
             Log.d(TAG, e.toString())
             FetchHospitalisationsResult.NetworkError
         }
+        catch (e: Exception) {
+            Log.e(TAG, "Unknown error", e)
+            FetchHospitalisationsResult.UnknownError
+        }
     }
 
     override suspend fun fetchFamilyMembers(familyId: String): FetchFamilyMembersResult {
@@ -189,6 +206,10 @@ class ScaNetworkDataRepository(
         } catch(e: IOException) {
             Log.d(TAG, e.toString())
             FetchFamilyMembersResult.NetworkError
+        }
+        catch (e: Exception) {
+            Log.e(TAG, "Unknown error", e)
+            FetchFamilyMembersResult.UnknownError
         }
     }
 
@@ -218,6 +239,48 @@ class ScaNetworkDataRepository(
         } catch(e: IOException) {
             Log.d(TAG, e.toString())
             FetchPolicyHoldersResult.NetworkError
+        }
+        catch (e: Exception) {
+            Log.e(TAG, "Unknown error", e)
+            FetchPolicyHoldersResult.UnknownError
+        }
+    }
+
+    override suspend fun newConsultation(
+        provider: String,
+        userId: String,
+        cost: String,
+        act: String
+    ): Boolean {
+        return try {
+            val response = scaApiService.newConsultation(
+                action = "confirm_soin",
+                provider = provider,
+                userId = userId,
+                cost = cost,
+                act = act
+            )
+            when {
+                response.isSuccessful -> {
+                    response.body()?.isOk() ?: false
+                }
+
+                response.code() in 500..599 -> {
+                    Log.e(TAG, "Server error: ${response.code()}")
+                    false
+                }
+
+                else -> {
+                    Log.e(TAG, "Request failed: ${response.code()}")
+                    false
+                }
+            }
+        } catch (e: IOException) {
+            Log.e(TAG, "Network error", e)
+            false
+        } catch (e: Exception) {
+            Log.e(TAG, "Unknown error", e)
+            false
         }
     }
 }

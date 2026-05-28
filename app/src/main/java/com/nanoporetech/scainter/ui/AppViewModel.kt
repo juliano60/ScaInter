@@ -104,6 +104,15 @@ class AppViewModel(
                       }
                       _events.emit(UiEvent.Error(R.string.err_connection_offline))
                   }
+                  else -> {
+                      _uiState.update {
+                          it.copy(
+                              isLoggedIn = false,
+                              isLoginError = false
+                          )
+                      }
+                      _events.emit(UiEvent.Error(R.string.err_unknown_error))
+                  }
               }
         }
     }

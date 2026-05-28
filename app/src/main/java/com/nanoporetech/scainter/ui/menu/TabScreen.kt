@@ -1,5 +1,7 @@
 package com.nanoporetech.scainter.ui.menu
 
+import android.R.attr.name
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
@@ -26,11 +28,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,6 +48,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -55,6 +62,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.nanoporetech.scainter.R
+import com.nanoporetech.scainter.ScaDestination
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.data.AppUiState
 import com.nanoporetech.scainter.data.DataSource
@@ -66,16 +74,23 @@ import com.nanoporetech.scainter.ui.consultation.MedicalPrescriptionScreen
 import com.nanoporetech.scainter.ui.consultation.NewConsultationScreen
 import com.nanoporetech.scainter.ui.consultation.NewConsultationViewModel
 import com.nanoporetech.scainter.ui.consultation.PolicyHolderDetailsScreen
+import com.nanoporetech.scainter.ui.events.UiEvent
 import com.nanoporetech.scainter.ui.examination.ExaminationListScreen
 import com.nanoporetech.scainter.ui.hospitalisation.HospitalisationListScreen
 import com.nanoporetech.scainter.ui.support.SupportScreen
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.theme.ScaInterTheme
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.collections.forEach
 
 
 private const val TAG = "TabScreen"
+
+enum class NavResult {
+    NewConsultationSuccess,
+    NewConsultationFailed,
+}
 
 enum class ScaAppScreen(@StringRes val title: Int) {
     HealthCareDashboard(title = R.string.page_health_care),
@@ -101,6 +116,7 @@ private data class TabSpec(
     val icon: ImageVector
 )
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun TabScreen(
     uiState: AppUiState,
@@ -134,6 +150,8 @@ fun TabScreen(
         else -> ScaAppScreen.entries.firstOrNull { it.name == currentRoute } ?: ScaAppScreen.HealthCareDashboard
     }
     var scanResult by rememberSaveable { mutableStateOf("") }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     fun onTabPressed(route: String) {
         navController.navigate(route) {
@@ -156,6 +174,9 @@ fun TabScreen(
                 },
                 onLogout = onLogout,
             )
+        },
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
         },
         bottomBar = {
             DockBottomNavigationBar(
@@ -180,7 +201,34 @@ fun TabScreen(
                 startDestination = ScaAppScreen.HealthCareDashboard.name,
                 modifier = Modifier
             ) {
-                composable(route = ScaAppScreen.HealthCareDashboard.name) {
+                composable(route = ScaAppScreen.HealthCareDashboard.name) { backStackEntry ->
+                    val navResult by backStackEntry
+                        .savedStateHandle
+                        .getStateFlow<String?>("nav_result", null)
+                        .collectAsState()
+
+                    LaunchedEffect(navResult) {
+                        when (navResult) {
+                            NavResult.NewConsultationSuccess.name -> {
+                                snackbarHostState.showSnackbar(
+                                    message = context.getString(R.string.new_consultation_success_message),
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
+                            NavResult.NewConsultationFailed.name -> {
+                                snackbarHostState.showSnackbar(
+                                    message = context.getString(R.string.err_unknown_error),
+                                    duration = SnackbarDuration.Long
+                                )
+                            }
+                            null -> Unit
+                        }
+                        // now clear old nav result
+                        if (navResult != null) {
+                            backStackEntry.savedStateHandle["nav_result"] = null
+                        }
+                    }
+
                     HealthCareScreen(
                         provider = uiState.provider,
                         onViewConsultations = {
@@ -354,18 +402,54 @@ fun TabScreen(
                     )
 
                     val uiState by viewModel.uiState.collectAsState()
-                    val policyHolder = uiState.policyHolders.first { it.id == policyHolderId }
+                    val policyHolder = uiState.policyHolders.firstOrNull { it.id == policyHolderId }
 
-                    PolicyHolderDetailsScreen(
-                        policyHolder = policyHolder,
-                        selectedConsultation = uiState.selectedConsultation,
-                        selectedCost = uiState.selectedCost,
-                        onConsultationSelected = viewModel::setConsultation,
-                        onCostSelected = viewModel::setCost,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(dimensionResource(R.dimen.padding_medium))
-                    )
+                    Log.d(TAG, "PolicyHolder: $policyHolder")
+
+                    LaunchedEffect(policyHolder) {
+                        policyHolder?.let {
+                            viewModel.setPolicyHolder(it)
+                        }
+                    }
+
+                    LaunchedEffect(Unit) {
+                        viewModel.events.collectLatest { event ->
+                            when (event) {
+                                is UiEvent.Success -> {
+                                    // indicate success/failure
+                                    navController
+                                        .getBackStackEntry(ScaAppScreen.HealthCareDashboard.name)
+                                        .savedStateHandle["nav_result"] = NavResult.NewConsultationSuccess.name
+
+                                    // then navigate
+                                    navController.popBackStack(
+                                        ScaAppScreen.HealthCareDashboard.name,
+                                        inclusive = false
+                                    )
+                                }
+                                is UiEvent.Error -> {
+                                    snackbarHostState.showSnackbar(
+                                        message = context.getString(event.errorId),
+                                        duration = SnackbarDuration.Long
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    if (policyHolder != null) {
+                        PolicyHolderDetailsScreen(
+                            policyHolder = policyHolder,
+                            selectedConsultation = uiState.selectedConsultation,
+                            selectedCost = uiState.selectedCost,
+                            onConsultationSelected = viewModel::setConsultation,
+                            onCostSelected = viewModel::setCost,
+                            onValidate = { viewModel.newConsultation() },
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(dimensionResource(R.dimen.padding_medium))
+                        )
+                    }
                 }
             }
         }

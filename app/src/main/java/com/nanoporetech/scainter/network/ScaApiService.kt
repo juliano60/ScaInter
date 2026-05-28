@@ -6,6 +6,7 @@ import com.nanoporetech.scainter.model.FamilyMember
 import com.nanoporetech.scainter.model.Hospitalisation
 import com.nanoporetech.scainter.model.PolicyHolder
 import com.nanoporetech.scainter.model.Provider
+import com.nanoporetech.scainter.model.Status
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -21,6 +22,15 @@ interface ScaApiService {
         @Query(value = "action") action: String,
         @Query(value = "provider") provider: String
     ): Response<List<Consultation>>
+
+    @GET("consultation_api.php")
+    suspend fun newConsultation(
+        @Query(value = "action") action: String,
+        @Query(value = "provider") provider: String,
+        @Query(value = "id") userId: String,
+        @Query(value = "montant") cost: String,
+        @Query(value = "acte") act: String
+    ): Response<Status>
 
     @GET("examination_api.php")
     suspend fun fetchExaminations(

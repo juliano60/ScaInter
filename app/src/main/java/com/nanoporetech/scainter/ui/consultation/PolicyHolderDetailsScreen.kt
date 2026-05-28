@@ -1,5 +1,7 @@
 package com.nanoporetech.scainter.ui.consultation
 
+import android.R.attr.enabled
+import android.R.attr.type
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +21,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -54,7 +57,8 @@ fun PolicyHolderDetailsScreen(
     selectedConsultation: String,
     selectedCost: String,
     onConsultationSelected: (String) -> Unit = {},
-    onCostSelected: (String) -> Unit = {}
+    onCostSelected: (String) -> Unit = {},
+    onValidate: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -99,6 +103,7 @@ fun PolicyHolderDetailsScreen(
 
         PrimaryButton(
             text = stringResource(R.string.confirm_button),
+            onClick = onValidate,
             modifier = Modifier
                 .fillMaxWidth()
         )
@@ -168,6 +173,7 @@ fun OptionsInfo(
                             ExposedDropdownMenuDefaults.TrailingIcon(expanded = consultationExpanded)
                         },
                         modifier = Modifier
+                            .menuAnchor(MenuAnchorType.PrimaryNotEditable, enabled = true)
                             .fillMaxWidth()
                     )
 
@@ -205,6 +211,7 @@ fun OptionsInfo(
                             ExposedDropdownMenuDefaults.TrailingIcon(expanded = costExpanded)
                         },
                         modifier = Modifier
+                            .menuAnchor(MenuAnchorType.PrimaryNotEditable, enabled = true)
                             .fillMaxWidth()
                     )
 
@@ -212,7 +219,7 @@ fun OptionsInfo(
                         expanded = costExpanded,
                         onDismissRequest = { costExpanded = false }
                     ) {
-                        policyHolder.consultationList.forEach { cost ->
+                        policyHolder.costs.forEach { cost ->
                             DropdownMenuItem(
                                 text = { Text(text = cost) },
                                 onClick = {

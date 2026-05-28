@@ -103,4 +103,6 @@
     <string name="status_inactive_message">Inactive or dormant status</string>
     <string name="consultation_label">Consultation</string>
     <string name="cost_label">Cost</string>
+    <string name="new_consultation_success_message">New consultation added.</string>
+    <string name="err_new_consultation_message">Error adding new consultation.</string>
 </resources>

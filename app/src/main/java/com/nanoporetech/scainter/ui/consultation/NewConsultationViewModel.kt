@@ -6,20 +6,21 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import coil.util.CoilUtils.result
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.ScaInterApplication
-import com.nanoporetech.scainter.data.FetchExaminationsResult
 import com.nanoporetech.scainter.data.FetchFamilyMembersResult
 import com.nanoporetech.scainter.data.FetchPolicyHoldersResult
 import com.nanoporetech.scainter.data.NewConsultationUiState
 import com.nanoporetech.scainter.data.ScaDataRepository
-import com.nanoporetech.scainter.model.Provider
-import com.nanoporetech.scainter.ui.UiEvent
+import com.nanoporetech.scainter.model.PolicyHolder
+import com.nanoporetech.scainter.ui.events.UiEvent
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
 
 class NewConsultationViewModel(
     private val familyId: String,
@@ -29,6 +30,9 @@ class NewConsultationViewModel(
 
     private var _uiState = MutableStateFlow(NewConsultationUiState())
     val uiState = _uiState.asStateFlow()
+
+    private val _events = MutableSharedFlow<UiEvent>()
+    val events = _events.asSharedFlow()
 
     init {
         viewModelScope.launch {
@@ -93,6 +97,46 @@ class NewConsultationViewModel(
                 selectedCost = value
             )
         }
+    }
+
+    fun setPolicyHolder(policyHolder: PolicyHolder) {
+        _uiState.update {
+            it.copy(
+                currentPolicyHolder = policyHolder
+            )
+        }
+    }
+
+    fun newConsultation() {
+        val policyHolder = _uiState.value.currentPolicyHolder ?: return
+
+        viewModelScope.launch {
+            // load family members
+            when (val result = repository.newConsultation(
+                provider = providerName,
+                userId = policyHolder.id.toString(),
+                cost =  getCost(_uiState.value.selectedCost),
+                act = _uiState.value.selectedConsultation
+            )) {
+                true -> {
+                    _events.emit(UiEvent.Success(R.string.new_consultation_success_message))
+                }
+                else -> {
+                    _events.emit(UiEvent.Error(R.string.err_new_consultation_message))
+                }
+            }
+        }
+    }
+
+    private fun getCost(value: String): String {
+        val cost = value
+            .trim()
+            .split(Regex("\\s+"))
+            .dropLast(1)
+            .lastOrNull()
+            ?.toDoubleOrNull()
+            ?: 0.0
+        return cost.toString()
     }
 
     companion object {

@@ -10,6 +10,8 @@ data class NewConsultationUiState(
     val familyMembers: List<FamilyMember> = emptyList(),
     /** the family members' details for a given policy */
     val policyHolders: List<PolicyHolder> = emptyList(),
+    /** the current policyholder */
+    val currentPolicyHolder: PolicyHolder? = null,
     /** the desired consultation */
     val selectedConsultation: String = "",
     /** the cost for that consultation */
