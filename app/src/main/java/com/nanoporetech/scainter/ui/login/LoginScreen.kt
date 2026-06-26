@@ -2,6 +2,7 @@ package com.nanoporetech.scainter.ui.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -46,6 +48,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
@@ -70,87 +73,83 @@ fun LoginScreen(
     val largePadding = dimensionResource(R.dimen.padding_large)
     val paddingMedium = dimensionResource(R.dimen.padding_medium)
 
-    Box(
+    Column(
+        verticalArrangement = Arrangement.Center,
         modifier = modifier
+            .fillMaxSize()
     ) {
+        // HEADER SECTION
         Column(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
-                .fillMaxSize()
+                .weight(9.0f)
         ) {
-            // HEADER SECTION
-            Column(
-                verticalArrangement = Arrangement.Center,
+            HeaderAndLogo(
                 modifier = Modifier
-                    .weight(9.0f)
-            ) {
-                HeaderAndLogo(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
+                    .fillMaxWidth()
+            )
 
-                Spacer(modifier = Modifier.height(largePadding))
+            Spacer(modifier = Modifier.height(largePadding))
 
-                // WELCOME MESSAGE SECTION
-                WelcomeMessage(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(largePadding))
-
-                // CREDENTIALS SECTION
-                CredentialsSection(
-                    username = username,
-                    onUsernameChanged = onUsernameChanged,
-                    password = password,
-                    onPasswordChanged = onPasswordChanged,
-                    onLogin = onLogin,
-                    isError = isLoginError,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(paddingMedium))
-
-                // REMEMBER ME SECTION
-                RememberMeSection(
-                    rememberMe = rememberMe,
-                    onRememberMeChange = onRememberMeChange,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-            }
-
-            Column(
-                verticalArrangement = Arrangement.Center,
+            // WELCOME MESSAGE SECTION
+            WelcomeMessage(
                 modifier = Modifier
-                    .weight(1.5f)
-            ) {
-                Text(
-                    text = stringResource(R.string.password_forgotten),
-                    style = MaterialTheme.typography.bodyLarge,
-                    //fontSize = 16.sp,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .clickable(
-                            onClick = onForgottenPassword
-                        )
-                )
+                    .fillMaxWidth()
+            )
 
-                Spacer(modifier = Modifier.height(paddingMedium))
+            Spacer(modifier = Modifier.height(largePadding))
 
-                // LOGIN BUTTON
-                PrimaryButton(
-                    text = stringResource(R.string.login),
-                    onClick = onLogin,
-                    enabled = username.isNotBlank() && password.isNotBlank(),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-            }
+            // CREDENTIALS SECTION
+            CredentialsSection(
+                username = username,
+                onUsernameChanged = onUsernameChanged,
+                password = password,
+                onPasswordChanged = onPasswordChanged,
+                onLogin = onLogin,
+                isError = isLoginError,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(paddingMedium))
+
+            // REMEMBER ME SECTION
+            RememberMeSection(
+                rememberMe = rememberMe,
+                onRememberMeChange = onRememberMeChange,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+        }
+
+        Column(
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .weight(1.5f)
+        ) {
+            Text(
+                text = stringResource(R.string.password_forgotten),
+                style = MaterialTheme.typography.bodyLarge,
+                //fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .clickable(
+                        onClick = onForgottenPassword
+                    )
+            )
+
+            Spacer(modifier = Modifier.height(paddingMedium))
+
+            // LOGIN BUTTON
+            PrimaryButton(
+                text = stringResource(R.string.login),
+                onClick = onLogin,
+                enabled = username.isNotBlank() && password.isNotBlank(),
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
         }
     }
 }
@@ -177,9 +176,10 @@ fun HeaderAndLogo(
 
         Text(
             text = stringResource(R.string.company_name),
-            style = MaterialTheme.typography.displaySmall,
+            style = MaterialTheme.typography.titleLarge,
             color = ScaInterTheme.extendedColors.mainGreen.color,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.Bold,
+            fontSize = 30.sp
         )
     }
 }
@@ -316,9 +316,10 @@ fun RememberMeSection(
     onRememberMeChange: (value: Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier) {
+    Row(
+        horizontalArrangement = Arrangement.End,
+        modifier = modifier
+    ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
