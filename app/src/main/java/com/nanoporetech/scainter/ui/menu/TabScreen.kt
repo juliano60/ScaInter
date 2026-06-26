@@ -153,6 +153,7 @@ fun TabScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     var showConfirmationPrompt by rememberSaveable { mutableStateOf(false) }
+    var showExitPrompt by rememberSaveable { mutableStateOf(false) }
 
     fun onTabPressed(route: String) {
         navController.navigate(route) {
@@ -183,7 +184,7 @@ fun TabScreen(
                         else -> navController.popBackStack()
                     }
                 },
-                onLogout = onLogout,
+                onLogout = { showExitPrompt = true },
             )
         },
         snackbarHost = {
@@ -477,7 +478,18 @@ fun TabScreen(
                     ScaAppScreen.HealthCareDashboard.name,
                     inclusive = false
                 )
-            },
+            }
+        )
+    }
+    if (showExitPrompt) {
+        showAlert(
+            title = R.string.confirmation_generic_title,
+            message = R.string.confirmation_exit_prompt,
+            onDismiss = { showExitPrompt = false },
+            onConfirm = {
+                showExitPrompt = false
+                onLogout()
+            }
         )
     }
 }

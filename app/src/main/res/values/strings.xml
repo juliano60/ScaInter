@@ -105,7 +105,7 @@
     <string name="cost_label">Cost</string>
     <string name="new_consultation_success_message">New consultation added.</string>
     <string name="err_new_consultation_message">Error adding new consultation.</string>
-    <string name="confirmation_generic_title">Cancel action?</string>
+    <string name="confirmation_generic_title">Confirm Action</string>
     <string name="yes_button">Yes</string>
     <string name="confirmation_abort_prompt">Would you like to cancel the current operation?</string>
     <string name="confirmation_exit_prompt">Quit application?</string>
