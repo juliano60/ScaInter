@@ -219,7 +219,9 @@ fun OptionsInfo(
                         expanded = costExpanded,
                         onDismissRequest = { costExpanded = false }
                     ) {
-                        policyHolder.costs.forEach { cost ->
+                        policyHolder.costs
+                            .filter { isCostSpecified(it) }
+                            .forEach { cost ->
                             DropdownMenuItem(
                                 text = { Text(text = cost) },
                                 onClick = {
@@ -235,6 +237,14 @@ fun OptionsInfo(
     }
 }
 
+// Costs are expected to be formatted like:
+// "Consult. Generale: 10000 FCFA"
+// Treat the cost as specified if the penultimate space-separated token
+// (the price) can be parsed as a number.
+private fun isCostSpecified(cost: String): Boolean {
+    val fragments = cost.trim().split(" ")
+    return fragments.size >= 2 && fragments[fragments.size - 2].toDoubleOrNull() != null
+}
 
 @Composable
 private fun getStatusColor(status: String) = when(status) {
