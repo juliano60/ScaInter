@@ -1,6 +1,5 @@
 package com.nanoporetech.scainter.ui.menu
 
-import android.R.attr.name
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.annotation.StringRes
@@ -62,10 +61,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.nanoporetech.scainter.R
-import com.nanoporetech.scainter.ScaDestination
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.data.AppUiState
 import com.nanoporetech.scainter.data.DataSource
+import com.nanoporetech.scainter.ui.components.showAlert
 import com.nanoporetech.scainter.ui.qrcode.CodeScannerScreen
 import com.nanoporetech.scainter.ui.consultation.ConsultationDetailsScreen
 import com.nanoporetech.scainter.ui.consultation.ConsultationFamilyMembersListScreen
@@ -116,6 +115,7 @@ private data class TabSpec(
     val icon: ImageVector
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun TabScreen(
@@ -152,6 +152,7 @@ fun TabScreen(
     var scanResult by rememberSaveable { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
+    var showConfirmationPrompt by rememberSaveable { mutableStateOf(false) }
 
     fun onTabPressed(route: String) {
         navController.navigate(route) {
@@ -170,7 +171,17 @@ fun TabScreen(
                 currentScreen = currentScreen,
                 showBackButton = navController.previousBackStackEntry != null,
                 onNavigateUp = {
-                    navController.popBackStack()
+                    val current = backStackEntry?.destination?.route
+
+                    when {
+                        current?.startsWith(ScaAppScreen.ConsultationNewConsultation.name) == true -> {
+                            showConfirmationPrompt = true
+                        }
+                        current?.startsWith(ScaAppScreen.CodeScanner.name) == true -> {
+                            showConfirmationPrompt = true
+                        }
+                        else -> navController.popBackStack()
+                    }
                 },
                 onLogout = onLogout,
             )
@@ -453,6 +464,21 @@ fun TabScreen(
                 }
             }
         }
+    }
+
+    if (showConfirmationPrompt) {
+        showAlert(
+            title = R.string.confirmation_generic_title,
+            message = R.string.confirmation_abort_prompt,
+            onDismiss = { showConfirmationPrompt = false },
+            onConfirm = {
+                showConfirmationPrompt = false
+                navController.popBackStack(
+                    ScaAppScreen.HealthCareDashboard.name,
+                    inclusive = false
+                )
+            },
+        )
     }
 }
 

@@ -106,4 +106,8 @@
     <string name="cost_label">Montant</string>
     <string name="new_consultation_success_message">Nouvelle feuille de soins établie.</string>
     <string name="err_new_consultation_message">Erreur lors de l\'ajout d\'une nouvelle feuille de soin.</string>
+    <string name="confirmation_generic_title">Annuler l\'opération?</string>
+    <string name="yes_button">Oui</string>
+    <string name="confirmation_abort_prompt">Souhaitez-vous annuler l\'opération en cours ?</string>
+    <string name="confirmation_exit_prompt">Quitter l\'application?</string>
 </resources>

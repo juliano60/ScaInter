@@ -1,5 +1,6 @@
 package com.nanoporetech.scainter.ui.components
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -69,6 +70,7 @@ import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.ui.consultation.Prescription
+import com.nanoporetech.scainter.ui.menu.ScaAppScreen
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.theme.ScaInterTheme
 import com.nanoporetech.scainter.ui.utils.displayedDate
@@ -586,6 +588,39 @@ fun PolicyHolderAvatar(
         )
     }
 }
+
+@Composable
+fun showAlert(
+    @StringRes title: Int,
+    @StringRes message: Int,
+    onDismiss: () -> Unit = {},
+    onConfirm: () -> Unit = {}
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(stringResource(title))
+        },
+        text = {
+            Text(stringResource(message))
+        },
+        confirmButton = {
+            TextButton(
+                onClick = onConfirm
+            ) {
+                Text(stringResource(R.string.confirm_button))
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss
+            ) {
+                Text(stringResource(R.string.cancel_button))
+            }
+        }
+    )
+}
+
 
 @Preview(
     locale = "fr-rCI",
