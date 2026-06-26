@@ -1,6 +1,9 @@
 package com.nanoporetech.scainter
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -80,13 +83,29 @@ fun ScaInterApp(
         }
     ) { innerPadding ->
 
+        val animationDuration = 500
+
         NavHost(
             navController = navController,
             startDestination = ScaDestination.LoginScreen.name,
             modifier = Modifier
                 .padding(innerPadding)
         ) {
-            composable(ScaDestination.LoginScreen.name) {
+            composable(
+                route =ScaDestination.LoginScreen.name,
+                enterTransition = {
+                    slideInHorizontally(
+                        initialOffsetX = { -it },
+                        animationSpec = tween(animationDuration)
+                    )
+                },
+                exitTransition = {
+                    slideOutHorizontally(
+                        targetOffsetX = { -it },
+                        animationSpec = tween(animationDuration)
+                    )
+                }
+            ) {
                 LoginScreen(
                     username = uiState.username,
                     onUsernameChanged = {
@@ -96,9 +115,7 @@ fun ScaInterApp(
                     onPasswordChanged = {
                         model.setPassword(it)
                     },
-                    onLogin = {
-                        model.login()
-                    },
+                    onLogin = model::login,
                     isLoginError = uiState.isLoginError,
                     onForgottenPassword = {
                         navController.navigate(route = ScaDestination.ForgottenPasswordScreen.name)
@@ -123,7 +140,21 @@ fun ScaInterApp(
                         .padding(dimensionResource(R.dimen.padding_medium))
                 )
             }
-            composable(ScaDestination.TabScreen.name) {
+            composable(
+                route = ScaDestination.TabScreen.name,
+                enterTransition = {
+                    slideInHorizontally(
+                        initialOffsetX = { it },
+                        animationSpec = tween(animationDuration)
+                    )
+                },
+                exitTransition = {
+                    slideOutHorizontally(
+                        targetOffsetX = { it },
+                        animationSpec = tween(animationDuration)
+                    )
+                }
+            ) {
                 TabScreen(
                     onLogout = model::logout,
                     onFetchConsultations = model::fetchConsultations,
