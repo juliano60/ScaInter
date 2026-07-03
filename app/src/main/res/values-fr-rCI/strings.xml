@@ -4,11 +4,11 @@
     <string name="company_name">SCA INTER A</string>
 
     <!-- LOGIN -->
-    <string name="welcome_message">Bienvenue sur mySCA Inter Prestataires</string>
+    <string name="welcome_message">mySCA Inter Prestataires</string>
     <string name="username_label">Identifiant</string>
     <string name="password_label">Mot de passe</string>
     <string name="password_forgotten">Mot de passe oublié?</string>
-    <string name="remember_me">Mémoriser</string>
+    <string name="remember_me">Se souvenir de moi</string>
     <string name="login">Se connecter</string>
     <string name="forgotten_password_title">Mot de passe oublié</string>
     <string name="forgotten_password_text">N\'hésitez pas à utiliser le numero WhatsApp ci-dessous afin de contacter l\'équipe de support technique.</string>
