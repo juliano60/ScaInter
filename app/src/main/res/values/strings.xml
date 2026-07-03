@@ -109,4 +109,8 @@
     <string name="yes_button">Yes</string>
     <string name="confirmation_abort_prompt">Would you like to cancel the current operation?</string>
     <string name="confirmation_exit_prompt">Quit application?</string>
+    <string name="sca_about_title">SCA INTER A Service Providers</string>
+    <string name="sca_about_text">My SCA Prestataires is a mobile application that allows users to access healthcare services through a care network defined by the company SCA INTER A. This application is therefore a product of the SCA INTER A group.</string>
+    <string name="our_contacts">Our contact details:</string>
+    <string name="page_about">About</string>
 </resources>

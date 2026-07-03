@@ -19,7 +19,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.HelpOutline
 import androidx.compose.material.icons.automirrored.outlined.Logout
+import androidx.compose.material.icons.outlined.HelpOutline
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -103,7 +105,7 @@ enum class ScaAppScreen(@StringRes val title: Int) {
     ExaminationNewExamination(title = R.string.new_examination),
     HospitalisationList(title = R.string.page_hospitalisation_list),
     HospitalisationNewHospitalisation(title = R.string.new_hospitalisation),
-    Support(title = R.string.page_support),
+    Support(title = R.string.page_about),
     CodeScanner(title = R.string.code_scanner_title)
 }
 private data class TabSpec(
@@ -135,8 +137,8 @@ fun TabScreen(
         ),
         TabSpec(
             route = ScaAppScreen.Support.name,
-            label = stringResource(R.string.page_support),
-            icon = Icons.AutoMirrored.Outlined.HelpOutline
+            label = stringResource(R.string.page_about),
+            icon = Icons.Outlined.Info
         )
     )
 

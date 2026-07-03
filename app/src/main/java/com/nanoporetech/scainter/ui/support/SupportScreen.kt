@@ -12,7 +12,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.outlined.Apps
+import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.HeadsetMic
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -32,9 +38,11 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.ui.components.CardHeader
+import com.nanoporetech.scainter.ui.login.ScaTopAppBar
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.theme.ScaInterTheme
 import compose.icons.FontAwesomeIcons
@@ -47,61 +55,110 @@ fun SupportScreen(
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {}
 ) {
-    Scaffold (
-        topBar = {
-            SupportTopAppBar(onBack = onBack)
-        },
-        containerColor = AppConstants.lightGreen
-    ) { innerPadding ->
+    val paddingSmall = dimensionResource(R.dimen.padding_small)
 
-        Box(
-            modifier = modifier.padding(innerPadding)
+    Box() {
+        Card(
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = dimensionResource(R.dimen.card_elevation)
+            ),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(dimensionResource(R.dimen.padding_medium))
         ) {
-            Card(
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = dimensionResource(R.dimen.card_elevation)
-                ),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(dimensionResource(R.dimen.padding_medium))
+            Column(
+                modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium)),
+                verticalArrangement = Arrangement.spacedBy(
+                    dimensionResource(R.dimen.padding_medium)
+                )
             ) {
+                CardHeader(
+                    title = stringResource(R.string.sca_about_title),
+                    iconImg = Icons.Outlined.Apps,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Text(
+                    text = stringResource(R.string.sca_about_text),
+                    textAlign = TextAlign.Justify,
+                    color = MaterialTheme.colorScheme.primary,
+                    lineHeight = 32.sp
+                )
+
+                Text(
+                    text = stringResource(R.string.our_contacts),
+                    color = MaterialTheme.colorScheme.primary
+                )
+
                 Column(
-                    modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium)),
-                    verticalArrangement = Arrangement.spacedBy(
-                        dimensionResource(R.dimen.padding_medium)
-                    )
+                    verticalArrangement = Arrangement.spacedBy(paddingSmall),
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
-                    CardHeader(
-                        title = stringResource(R.string.sca_technical_support),
-                        iconImg = Icons.Outlined.HeadsetMic,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    Text(
-                        text = stringResource(R.string.forgotten_password_text),
-                        textAlign = TextAlign.Start,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-
-                    Text(
-                        text = stringResource(R.string.contact_hours),
-                        color = MaterialTheme.colorScheme.primary
-                    )
-
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            imageVector = FontAwesomeIcons.Brands.Whatsapp,
+                            imageVector = Icons.Outlined.LocationOn,
                             contentDescription = null,
                             modifier = Modifier.size(dimensionResource(R.dimen.icon_small)),
-                            tint = Color(0xFF2E7D32)
+                            tint = ScaInterTheme.extendedColors.mainGreen.color
                         )
                         Spacer(modifier = Modifier.width(dimensionResource(R.dimen.padding_small)))
                         Text(
-                            text = "(+225) 0722446688",
+                            text = "Cocody, Abidjan, RCI.",
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Email,
+                            contentDescription = null,
+                            modifier = Modifier.size(dimensionResource(R.dimen.icon_small)),
+                            tint = ScaInterTheme.extendedColors.mainGreen.color
+                        )
+                        Spacer(modifier = Modifier.width(dimensionResource(R.dimen.padding_small)))
+                        Text(
+                            text = "info@scaintera.com",
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Phone,
+                            contentDescription = null,
+                            modifier = Modifier.size(dimensionResource(R.dimen.icon_small)),
+                            tint = ScaInterTheme.extendedColors.mainGreen.color
+                        )
+                        Spacer(modifier = Modifier.width(dimensionResource(R.dimen.padding_small)))
+                        Text(
+                            text = "(+225) 27 22 550 196",
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Public,
+                            contentDescription = null,
+                            modifier = Modifier.size(dimensionResource(R.dimen.icon_small)),
+                            tint = ScaInterTheme.extendedColors.mainGreen.color
+                        )
+                        Spacer(modifier = Modifier.width(dimensionResource(R.dimen.padding_small)))
+                        Text(
+                            text = "www.scaintera.com",
                             color = MaterialTheme.colorScheme.primary
                         )
                         Spacer(modifier = Modifier.weight(1f))
@@ -110,33 +167,6 @@ fun SupportScreen(
             }
         }
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun SupportTopAppBar(
-    modifier: Modifier = Modifier,
-    onBack: () -> Unit
-) {
-    CenterAlignedTopAppBar(
-        modifier = modifier,
-        title = {
-            Text(text = stringResource(R.string.page_support))
-        },
-        navigationIcon = {
-            IconButton(onClick = onBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.back_button)
-                )
-            }
-        },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = Color.Black,
-            titleContentColor = Color.White,
-            navigationIconContentColor = Color.White
-        )
-    )
 }
 
 @Preview(
