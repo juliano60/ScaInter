@@ -1,7 +1,9 @@
 package com.nanoporetech.scainter.ui.components
 
+import android.R.attr.text
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -137,6 +139,60 @@ data class CardItem(
     val value: String = "",
     val valueColor: Color? = null,
 )
+
+@Composable
+fun CardBodyTwoLines(
+    items: List<CardItem>,
+    modifier: Modifier = Modifier,
+    indentRight: Boolean = false,
+    keyIsBold: Boolean = true,
+    firstColumnWeight: Float = 0.4f,
+    secondColumnWeight: Float = 0.6f,
+) {
+    val paddingSmall = dimensionResource(R.dimen.padding_small)
+    val paddingXSmall = dimensionResource(R.dimen.padding_xsmall)
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(paddingSmall),
+        modifier = modifier) {
+        for (item in items) {
+            if (item.label.isNotBlank()) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(paddingXSmall),
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = item.label,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            fontWeight = if (keyIsBold) FontWeight.SemiBold else FontWeight.Normal,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier
+                                .weight(firstColumnWeight)
+                        )
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = item.value,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = item.valueColor ?: MaterialTheme.colorScheme.onPrimaryContainer,
+                            modifier = Modifier
+                                .weight(secondColumnWeight),
+                            textAlign = if (indentRight) TextAlign.End else TextAlign.Start
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
 
 @Composable
 fun CardBody(
@@ -478,6 +534,7 @@ fun PolicyHolderInfo(
     internalId: String,
     dateOfBirth: String,
     subscriberName: String,
+    coverPercent: String,
     contractType: String,
     modifier: Modifier = Modifier
 ) {
@@ -518,6 +575,12 @@ fun PolicyHolderInfo(
 
             Text(
                 text = displayedDate(dateOfBirth),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+
+            Text(
+                text = stringResource(R.string.coverage_label_and_value, coverPercent),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )

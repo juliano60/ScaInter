@@ -43,6 +43,7 @@ import com.nanoporetech.scainter.model.PolicyHolder
 import com.nanoporetech.scainter.model.imageUrl
 import com.nanoporetech.scainter.model.providerDisplayedName
 import com.nanoporetech.scainter.ui.components.CardBody
+import com.nanoporetech.scainter.ui.components.CardBodyTwoLines
 import com.nanoporetech.scainter.ui.components.CardHeader
 import com.nanoporetech.scainter.ui.components.CardItem
 import com.nanoporetech.scainter.ui.components.PolicyHolderInfo
@@ -72,6 +73,7 @@ fun PolicyHolderDetailsScreen(
             subscriberName = policyHolder.subscriberName,
             contractType = policyHolder.contractType,
             imageUrl = policyHolder.imageUrl,
+            coverPercent = policyHolder.coverExternal,
             modifier = Modifier
                 .fillMaxWidth()
         )
@@ -270,10 +272,6 @@ fun InsuranceInfo(
             valueColor = getStatusColor(policyHolder.providerStatus)
         ),
         CardItem(
-            stringResource(R.string.coverage_label),
-            policyHolder.coverExternal
-        ),
-        CardItem(
             stringResource(R.string.last_consultation_label),
             displayedDate(policyHolder.lastConsultationDate)
         ),
@@ -305,10 +303,8 @@ fun InsuranceInfo(
                     .padding(bottom = paddingMedium)
             )
 
-            CardBody(
+            CardBodyTwoLines(
                 items = items,
-                firstColumnWeight = 0.8f,
-                secondColumnWeight = 0.6f
             )
         }
     }

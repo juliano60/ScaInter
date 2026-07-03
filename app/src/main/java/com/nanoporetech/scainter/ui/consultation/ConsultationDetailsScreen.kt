@@ -62,6 +62,7 @@ fun ConsultationDetailsScreen(
             subscriberName = consultation.subscriberName,
             contractType = consultation.contractType,
             imageUrl = consultation.imageUrl,
+            coverPercent = consultation.percentageCoverage,
             modifier = Modifier
                 .fillMaxWidth()
         )

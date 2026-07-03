@@ -113,4 +113,5 @@
     <string name="sca_about_text">My SCA Prestataires is a mobile application that allows users to access healthcare services through a care network defined by the company SCA INTER A. This application is therefore a product of the SCA INTER A group.</string>
     <string name="our_contacts">Our contact details:</string>
     <string name="page_about">About</string>
+    <string name="coverage_label_and_value">Coverage %s</string>
 </resources>
