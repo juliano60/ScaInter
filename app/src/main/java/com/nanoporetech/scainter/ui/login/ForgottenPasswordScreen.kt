@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.outlined.HeadsetMic
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -36,9 +37,13 @@ import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.ui.components.CardHeader
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
+import com.nanoporetech.scainter.ui.theme.ScaInterTheme
 import compose.icons.FontAwesomeIcons
 import compose.icons.fontawesomeicons.Brands
+import compose.icons.fontawesomeicons.Solid
 import compose.icons.fontawesomeicons.brands.Whatsapp
+import compose.icons.fontawesomeicons.solid.Mobile
+import compose.icons.fontawesomeicons.solid.Phone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -90,21 +95,59 @@ fun ForgottenPasswordScreen(
                         text = stringResource(R.string.contact_hours),
                         color = MaterialTheme.colorScheme.primary)
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small)),
+                        modifier = Modifier
+                            .fillMaxWidth()
                     ) {
-                        Icon(
-                            imageVector = FontAwesomeIcons.Brands.Whatsapp,
-                            contentDescription = null,
-                            modifier = Modifier.size(dimensionResource(R.dimen.icon_small)),
-                            tint = Color(0xFF2E7D32) // green
-                        )
-                        Spacer(modifier = Modifier.width(dimensionResource(R.dimen.padding_small)))
-                        Text(
-                            "(+225) 0722446688",
-                            color = MaterialTheme.colorScheme.primary
-                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Phone,
+                                contentDescription = null,
+                                modifier = Modifier.size(dimensionResource(R.dimen.icon_small)),
+                                tint = ScaInterTheme.extendedColors.mainGreen.color
+                            )
+                            Spacer(modifier = Modifier.width(dimensionResource(R.dimen.padding_small)))
+                            Text(
+                                "(+225) 01 71 909032",
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Phone,
+                                contentDescription = null,
+                                modifier = Modifier.size(dimensionResource(R.dimen.icon_small)),
+                                tint = ScaInterTheme.extendedColors.mainGreen.color
+                            )
+                            Spacer(modifier = Modifier.width(dimensionResource(R.dimen.padding_small)))
+                            Text(
+                                "(+225) 01 71 909034",
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Phone,
+                                contentDescription = null,
+                                modifier = Modifier.size(dimensionResource(R.dimen.icon_small)),
+                                tint = ScaInterTheme.extendedColors.mainGreen.color
+                            )
+                            Spacer(modifier = Modifier.width(dimensionResource(R.dimen.padding_small)))
+                            Text(
+                                "(+225) 01 71 909005",
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
                     }
                 }
             }
@@ -141,8 +184,9 @@ fun ScaTopAppBar(
     )
 }
 
-
-@Preview
+@Preview(
+    locale = "fr-rCI",
+    showBackground = true)
 @Composable
 fun ForgottenPasswordScreenPreview() {
     ScaInterAppTheme() {

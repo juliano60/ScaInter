@@ -10,7 +10,7 @@
     <string name="remember_me">Remember me</string>
     <string name="login">Login</string>
     <string name="forgotten_password_title">Forgotten Password</string>
-    <string name="forgotten_password_text">Please use the number below to contact the technical support team.</string>
+    <string name="forgotten_password_text">For access, please contact the SCA INTER A IT Department at the following numbers:</string>
 
     <!-- SUPPORT PAGE -->
     <string name="contact_hours">Monday to Friday from 08h00 to 18h00</string>
