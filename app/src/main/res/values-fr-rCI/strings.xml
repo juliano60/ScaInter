@@ -110,8 +110,8 @@
     <string name="yes_button">Oui</string>
     <string name="confirmation_abort_prompt">Souhaitez-vous annuler l\'opération en cours ?</string>
     <string name="confirmation_exit_prompt">Quitter l\'application?</string>
-    <string name="sca_about_title">SCA INTER A Prestataires</string>
-    <string name="sca_about_text">My SCA Prestataires est une application mobile qui permet aux utilisateurs d\'accéder à des services de santé via un réseau de soins défini par la société SCA INTER A. Cette application est donc un produit du groupe SCA INTER A.</string>
+    <string name="sca_about_title">mySCA Prestataires</string>
+    <string name="sca_about_text">MySCA Prestataires est une application mobile qui permet aux utilisateurs d\'accéder à des services de santé via un réseau de soins défini par la société SCA INTER A. Cette application est donc un produit du groupe SCA INTER A.</string>
     <string name="our_contacts">Nos coordonnées:</string>
     <string name="page_about">À Propos</string>
     <string name="coverage_label_and_value">Couverture %s</string>
