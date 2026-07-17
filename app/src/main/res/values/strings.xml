@@ -114,4 +114,5 @@
     <string name="our_contacts">Our contact details:</string>
     <string name="page_about">About...</string>
     <string name="coverage_label_and_value">Coverage %s</string>
+    <string name="quantity_label">Quantity</string>
 </resources>

@@ -283,7 +283,7 @@ fun ConsultationDetailsScreenPreview() {
                 ConsultationDetailsScreen(
                     // 0-1 - with prescriptions
                     // 2 - without prescriptions
-                    consultation = DataSource.consultations()[1]
+                    consultation = DataSource.consultations()[2]
                 )
             }
         }

@@ -115,4 +115,5 @@
     <string name="our_contacts">Nos coordonnées:</string>
     <string name="page_about">À Propos de nous</string>
     <string name="coverage_label_and_value">Couverture %s</string>
+    <string name="quantity_label">Quantité</string>
 </resources>

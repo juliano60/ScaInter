@@ -280,7 +280,6 @@ fun InsuranceInfo(
                 stringResource(R.string.provider_label),
                 policyHolder.providerDisplayedName ?: stringResource(R.string.not_available)
             )
-
     )
 
     val paddingMedium = dimensionResource(R.dimen.padding_medium)

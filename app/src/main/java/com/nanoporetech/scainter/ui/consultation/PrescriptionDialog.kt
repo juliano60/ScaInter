@@ -1,35 +1,47 @@
 package com.nanoporetech.scainter.ui.consultation
 
-import android.R.attr.enabled
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,20 +64,39 @@ import com.nanoporetech.scainter.ui.components.PrimaryButton
 import com.nanoporetech.scainter.ui.components.PrimaryOutlinedTextField
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun PrescriptionDialog(
     act: String,
     doctor: String,
     affection: String,
-    medication: String,
-    selectedIndex: Int,
-    posology: String,
+    medication1: String,
+    selectedIndex1: Int,
+    posology1: String,
+    medication2: String,
+    selectedIndex2: Int,
+    posology2: String,
+    medication3: String,
+    selectedIndex3: Int,
+    posology3: String,
+    medication4: String,
+    selectedIndex4: Int,
+    posology4: String,
     modifier: Modifier = Modifier,
     onDoctorChanged: (String) -> Unit = {},
     onAffectionChanged: (String) -> Unit = {},
-    onMedicationChanged: (String) -> Unit = {},
-    onQuantityChanged: (Int) -> Unit = {},
-    onPosologyChanged: (String) -> Unit = {},
+    onMedication1Changed: (String) -> Unit = {},
+    onQuantity1Changed: (Int) -> Unit = {},
+    onPosology1Changed: (String) -> Unit = {},
+    onMedication2Changed: (String) -> Unit = {},
+    onQuantity2Changed: (Int) -> Unit = {},
+    onPosology2Changed: (String) -> Unit = {},
+    onMedication3Changed: (String) -> Unit = {},
+    onQuantity3Changed: (Int) -> Unit = {},
+    onPosology3Changed: (String) -> Unit = {},
+    onMedication4Changed: (String) -> Unit = {},
+    onQuantity4Changed: (Int) -> Unit = {},
+    onPosology4Changed: (String) -> Unit = {},
     onDismissRequest: () -> Unit = {},
     onAddPrescription: () -> Unit = {}
 ) {
@@ -76,16 +107,23 @@ fun PrescriptionDialog(
     Dialog(
         onDismissRequest = onDismissRequest,
     ) {
-        Card(
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
-            modifier = modifier
-        ) {
-            Box {
-                Column(
-                    modifier = Modifier
-                        .padding(paddingMedium)
-                        .fillMaxWidth()
-                ) {
+        BoxWithConstraints {
+            val scrollState = rememberScrollState()
+            val maxDialogHeight = maxHeight * 0.9f
+
+            Card(
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
+                modifier = modifier
+                    .fillMaxWidth()
+                    .heightIn(max = maxDialogHeight)
+            ) {
+                Box {
+                    Column(
+                        modifier = Modifier
+                            .padding(paddingMedium)
+                            .fillMaxWidth()
+                            .verticalScroll(scrollState)
+                    ) {
                     Spacer(modifier = Modifier.height(paddingMedium))
 
                     // SECTION TITLE
@@ -152,29 +190,141 @@ fun PrescriptionDialog(
 
                     Spacer(modifier = Modifier.height(paddingSmall))
 
-                    // MEDICATION
+                    // MEDICATION #1
                     PredictiveTextField(
-                        value = medication,
+                        value = medication1,
                         placeholder = stringResource(R.string.medication_hint),
                         suggestions = Medicine.load(context = LocalContext.current),
-                        onValueChanged = onMedicationChanged,
+                        onValueChanged = onMedication1Changed,
                         modifier = Modifier.fillMaxWidth()
                     )
 
                     Spacer(modifier = Modifier.height(paddingSmall))
 
                     // QUANTITY
-                    QuantityPicker(
-                        selectedIndex = selectedIndex,
-                        onQuantityChanged = onQuantityChanged,
+                    QuantityDropdown(
+                        quantities = listOf(1, 2, 3, 4),
+                        selectedIndex = selectedIndex1,
+                        onQuantityChanged = onQuantity1Changed,
                         modifier = Modifier.fillMaxWidth()
                     )
 
                     // POSOLOGY
                     PrimaryOutlinedTextField(
-                        value = posology,
+                        value = posology1,
                         placeholder = stringResource(R.string.posology_hint),
-                        onValueChanged = onPosologyChanged,
+                        onValueChanged = onPosology1Changed,
+                        modifier = Modifier.fillMaxWidth(),
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            imeAction = ImeAction.Done,
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = { onAddPrescription() }
+                        ),
+                    )
+
+                    Spacer(modifier = Modifier.height(paddingMedium))
+                    HorizontalDivider()
+                    Spacer(modifier = Modifier.height(paddingMedium))
+
+                    // MEDICATION #2
+                    PredictiveTextField(
+                        value = medication2,
+                        placeholder = stringResource(R.string.medication_hint),
+                        suggestions = Medicine.load(context = LocalContext.current),
+                        onValueChanged = onMedication2Changed,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(paddingSmall))
+
+                    // QUANTITY
+                    QuantityDropdown(
+                        quantities = listOf(1, 2, 3, 4),
+                        selectedIndex = selectedIndex2,
+                        onQuantityChanged = onQuantity2Changed,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    // POSOLOGY
+                    PrimaryOutlinedTextField(
+                        value = posology2,
+                        placeholder = stringResource(R.string.posology_hint),
+                        onValueChanged = onPosology2Changed,
+                        modifier = Modifier.fillMaxWidth(),
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            imeAction = ImeAction.Done,
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = { onAddPrescription() }
+                        ),
+                    )
+
+                    Spacer(modifier = Modifier.height(paddingMedium))
+                    HorizontalDivider()
+                    Spacer(modifier = Modifier.height(paddingMedium))
+
+                    // MEDICATION #3
+                    PredictiveTextField(
+                        value = medication3,
+                        placeholder = stringResource(R.string.medication_hint),
+                        suggestions = Medicine.load(context = LocalContext.current),
+                        onValueChanged = onMedication3Changed,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(paddingSmall))
+
+                    // QUANTITY
+                    QuantityDropdown(
+                        quantities = listOf(1, 2, 3, 4),
+                        selectedIndex = selectedIndex3,
+                        onQuantityChanged = onQuantity3Changed,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    // POSOLOGY
+                    PrimaryOutlinedTextField(
+                        value = posology3,
+                        placeholder = stringResource(R.string.posology_hint),
+                        onValueChanged = onPosology3Changed,
+                        modifier = Modifier.fillMaxWidth(),
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            imeAction = ImeAction.Done,
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = { onAddPrescription() }
+                        ),
+                    )
+
+                    Spacer(modifier = Modifier.height(paddingMedium))
+                    HorizontalDivider()
+                    Spacer(modifier = Modifier.height(paddingMedium))
+
+                    // MEDICATION #4
+                    PredictiveTextField(
+                        value = medication4,
+                        placeholder = stringResource(R.string.medication_hint),
+                        suggestions = Medicine.load(context = LocalContext.current),
+                        onValueChanged = onMedication4Changed,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(paddingSmall))
+
+                    // QUANTITY
+                    QuantityDropdown(
+                        quantities = listOf(1, 2, 3, 4),
+                        selectedIndex = selectedIndex4,
+                        onQuantityChanged = onQuantity4Changed,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    // POSOLOGY
+                    PrimaryOutlinedTextField(
+                        value = posology4,
+                        placeholder = stringResource(R.string.posology_hint),
+                        onValueChanged = onPosology4Changed,
                         modifier = Modifier.fillMaxWidth(),
                         keyboardOptions = KeyboardOptions.Default.copy(
                             imeAction = ImeAction.Done,
@@ -195,29 +345,30 @@ fun PrescriptionDialog(
                         onClick = onAddPrescription,
                         enabled = doctor.isNotBlank() &&
                                 affection.isNotBlank() &&
-                                medication.isNotBlank(),
+                                medication1.isNotBlank(),
                         modifier = Modifier
                             .fillMaxWidth()
                     )
-                }
+                    }
 
-                // DISMISS BUTTON
-                IconButton(
-                    onClick = onDismissRequest,
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(8.dp)
-                        .clip(CircleShape)
-                        .background(
-                            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.8f)
+                    // DISMISS BUTTON
+                    IconButton(
+                        onClick = onDismissRequest,
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(8.dp)
+                            .clip(CircleShape)
+                            .background(
+                                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.8f)
+                            )
+                            .size(36.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Close,
+                            contentDescription = stringResource(R.string.close_button),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
-                        .size(36.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.Close,
-                        contentDescription = stringResource(R.string.close_button),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    }
                 }
             }
         }
@@ -250,6 +401,51 @@ fun QuantityPicker(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun QuantityDropdown(
+    quantities: List<Int>,
+    selectedIndex: Int,
+    onQuantityChanged: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded },
+        modifier = modifier
+    ) {
+        OutlinedTextField(
+            value = quantities[selectedIndex].toString(),
+            onValueChange = {},
+            readOnly = true,
+            label = { Text("Quantity") },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded)
+            },
+            modifier = Modifier
+                .menuAnchor()
+                .fillMaxWidth()
+        )
+
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            quantities.forEachIndexed { index, quantity ->
+                DropdownMenuItem(
+                    text = { Text(quantity.toString()) },
+                    onClick = {
+                        onQuantityChanged(index)
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+}
+
 @Preview(
     locale = "fr-rCI",
     showBackground = true)
@@ -264,9 +460,18 @@ fun PrescriptionDialogPreview() {
                 act = "Neurology",
                 doctor = "",
                 affection = "",
-                medication = "",
-                posology = "",
-                selectedIndex = 0
+                medication1 = "",
+                posology1 = "",
+                selectedIndex1 = 0,
+                medication2 = "",
+                posology2 = "",
+                selectedIndex2 = 0,
+                medication3 = "",
+                posology3 = "",
+                selectedIndex3 = 0,
+                medication4 = "",
+                posology4 = "",
+                selectedIndex4 = 0,
             )
         }
     }

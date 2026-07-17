@@ -39,37 +39,110 @@ class MedicalPrescriptionViewModel(
         }
     }
 
-    fun setPosology(value: String) {
+    fun setPosology4(value: String) {
         _uiState.update {
-            it.copy(posology = value)
+            it.copy(posology4 = value)
         }
     }
 
-    fun setQuantity(index: Int) {
+    fun setQuantity4(index: Int) {
         _uiState.update {
-            it.copy(quantityIndex = index)
+            it.copy(quantityIndex4 = index)
         }
     }
 
-    fun setMedication(value: String) {
+    fun setMedication4(value: String) {
         _uiState.update {
-            it.copy(medication = value)
+            it.copy(medication4 = value)
+        }
+    }
+
+    fun setPosology3(value: String) {
+        _uiState.update {
+            it.copy(posology3 = value)
+        }
+    }
+
+    fun setQuantity3(index: Int) {
+        _uiState.update {
+            it.copy(quantityIndex3 = index)
+        }
+    }
+
+    fun setMedication3(value: String) {
+        _uiState.update {
+            it.copy(medication3 = value)
+        }
+    }
+
+    fun setPosology2(value: String) {
+        _uiState.update {
+            it.copy(posology2 = value)
+        }
+    }
+
+    fun setQuantity2(index: Int) {
+        _uiState.update {
+            it.copy(quantityIndex2 = index)
+        }
+    }
+
+    fun setMedication2(value: String) {
+        _uiState.update {
+            it.copy(medication2 = value)
+        }
+    }
+
+    fun setPosology1(value: String) {
+        _uiState.update {
+            it.copy(posology1 = value)
+        }
+    }
+
+    fun setQuantity1(index: Int) {
+        _uiState.update {
+            it.copy(quantityIndex1 = index)
+        }
+    }
+
+    fun setMedication1(value: String) {
+        _uiState.update {
+            it.copy(medication1 = value)
         }
     }
 
     fun addPrescription() {
-        val currentState = _uiState.value
+        val state = _uiState.value
 
-        val prescription = Prescription(
-            name = _uiState.value.medication,
-            quantityIndex = _uiState.value.quantityIndex,
-            posology = _uiState.value.posology
+        val newPrescriptions = listOf(
+            Prescription(
+                name = state.medication1,
+                quantityIndex = state.quantityIndex1,
+                posology = state.posology1
+            ),
+            Prescription(
+                name = state.medication2,
+                quantityIndex = state.quantityIndex2,
+                posology = state.posology2
+            ),
+            Prescription(
+                name = state.medication3,
+                quantityIndex = state.quantityIndex3,
+                posology = state.posology3
+            ),
+            Prescription(
+                name = state.medication4,
+                quantityIndex = state.quantityIndex4,
+                posology = state.posology4
+            )
         )
 
-        val updatedPrescriptions = currentState.prescriptions
-            // Overwrite old prescription with new one
-            .filterNot { it.name == prescription.name }
-            .plus(prescription)
+        val namesToReplace = newPrescriptions
+            .mapTo(mutableSetOf()) { it.name }
+
+        val updatedPrescriptions =
+            state.prescriptions.filterNot { it.name in namesToReplace } +
+                    newPrescriptions
 
         if (updatedPrescriptions.size > MAX_PRESCRIPTIONS) {
             return
@@ -102,9 +175,9 @@ class MedicalPrescriptionViewModel(
     fun openDialog() {
         _uiState.update {
             it.copy(
-                medication = "",
-                quantityIndex = 0,
-                posology = "",
+                //medication = "",
+                //quantityIndex = 0,
+                //posology = "",
                 isDialogOpen = true)
         }
     }
@@ -118,9 +191,9 @@ class MedicalPrescriptionViewModel(
     fun editPrescription(prescription: Prescription) {
         _uiState.update {
             it.copy(
-                medication = prescription.name,
-                quantityIndex = prescription.quantityIndex,
-                posology = prescription.posology,
+                //medication = prescription.name,
+                //quantityIndex = prescription.quantityIndex,
+                //posology = prescription.posology,
                 isDialogOpen = true
             )
         }
