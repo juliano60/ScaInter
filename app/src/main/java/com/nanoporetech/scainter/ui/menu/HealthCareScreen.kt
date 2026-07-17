@@ -33,10 +33,10 @@ fun HealthCareScreen(
     onViewExaminations: () -> Unit = {},
     onViewHospitalisations: () -> Unit = {},
 ) {
-    val spacingLarge = dimensionResource(R.dimen.vertical_spacing_xlarge)
+    val spacingMedium = dimensionResource(R.dimen.vertical_spacing_medium)
 
     Column(
-        verticalArrangement = Arrangement.spacedBy(spacingLarge),
+        verticalArrangement = Arrangement.spacedBy(spacingMedium),
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
@@ -46,7 +46,7 @@ fun HealthCareScreen(
             title = provider.displayedName,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(all = dimensionResource(R.dimen.padding_small))
+                .padding(all = dimensionResource(R.dimen.padding_xsmall))
         )
 
         // CONSULTATION MENU

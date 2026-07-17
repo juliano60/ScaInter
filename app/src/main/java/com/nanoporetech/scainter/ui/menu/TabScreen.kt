@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
@@ -553,36 +554,42 @@ private fun DockBottomNavigationBar(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .windowInsetsPadding(WindowInsets.navigationBars)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        contentAlignment = Alignment.BottomCenter
+            .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Horizontal))
     ) {
-        Surface(
-            shape = RoundedCornerShape(24.dp),
-            tonalElevation = 6.dp,
-            shadowElevation = 10.dp,
+        Box(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(horizontal = 16.dp, vertical = 6.dp)
+                .offset(y = (-8).dp)
         ) {
-            NavigationBar(
-                modifier = Modifier.widthIn(max = 300.dp),
-                containerColor = MaterialTheme.colorScheme.surface,
-                tonalElevation = 0.dp,
+            Surface(
+                shape = RoundedCornerShape(24.dp),
+                tonalElevation = 6.dp,
+                shadowElevation = 10.dp,
             ) {
-                tabs.forEach { tab ->
-                    NavigationBarItem(
-                        selected = when (tab.route) {
-                            ScaAppScreen.HealthCareDashboard.name ->
-                                currentRoute != ScaAppScreen.Support.name
-                            else -> currentRoute == tab.route
-                        },
-                        onClick = { onTabPressed(tab.route) },
-                        icon = { Icon(
-                            imageVector = tab.icon,
-                            contentDescription = tab.label,
-                            modifier = Modifier.size(28.dp)
-                        )},
-                        label = { Text(tab.label) },
-                        alwaysShowLabel = true
-                    )
+                NavigationBar(
+                    modifier = Modifier.widthIn(max = 300.dp),
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    tonalElevation = 0.dp,
+                    windowInsets = WindowInsets(0, 0, 0, 0),
+                ) {
+                    tabs.forEach { tab ->
+                        NavigationBarItem(
+                            selected = when (tab.route) {
+                                ScaAppScreen.HealthCareDashboard.name ->
+                                    currentRoute != ScaAppScreen.Support.name
+                                else -> currentRoute == tab.route
+                            },
+                            onClick = { onTabPressed(tab.route) },
+                            icon = { Icon(
+                                imageVector = tab.icon,
+                                contentDescription = tab.label,
+                                modifier = Modifier.size(28.dp)
+                            )},
+                            label = { Text(tab.label) },
+                            alwaysShowLabel = true
+                        )
+                    }
                 }
             }
         }
