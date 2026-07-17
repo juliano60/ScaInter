@@ -20,7 +20,7 @@ data class PolicyHolder(
     val picture: String?,
     val providerStatus: String,
     val lastConsultationType: String?,
-    val lastConsultationDate: String,
+    val lastConsultationDate: String?,
     val providerName: String?,
     val consommationTotal: Double,
     val plafond: Double,

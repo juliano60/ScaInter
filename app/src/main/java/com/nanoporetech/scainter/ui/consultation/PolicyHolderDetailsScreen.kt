@@ -270,15 +270,15 @@ fun InsuranceInfo(
         ),
         CardItem(
             stringResource(R.string.last_consultation_label),
-            displayedDate(policyHolder.lastConsultationDate)
+            displayedDate(policyHolder.lastConsultationDate) ?: stringResource(R.string.not_available)
         ),
             CardItem(
                 stringResource(R.string.type_label),
-                policyHolder.lastConsultationType ?: "N/A"
+                policyHolder.lastConsultationType ?: stringResource(R.string.not_available)
             ),
             CardItem(
                 stringResource(R.string.provider_label),
-                policyHolder.providerDisplayedName ?: "N/A"
+                policyHolder.providerDisplayedName ?: stringResource(R.string.not_available)
             )
 
     )

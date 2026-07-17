@@ -21,7 +21,11 @@ fun displayedDateAndTime(date: String): String {
 }
 
 @Composable
-fun displayedDate(date: String): String {
+fun displayedDate(date: String?): String? {
+    if (date == null) {
+        return null
+    }
+
     val parsed = dateFromISOString(date)
     return if (parsed != null) {
         formatDate(parsed)
