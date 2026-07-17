@@ -272,14 +272,15 @@ fun InsuranceInfo(
             stringResource(R.string.last_consultation_label),
             displayedDate(policyHolder.lastConsultationDate)
         ),
-        CardItem(
-            stringResource(R.string.type_label),
-            policyHolder.lastConsultationType
-        ),
-        CardItem(
-            stringResource(R.string.provider_label),
-            policyHolder.providerDisplayedName
-        )
+            CardItem(
+                stringResource(R.string.type_label),
+                policyHolder.lastConsultationType ?: "N/A"
+            ),
+            CardItem(
+                stringResource(R.string.provider_label),
+                policyHolder.providerDisplayedName ?: "N/A"
+            )
+
     )
 
     val paddingMedium = dimensionResource(R.dimen.padding_medium)

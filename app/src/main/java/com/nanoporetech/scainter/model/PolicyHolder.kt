@@ -19,9 +19,9 @@ data class PolicyHolder(
     val insuranceStatus: String,
     val picture: String?,
     val providerStatus: String,
-    val lastConsultationType: String,
+    val lastConsultationType: String?,
     val lastConsultationDate: String,
-    val providerName: String,
+    val providerName: String?,
     val consommationTotal: Double,
     val plafond: Double,
     val isConsommationLimitReached: Boolean,
@@ -38,8 +38,12 @@ val PolicyHolder.imageUrl: String
         return "${appConfig.httpProtocol}://${appConfig.hostname}${appConfig.imagesPath}/$internalId.jpg"
     }
 
-val PolicyHolder.providerDisplayedName: String
+val PolicyHolder.providerDisplayedName: String?
     get() {
+        if (providerName == null) {
+            return null
+        }
+
         val fragments = providerName.split(
             Regex("\\s+|'|’")
         )

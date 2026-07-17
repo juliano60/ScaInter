@@ -11,16 +11,10 @@ interface AppContainer {
     val scaDataRepository: ScaDataRepository
 }
 
-class DefaultAppContainer: AppContainer {
+class DefaultAppContainer(
+    private val okHttpClient: OkHttpClient = createLoggingOkHttpClient()
+) : AppContainer {
     private val baseUrl = "http://138.68.160.209/centredesantetout/"
-
-    private val loggingInterceptor = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
-    }
-
-    private val okHttpClient = OkHttpClient.Builder()
-        .addInterceptor(loggingInterceptor)
-        .build()
 
     private val retrofit = Retrofit.Builder()
         .baseUrl(baseUrl)
@@ -34,5 +28,17 @@ class DefaultAppContainer: AppContainer {
 
     override val scaDataRepository: ScaDataRepository by lazy {
         ScaNetworkDataRepository(retrofitService)
+    }
+
+    private companion object {
+        fun createLoggingOkHttpClient(): OkHttpClient {
+            return OkHttpClient.Builder()
+                .addInterceptor(
+                    HttpLoggingInterceptor().apply {
+                        level = HttpLoggingInterceptor.Level.BODY
+                    }
+                )
+                .build()
+        }
     }
 }
