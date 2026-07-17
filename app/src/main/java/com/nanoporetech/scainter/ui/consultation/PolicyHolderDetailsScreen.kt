@@ -248,10 +248,8 @@ private fun isCostSpecified(cost: String): Boolean {
 }
 
 @Composable
-private fun getStatusColor(status: String) = when(status) {
-    "Actif" -> Color(0xFF19bd04)  // green
-    "Non-Actif" -> MaterialTheme.colorScheme.error
-    else -> MaterialTheme.colorScheme.onPrimaryContainer
+private fun getStatusColor(status: String): Color {
+    return Color.Red
 }
 
 @Composable

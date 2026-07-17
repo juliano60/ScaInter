@@ -123,7 +123,7 @@ fun CodeScannerScreen(
 
         // DEBUG INPUT FOR EMULATOR TESTING
 
-        /*if (BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.TopCenter
@@ -166,8 +166,8 @@ fun CodeScannerScreen(
                         Text("Scan")
                     }
                 }
-            }*/
-        //}
+            }
+        }
 
         // Simple overlay UI based on scan state
         when (val s = scanState) {
