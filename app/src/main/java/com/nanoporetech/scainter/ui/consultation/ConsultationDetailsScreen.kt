@@ -36,6 +36,8 @@ import com.nanoporetech.scainter.ui.components.CardHeader
 import com.nanoporetech.scainter.ui.components.CardHeaderDrawable
 import com.nanoporetech.scainter.ui.components.CardItem
 import com.nanoporetech.scainter.ui.components.PolicyHolderInfo
+import com.nanoporetech.scainter.ui.components.PrescriptionCardBody
+import com.nanoporetech.scainter.ui.components.PrescriptionCardItem
 import com.nanoporetech.scainter.ui.components.PrimaryButton
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.utils.capitalized
@@ -190,20 +192,24 @@ fun PrescriptionDetails(
     consultation: Consultation,
     modifier: Modifier = Modifier
 ) {
-    val items = mutableListOf<CardItem>()
+    val items = mutableListOf<PrescriptionCardItem>()
 
-    fun addIfNotEmpty(key: String?, value: Int) {
+    fun addIfNotEmpty(key: String?, quantity: Int, posology: String) {
         if (!key.isNullOrBlank()) {
-            items.add(CardItem(label = key.capitalized(), value.toString()))
+            items.add(PrescriptionCardItem(
+                name = key.capitalized(),
+                quantity = quantity.toString(),
+                posology = posology
+            ))
         }
     }
 
-    addIfNotEmpty(consultation.prescription, consultation.quantity)
-    addIfNotEmpty(consultation.prescription1, consultation.quantity1)
-    addIfNotEmpty(consultation.prescription2, consultation.quantity2)
-    addIfNotEmpty(consultation.prescription3, consultation.quantity3)
+    addIfNotEmpty(consultation.prescription, consultation.quantity, consultation.posology)
+    addIfNotEmpty(consultation.prescription1, consultation.quantity1, consultation.posology1)
+    addIfNotEmpty(consultation.prescription2, consultation.quantity2, consultation.posology2)
+    addIfNotEmpty(consultation.prescription3, consultation.quantity3, consultation.posology3)
 
-    CardBody(
+    PrescriptionCardBody(
         items = items,
         firstColumnWeight = 0.9f,
         secondColumnWeight = 0.1f,

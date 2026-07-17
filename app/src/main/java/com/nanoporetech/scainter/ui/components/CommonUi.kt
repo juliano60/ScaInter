@@ -190,6 +190,62 @@ fun CardBodyTwoLines(
     }
 }
 
+data class PrescriptionCardItem(
+    val name: String = "",
+    val quantity: String = "",
+    val posology: String = "",
+    val valueColor: Color? = null,
+)
+
+@Composable
+fun PrescriptionCardBody(
+    items: List<PrescriptionCardItem>,
+    modifier: Modifier = Modifier,
+    indentRight: Boolean = false,
+    keyIsBold: Boolean = true,
+    firstColumnWeight: Float = 0.4f,
+    secondColumnWeight: Float = 0.6f,
+) {
+    Column(modifier) {
+        for (item in items) {
+            Row(modifier = Modifier
+                .fillMaxWidth()
+            ) {
+                Text(
+                    text = item.name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    fontWeight = if (keyIsBold) FontWeight.SemiBold else FontWeight.Normal,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .weight(firstColumnWeight)
+                )
+                Text(
+                    text = item.quantity,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = item.valueColor ?: MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier
+                        .weight(secondColumnWeight),
+                    textAlign = if (indentRight) TextAlign.End else TextAlign.Start
+                )
+            }
+            Row(modifier = Modifier
+                .fillMaxWidth()
+            ) {
+                Text(
+                    text = item.posology,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    fontWeight = FontWeight.Normal,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        }
+    }
+}
+
 @Composable
 fun CardBody(
     items: List<CardItem>,
