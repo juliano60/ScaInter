@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
+import com.nanoporetech.scainter.ui.theme.ScaInterTheme
 
 @Composable
 fun NewConsultationScreen(
@@ -50,7 +51,7 @@ fun NewConsultationScreen(
                 Icon(
                     imageVector = Icons.Filled.QrCodeScanner,
                     contentDescription = stringResource(R.string.scan_qr_code),
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = ScaInterTheme.extendedColors.mainGreen.color,
                     modifier = Modifier
                         .size(dimensionResource(R.dimen.scanner_icon_size))
                 )
@@ -59,7 +60,7 @@ fun NewConsultationScreen(
             Text(
                 text = stringResource(R.string.scan_qr_code),
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary,
+                color = ScaInterTheme.extendedColors.mainGreen.color,
                 modifier = Modifier
                     .padding(vertical = dimensionResource(R.dimen.padding_small))
             )

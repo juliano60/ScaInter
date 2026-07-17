@@ -389,16 +389,16 @@ fun PrimarySwitch(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
-    Switch(
-        checked = checked,
-        onCheckedChange = onCheckedChange,
-        colors = SwitchDefaults.colors(
-            checkedTrackColor = ScaInterTheme.extendedColors.mainGreen.color,
-            uncheckedTrackColor = MaterialTheme.colorScheme.surface,
-            checkedBorderColor = MaterialTheme.colorScheme.primary,
-            uncheckedBorderColor =MaterialTheme.colorScheme.outlineVariant,
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            colors = SwitchDefaults.colors(
+                checkedTrackColor = ScaInterTheme.extendedColors.mainGreen.color,
+                uncheckedTrackColor = MaterialTheme.colorScheme.surface,
+                checkedBorderColor = ScaInterTheme.extendedColors.mainGreen.color,
+                uncheckedBorderColor =MaterialTheme.colorScheme.outlineVariant,
+            )
         )
-    )
 }
 
 @Composable
@@ -532,7 +532,6 @@ fun PolicyHolderInfo(
     imageUrl: String,
     name: String,
     internalId: String,
-    dateOfBirth: String,
     subscriberName: String,
     coverPercent: String,
     contractType: String,
@@ -572,12 +571,6 @@ fun PolicyHolderInfo(
                     style = MaterialTheme.typography.bodyLarge
                 )
             }
-
-            Text(
-                text = displayedDate(dateOfBirth),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
 
             Text(
                 text = stringResource(R.string.coverage_label_and_value, coverPercent),
@@ -621,8 +614,8 @@ fun PolicyHolderAvatar(
                         .matchParentSize()
                         .clip(CircleShape)
                         .graphicsLayer {
-                            scaleX = 1.2f
-                            scaleY = 1.2f
+                            scaleX = 1.1f
+                            scaleY = 1.1f
                         }
                 )
             },
@@ -635,8 +628,8 @@ fun PolicyHolderAvatar(
                         .matchParentSize()
                         .clip(CircleShape)
                         .graphicsLayer {
-                            scaleX = 1.2f
-                            scaleY = 1.2f
+                            scaleX = 1.1f
+                            scaleY = 1.1f
                         }
                 )
             },

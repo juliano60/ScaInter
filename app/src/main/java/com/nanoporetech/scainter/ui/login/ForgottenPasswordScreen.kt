@@ -81,19 +81,19 @@ fun ForgottenPasswordScreen(
                     CardHeader(
                         title = stringResource(R.string.sca_technical_support),
                         iconImg = Icons.Outlined.HeadsetMic,
-                        color = MaterialTheme.colorScheme.primary,
+                        color = ScaInterTheme.extendedColors.mainGreen.color,
                         modifier = Modifier.fillMaxWidth()
                     )
 
                     Text(
                         text = stringResource(R.string.forgotten_password_text),
                         textAlign = TextAlign.Start,
-                        color = MaterialTheme.colorScheme.primary
+                        color = ScaInterTheme.extendedColors.mainGreen.color
                     )
 
                     Text(
                         text = stringResource(R.string.contact_hours),
-                        color = MaterialTheme.colorScheme.primary)
+                        color = ScaInterTheme.extendedColors.mainGreen.color)
 
                     Column(
                         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small)),
@@ -113,7 +113,7 @@ fun ForgottenPasswordScreen(
                             Spacer(modifier = Modifier.width(dimensionResource(R.dimen.padding_small)))
                             Text(
                                 "(+225) 01 71 909032",
-                                color = MaterialTheme.colorScheme.primary
+                                color = ScaInterTheme.extendedColors.mainGreen.color
                             )
                         }
                         Row(
@@ -129,7 +129,7 @@ fun ForgottenPasswordScreen(
                             Spacer(modifier = Modifier.width(dimensionResource(R.dimen.padding_small)))
                             Text(
                                 "(+225) 01 71 909034",
-                                color = MaterialTheme.colorScheme.primary
+                                color = ScaInterTheme.extendedColors.mainGreen.color
                             )
                         }
                         Row(
@@ -145,7 +145,7 @@ fun ForgottenPasswordScreen(
                             Spacer(modifier = Modifier.width(dimensionResource(R.dimen.padding_small)))
                             Text(
                                 "(+225) 01 71 909005",
-                                color = MaterialTheme.colorScheme.primary
+                                color = ScaInterTheme.extendedColors.mainGreen.color
                             )
                         }
                     }

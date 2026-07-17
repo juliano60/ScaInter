@@ -46,6 +46,7 @@ import com.nanoporetech.scainter.data.DataSource
 import com.nanoporetech.scainter.model.FamilyMember
 import com.nanoporetech.scainter.ui.components.SubHeader
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
+import com.nanoporetech.scainter.ui.theme.ScaInterTheme
 
 @Composable
 fun ConsultationFamilyMembersListScreen(
@@ -101,7 +102,7 @@ fun ConsultationFamilyMembersListContent(
                     Icon(
                         imageVector = Icons.Filled.QrCodeScanner,
                         contentDescription = stringResource(R.string.scan_qr_code),
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = ScaInterTheme.extendedColors.mainGreen.color,
                         modifier = Modifier
                             .size(80.dp)
                     )
@@ -112,7 +113,7 @@ fun ConsultationFamilyMembersListContent(
                 text = stringResource(R.string.scan_qr_code),
                 style = MaterialTheme.typography.headlineSmall,
                 fontSize = 18.sp,
-                color = MaterialTheme.colorScheme.primary,
+                color = ScaInterTheme.extendedColors.mainGreen.color,
                 fontWeight = FontWeight.SemiBold,
             )
         }
@@ -191,7 +192,7 @@ fun MemberRowItem(
 
                 Text(
                     text = member.link,
-                    color = MaterialTheme.colorScheme.primary
+                    color = ScaInterTheme.extendedColors.mainGreen.color,
                 )
             }
 

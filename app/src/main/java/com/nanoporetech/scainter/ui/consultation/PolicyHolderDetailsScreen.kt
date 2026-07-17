@@ -69,7 +69,6 @@ fun PolicyHolderDetailsScreen(
         PolicyHolderInfo(
             name = policyHolder.fullname,
             internalId = policyHolder.internalId,
-            dateOfBirth = policyHolder.dateOfBirth,
             subscriberName = policyHolder.subscriberName,
             contractType = policyHolder.contractType,
             imageUrl = policyHolder.imageUrl,

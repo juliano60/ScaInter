@@ -1,14 +1,19 @@
 package com.nanoporetech.scainter.ui.menu
 
+import android.R.attr.bottom
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
@@ -555,12 +560,12 @@ private fun DockBottomNavigationBar(
         Surface(
             shape = RoundedCornerShape(24.dp),
             tonalElevation = 6.dp,
-            shadowElevation = 10.dp
+            shadowElevation = 10.dp,
         ) {
             NavigationBar(
                 modifier = Modifier.widthIn(max = 300.dp),
                 containerColor = MaterialTheme.colorScheme.surface,
-                tonalElevation = 0.dp
+                tonalElevation = 0.dp,
             ) {
                 tabs.forEach { tab ->
                     NavigationBarItem(

@@ -82,13 +82,13 @@ fun SupportScreen(
                 Text(
                     text = stringResource(R.string.sca_about_text),
                     textAlign = TextAlign.Justify,
-                    color = MaterialTheme.colorScheme.primary,
+                    color = ScaInterTheme.extendedColors.mainGreen.color,
                     lineHeight = 32.sp
                 )
 
                 Text(
                     text = stringResource(R.string.our_contacts),
-                    color = MaterialTheme.colorScheme.primary
+                    color = ScaInterTheme.extendedColors.mainGreen.color
                 )
 
                 Column(
@@ -108,7 +108,7 @@ fun SupportScreen(
                         Spacer(modifier = Modifier.width(dimensionResource(R.dimen.padding_small)))
                         Text(
                             text = "Cocody, Abidjan, RCI.",
-                            color = MaterialTheme.colorScheme.primary
+                            color = ScaInterTheme.extendedColors.mainGreen.color
                         )
                         Spacer(modifier = Modifier.weight(1f))
                     }
@@ -125,7 +125,7 @@ fun SupportScreen(
                         Spacer(modifier = Modifier.width(dimensionResource(R.dimen.padding_small)))
                         Text(
                             text = "info@scaintera.com",
-                            color = MaterialTheme.colorScheme.primary
+                            color = ScaInterTheme.extendedColors.mainGreen.color
                         )
                         Spacer(modifier = Modifier.weight(1f))
                     }
@@ -142,7 +142,7 @@ fun SupportScreen(
                         Spacer(modifier = Modifier.width(dimensionResource(R.dimen.padding_small)))
                         Text(
                             text = "(+225) 27 22 550 196",
-                            color = MaterialTheme.colorScheme.primary
+                            color = ScaInterTheme.extendedColors.mainGreen.color
                         )
                         Spacer(modifier = Modifier.weight(1f))
                     }
@@ -159,7 +159,7 @@ fun SupportScreen(
                         Spacer(modifier = Modifier.width(dimensionResource(R.dimen.padding_small)))
                         Text(
                             text = "www.scaintera.com",
-                            color = MaterialTheme.colorScheme.primary
+                            color = ScaInterTheme.extendedColors.mainGreen.color
                         )
                         Spacer(modifier = Modifier.weight(1f))
                     }

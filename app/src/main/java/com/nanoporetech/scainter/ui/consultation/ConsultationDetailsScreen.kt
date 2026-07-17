@@ -31,6 +31,7 @@ import com.nanoporetech.scainter.model.Consultation
 import com.nanoporetech.scainter.model.imageUrl
 import com.nanoporetech.scainter.model.prescriptions
 import com.nanoporetech.scainter.ui.components.CardBody
+import com.nanoporetech.scainter.ui.components.CardBodyTwoLines
 import com.nanoporetech.scainter.ui.components.CardHeader
 import com.nanoporetech.scainter.ui.components.CardHeaderDrawable
 import com.nanoporetech.scainter.ui.components.CardItem
@@ -58,7 +59,6 @@ fun ConsultationDetailsScreen(
         PolicyHolderInfo(
             name = consultation.fullname,
             internalId = consultation.internalId,
-            dateOfBirth = consultation.dateOfBirth,
             subscriberName = consultation.subscriberName,
             contractType = consultation.contractType,
             imageUrl = consultation.imageUrl,
@@ -235,7 +235,6 @@ fun ConsultationInfo(
         CardItem(stringResource(R.string.date_label),
             displayedDateAndTime(
             consultation.creationDate)),
-        CardItem(stringResource(R.string.coverage_label), consultation.percentageCoverage)
     )
 
     val paddingMedium = dimensionResource(R.dimen.padding_medium)
@@ -254,7 +253,7 @@ fun ConsultationInfo(
                     .padding(bottom = paddingMedium)
             )
 
-            CardBody(items = items)
+            CardBodyTwoLines(items = items)
         }
     }
 }

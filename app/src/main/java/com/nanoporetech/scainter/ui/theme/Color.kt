@@ -2,7 +2,8 @@ package com.nanoporetech.scainter.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val primaryLight = Color(0xFF196585)
+//val primaryLight = Color(0xFF196585)
+val primaryLight = Color(0xFF053e55)
 val onPrimaryLight = Color(0xFFFFFFFF)
 val primaryContainerLight = Color(0xFFC2E8FF)
 val onPrimaryContainerLight = Color(0xFF004D67)

@@ -83,7 +83,6 @@ fun LoginScreen(
             HeaderAndLogo(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(paddingMedium)
             )
 
             Spacer(modifier = Modifier.height(largePadding))
@@ -128,7 +127,7 @@ fun LoginScreen(
                 text = stringResource(R.string.password_forgotten),
                 style = MaterialTheme.typography.bodyLarge,
                 //fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.primary,
+                color = ScaInterTheme.extendedColors.mainGreen.color,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
@@ -300,7 +299,7 @@ fun WelcomeMessage(
     Text(
         text = stringResource(R.string.welcome_message),
         color = ScaInterTheme.extendedColors.mainGreen.color,
-        style = MaterialTheme.typography.displayMedium,
+        style = MaterialTheme.typography.displaySmall,
         fontWeight = FontWeight.SemiBold,
         textAlign = TextAlign.Center,
         modifier = modifier
@@ -328,7 +327,7 @@ fun RememberMeSection(
 
             Text(
                 text = stringResource(R.string.remember_me),
-                color = MaterialTheme.colorScheme.primary,
+                color = ScaInterTheme.extendedColors.mainGreen.color,
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 16.sp
             )
