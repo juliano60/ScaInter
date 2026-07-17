@@ -1,6 +1,5 @@
 package com.nanoporetech.scainter.ui.components
 
-import android.R.attr.text
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -43,7 +42,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -72,10 +70,8 @@ import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.ui.consultation.Prescription
-import com.nanoporetech.scainter.ui.menu.ScaAppScreen
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.theme.ScaInterTheme
-import com.nanoporetech.scainter.ui.utils.displayedDate
 
 @Composable
 fun CardHeader(

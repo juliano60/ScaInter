@@ -373,7 +373,7 @@ fun ScaInterAppTheme(
     dynamicColor: Boolean = true,
     content: @Composable() () -> Unit
 ) {
-    val colorScheme = when {
+    val baseColorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
@@ -382,6 +382,9 @@ fun ScaInterAppTheme(
         darkTheme -> darkScheme
         else -> lightScheme
     }
+
+    val brandGreen = if (darkTheme) mainGreenDark else mainGreenLight
+    val colorScheme = baseColorScheme.copy(onPrimaryContainer = brandGreen)
 
     val extendedColorScheme = when {
         darkTheme -> extendedDark
@@ -398,5 +401,4 @@ fun ScaInterAppTheme(
         )
     }
 }
-
 
