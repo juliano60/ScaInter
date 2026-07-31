@@ -126,7 +126,6 @@ fun LoginScreen(
             Text(
                 text = stringResource(R.string.password_forgotten),
                 style = MaterialTheme.typography.bodyLarge,
-                //fontSize = 16.sp,
                 color = ScaInterTheme.extendedColors.mainGreen.color,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier

@@ -1,7 +1,5 @@
 package com.nanoporetech.scainter.ui.consultation
 
-import android.R.attr.enabled
-import android.R.attr.type
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -35,14 +33,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.data.DataSource
 import com.nanoporetech.scainter.model.PolicyHolder
 import com.nanoporetech.scainter.model.imageUrl
 import com.nanoporetech.scainter.model.providerDisplayedName
-import com.nanoporetech.scainter.ui.components.CardBody
 import com.nanoporetech.scainter.ui.components.CardBodyTwoLines
 import com.nanoporetech.scainter.ui.components.CardHeader
 import com.nanoporetech.scainter.ui.components.CardItem

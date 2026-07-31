@@ -1,6 +1,5 @@
 package com.nanoporetech.scainter.ui.menu
 
-import android.R.attr.bottom
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.annotation.StringRes
@@ -10,8 +9,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.offset
@@ -23,9 +20,7 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.outlined.HelpOutline
 import androidx.compose.material.icons.automirrored.outlined.Logout
-import androidx.compose.material.icons.outlined.HelpOutline
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -82,8 +77,12 @@ import com.nanoporetech.scainter.ui.consultation.NewConsultationScreen
 import com.nanoporetech.scainter.ui.consultation.NewConsultationViewModel
 import com.nanoporetech.scainter.ui.consultation.PolicyHolderDetailsScreen
 import com.nanoporetech.scainter.ui.events.UiEvent
+import com.nanoporetech.scainter.ui.examination.ExaminationFamilyMembersListScreen
 import com.nanoporetech.scainter.ui.examination.ExaminationListScreen
+import com.nanoporetech.scainter.ui.examination.NewExaminationScreen
+import com.nanoporetech.scainter.ui.hospitalisation.HospitalisationFamilyMembersListScreen
 import com.nanoporetech.scainter.ui.hospitalisation.HospitalisationListScreen
+import com.nanoporetech.scainter.ui.hospitalisation.NewHospitalisationScreen
 import com.nanoporetech.scainter.ui.support.SupportScreen
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.theme.ScaInterTheme
@@ -106,13 +105,24 @@ enum class ScaAppScreen(@StringRes val title: Int) {
     ConsultationNewPrescription(title = R.string.medical_prescription_title),
     ConsultationNewConsultation(title = R.string.new_consultation),
     ConsultationFamilyMembersList(title = R.string.new_consultation),
-    PolicyHolderDetails(title = R.string.new_consultation),
+    ConsultationPolicyHolderDetails(title = R.string.new_consultation),
     ExaminationList(title = R.string.page_examination_list),
     ExaminationNewExamination(title = R.string.new_examination),
+    ExaminationFamilyMembersList(title = R.string.new_examination),
+    ExaminationPolicyHolderDetails(title = R.string.new_examination),
     HospitalisationList(title = R.string.page_hospitalisation_list),
     HospitalisationNewHospitalisation(title = R.string.new_hospitalisation),
+    HospitalisationFamilyMembersList(title = R.string.new_hospitalisation),
+    HospitalisationPolicyHolderDetails(title = R.string.new_examination),
     Support(title = R.string.page_about),
-    CodeScanner(title = R.string.code_scanner_title)
+    CodeScanner(title = R.string.code_scanner_title);
+
+    companion object {
+        const val RETURN_TO_ARGUMENT = "returnTo"
+        val codeScannerRoute = "${CodeScanner.name}/{$RETURN_TO_ARGUMENT}"
+        fun codeScannerRoute(returnTo: ScaAppScreen): String =
+            "${CodeScanner.name}/${returnTo.name}"
+    }
 }
 private data class TabSpec(
     /** route is the destination route **/
@@ -153,8 +163,8 @@ fun TabScreen(
     val currentScreen = when {
         currentRoute.startsWith(ScaAppScreen.ConsultationDetails.name)  ->
             ScaAppScreen.ConsultationDetails
-        currentRoute.startsWith(ScaAppScreen.PolicyHolderDetails.name)  ->
-            ScaAppScreen.PolicyHolderDetails
+        currentRoute.startsWith(ScaAppScreen.ConsultationPolicyHolderDetails.name)  ->
+            ScaAppScreen.ConsultationPolicyHolderDetails
         else -> ScaAppScreen.entries.firstOrNull { it.name == currentRoute } ?: ScaAppScreen.HealthCareDashboard
     }
     var scanResult by rememberSaveable { mutableStateOf("") }
@@ -364,7 +374,11 @@ fun TabScreen(
                 composable(route = ScaAppScreen.ConsultationNewConsultation.name) {
                     NewConsultationScreen(
                         onScanQrCode = {
-                            navController.navigate(ScaAppScreen.CodeScanner.name)
+                            navController.navigate(
+                                ScaAppScreen.codeScannerRoute(
+                                    ScaAppScreen.ConsultationFamilyMembersList
+                                )
+                            )
                         },
                         modifier = Modifier
                             .fillMaxSize()
@@ -372,13 +386,54 @@ fun TabScreen(
                             .padding(dimensionResource(R.dimen.padding_medium)),
                     )
                 }
-                composable(route = ScaAppScreen.CodeScanner.name) {
+                composable(route = ScaAppScreen.ExaminationNewExamination.name) {
+                    NewExaminationScreen(
+                        onScanQrCode = {
+                            navController.navigate(
+                                ScaAppScreen.codeScannerRoute(
+                                    ScaAppScreen.ExaminationFamilyMembersList
+                                )
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(color = AppConstants.lightGreen)
+                            .padding(dimensionResource(R.dimen.padding_medium)),
+                    )
+                }
+                composable(route = ScaAppScreen.HospitalisationNewHospitalisation.name) {
+                    NewHospitalisationScreen(
+                        onScanQrCode = {
+                            navController.navigate(
+                                ScaAppScreen.codeScannerRoute(
+                                    ScaAppScreen.HospitalisationFamilyMembersList
+                                )
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(color = AppConstants.lightGreen)
+                            .padding(dimensionResource(R.dimen.padding_medium)),
+                    )
+                }
+                composable(
+                    route = ScaAppScreen.codeScannerRoute,
+                    arguments = listOf(
+                        navArgument(ScaAppScreen.RETURN_TO_ARGUMENT) {
+                            type = NavType.StringType
+                        }
+                    )) { backStackEntry ->
+
+                    val returnTo = backStackEntry.arguments
+                        ?.getString(ScaAppScreen.RETURN_TO_ARGUMENT)
+                        ?: return@composable
+
                     CodeScannerScreen(
                         onScanResult = {
                             scanResult = it
                             Log.d(TAG, "QR scan result: $scanResult")
                             navController.popBackStack()
-                            navController.navigate(ScaAppScreen.ConsultationFamilyMembersList.name)
+                            navController.navigate(returnTo)
                         },
                         modifier = Modifier
                             .background(color = AppConstants.lightGreen)
@@ -390,10 +445,52 @@ fun TabScreen(
                         familyId = scanResult,
                         providerName = uiState.provider.name,
                         onMemberSelected = { policyHolderId ->
-                            navController.navigate(route = "${ScaAppScreen.PolicyHolderDetails.name}/${policyHolderId}")
+                            navController.navigate(route = "${ScaAppScreen.ConsultationPolicyHolderDetails.name}/${policyHolderId}")
                         },
                         onScanQrCode = {
-                            navController.navigate(ScaAppScreen.CodeScanner.name)
+                            navController.navigate(
+                                ScaAppScreen.codeScannerRoute(
+                                    ScaAppScreen.ConsultationFamilyMembersList
+                                )
+                            )
+                        },
+                        modifier = Modifier
+                            .background(color = AppConstants.lightGreen)
+                            .padding(dimensionResource(R.dimen.padding_medium))
+                    )
+                }
+                composable(route = ScaAppScreen.ExaminationFamilyMembersList.name) {
+                    ExaminationFamilyMembersListScreen(
+                        familyId = scanResult,
+                        providerName = uiState.provider.name,
+                        onMemberSelected = { policyHolderId ->
+                            navController.navigate(route = "${ScaAppScreen.ExaminationPolicyHolderDetails.name}/${policyHolderId}")
+                        },
+                        onScanQrCode = {
+                            navController.navigate(
+                                ScaAppScreen.codeScannerRoute(
+                                    ScaAppScreen.ExaminationFamilyMembersList
+                                )
+                            )
+                        },
+                        modifier = Modifier
+                            .background(color = AppConstants.lightGreen)
+                            .padding(dimensionResource(R.dimen.padding_medium))
+                    )
+                }
+                composable(route = ScaAppScreen.HospitalisationFamilyMembersList.name) {
+                    HospitalisationFamilyMembersListScreen(
+                        familyId = scanResult,
+                        providerName = uiState.provider.name,
+                        onMemberSelected = { policyHolderId ->
+                            navController.navigate(route = "${ScaAppScreen.HospitalisationPolicyHolderDetails.name}/${policyHolderId}")
+                        },
+                        onScanQrCode = {
+                            navController.navigate(
+                                ScaAppScreen.codeScannerRoute(
+                                    ScaAppScreen.HospitalisationFamilyMembersList
+                                )
+                            )
                         },
                         modifier = Modifier
                             .background(color = AppConstants.lightGreen)
@@ -401,7 +498,7 @@ fun TabScreen(
                     )
                 }
                 composable(
-                    route = "${ScaAppScreen.PolicyHolderDetails.name}/{policyHolderId}",
+                    route = "${ScaAppScreen.ConsultationPolicyHolderDetails.name}/{policyHolderId}",
                     arguments = listOf(
                         navArgument("policyHolderId") {
                             type = NavType.IntType
