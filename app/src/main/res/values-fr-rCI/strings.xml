@@ -116,4 +116,8 @@
     <string name="page_about">À Propos de nous</string>
     <string name="coverage_label_and_value">Couverture %s</string>
     <string name="quantity_label">Quantité</string>
+    <string name="medication_1_title">Médicament 1</string>
+    <string name="medication_2_title">Médicament 2</string>
+    <string name="medication_3_title">Médicament 3</string>
+    <string name="medication_4_title">Médicament 4</string>
 </resources>

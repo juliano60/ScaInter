@@ -46,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
@@ -102,6 +103,7 @@ fun PrescriptionDialog(
 ) {
     val paddingMedium = dimensionResource(R.dimen.padding_medium)
     val paddingSmall = dimensionResource(R.dimen.padding_small)
+    val paddingLarge = dimensionResource(R.dimen.padding_large)
     val focusManager = LocalFocusManager.current
 
     Dialog(
@@ -124,231 +126,253 @@ fun PrescriptionDialog(
                             .fillMaxWidth()
                             .verticalScroll(scrollState)
                     ) {
-                    Spacer(modifier = Modifier.height(paddingMedium))
+                        Spacer(modifier = Modifier.height(paddingLarge))
 
-                    // SECTION TITLE
-                    Text(
-                        text = stringResource(R.string.consultation_details_sub),
-                        color = AppConstants.mainGreen,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontSize = 18.sp
-                    )
+                        // ACT
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = stringResource(R.string.act_label),
+                                color = Color.Black,
+                                fontWeight = FontWeight.SemiBold,
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier
+                                    .padding(end = paddingSmall)
+                            )
+                            Text(
+                                text = act,
+                                color = AppConstants.mainGreen,
+                            )
+                        }
 
-                    Spacer(modifier = Modifier.height(paddingSmall))
+                        // DOCTOR
+                        PrimaryOutlinedTextField(
+                            value = doctor,
+                            placeholder = stringResource(R.string.prescriber_hint),
+                            onValueChanged = onDoctorChanged,
+                            modifier = Modifier.fillMaxWidth(),
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                imeAction = ImeAction.Next
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                            ),
+                        )
 
-                    // ACT
-                    Row {
+                        // CODE AFFECTION
+                        PrimaryOutlinedTextField(
+                            value = affection,
+                            placeholder = stringResource(R.string.affection_hint),
+                            onValueChanged = onAffectionChanged,
+                            modifier = Modifier.fillMaxWidth(),
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                imeAction = ImeAction.Next
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                            ),
+                        )
+
+                        Spacer(modifier = Modifier.height(paddingMedium))
+                        HorizontalDivider()
+                        Spacer(modifier = Modifier.height(paddingMedium))
+
+                        // MEDICATION #1
                         Text(
-                            text = stringResource(R.string.act_label),
+                            text = stringResource(R.string.medication_1_title),
                             color = AppConstants.mainGreen,
                             fontWeight = FontWeight.SemiBold,
                             style = MaterialTheme.typography.bodyLarge
                         )
-                        Spacer(modifier = Modifier.weight(1.0f))
-                        Text(text = act)
-                    }
 
-                    // DOCTOR
-                    PrimaryOutlinedTextField(
-                        value = doctor,
-                        placeholder = stringResource(R.string.prescriber_hint),
-                        onValueChanged = onDoctorChanged,
-                        modifier = Modifier.fillMaxWidth(),
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            imeAction = ImeAction.Next
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onNext = { focusManager.moveFocus(FocusDirection.Down) }
-                        ),
-                    )
+                        Spacer(modifier = Modifier.height(paddingSmall))
 
-                    // CODE AFFECTION
-                    PrimaryOutlinedTextField(
-                        value = affection,
-                        placeholder = stringResource(R.string.affection_hint),
-                        onValueChanged = onAffectionChanged,
-                        modifier = Modifier.fillMaxWidth(),
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            imeAction = ImeAction.Next
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onNext = { focusManager.moveFocus(FocusDirection.Down) }
-                        ),
-                    )
+                        PredictiveTextField(
+                            value = medication1,
+                            placeholder = stringResource(R.string.medication_hint),
+                            suggestions = Medicine.load(context = LocalContext.current),
+                            onValueChanged = onMedication1Changed,
+                            modifier = Modifier.fillMaxWidth()
+                        )
 
-                    Spacer(modifier = Modifier.height(paddingMedium))
-                    HorizontalDivider()
-                    Spacer(modifier = Modifier.height(paddingMedium))
+                        Spacer(modifier = Modifier.height(paddingSmall))
 
-                    // PRESCRIPTION
-                    Text(
-                        text = stringResource(R.string.medical_prescription_title),
-                        color = AppConstants.mainGreen,
-                        fontWeight = FontWeight.SemiBold,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
+                        // QUANTITY
+                        QuantityDropdown(
+                            quantities = listOf(1, 2, 3, 4),
+                            selectedIndex = selectedIndex1,
+                            onQuantityChanged = onQuantity1Changed,
+                            modifier = Modifier.fillMaxWidth()
+                        )
 
-                    Spacer(modifier = Modifier.height(paddingSmall))
+                        // POSOLOGY
+                        PrimaryOutlinedTextField(
+                            value = posology1,
+                            placeholder = stringResource(R.string.posology_hint),
+                            onValueChanged = onPosology1Changed,
+                            modifier = Modifier.fillMaxWidth(),
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                imeAction = ImeAction.Done,
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onDone = { onAddPrescription() }
+                            ),
+                        )
 
-                    // MEDICATION #1
-                    PredictiveTextField(
-                        value = medication1,
-                        placeholder = stringResource(R.string.medication_hint),
-                        suggestions = Medicine.load(context = LocalContext.current),
-                        onValueChanged = onMedication1Changed,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                        Spacer(modifier = Modifier.height(paddingMedium))
+                        HorizontalDivider()
+                        Spacer(modifier = Modifier.height(paddingMedium))
 
-                    Spacer(modifier = Modifier.height(paddingSmall))
+                        // MEDICATION #2
+                        Text(
+                            text = stringResource(R.string.medication_2_title),
+                            color = AppConstants.mainGreen,
+                            fontWeight = FontWeight.SemiBold,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
 
-                    // QUANTITY
-                    QuantityDropdown(
-                        quantities = listOf(1, 2, 3, 4),
-                        selectedIndex = selectedIndex1,
-                        onQuantityChanged = onQuantity1Changed,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                        Spacer(modifier = Modifier.height(paddingSmall))
 
-                    // POSOLOGY
-                    PrimaryOutlinedTextField(
-                        value = posology1,
-                        placeholder = stringResource(R.string.posology_hint),
-                        onValueChanged = onPosology1Changed,
-                        modifier = Modifier.fillMaxWidth(),
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            imeAction = ImeAction.Done,
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = { onAddPrescription() }
-                        ),
-                    )
+                        PredictiveTextField(
+                            value = medication2,
+                            placeholder = stringResource(R.string.medication_hint),
+                            suggestions = Medicine.load(context = LocalContext.current),
+                            onValueChanged = onMedication2Changed,
+                            modifier = Modifier.fillMaxWidth()
+                        )
 
-                    Spacer(modifier = Modifier.height(paddingMedium))
-                    HorizontalDivider()
-                    Spacer(modifier = Modifier.height(paddingMedium))
+                        Spacer(modifier = Modifier.height(paddingSmall))
 
-                    // MEDICATION #2
-                    PredictiveTextField(
-                        value = medication2,
-                        placeholder = stringResource(R.string.medication_hint),
-                        suggestions = Medicine.load(context = LocalContext.current),
-                        onValueChanged = onMedication2Changed,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                        // QUANTITY
+                        QuantityDropdown(
+                            quantities = listOf(1, 2, 3, 4),
+                            selectedIndex = selectedIndex2,
+                            onQuantityChanged = onQuantity2Changed,
+                            modifier = Modifier.fillMaxWidth()
+                        )
 
-                    Spacer(modifier = Modifier.height(paddingSmall))
+                        // POSOLOGY
+                        PrimaryOutlinedTextField(
+                            value = posology2,
+                            placeholder = stringResource(R.string.posology_hint),
+                            onValueChanged = onPosology2Changed,
+                            modifier = Modifier.fillMaxWidth(),
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                imeAction = ImeAction.Done,
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onDone = { onAddPrescription() }
+                            ),
+                        )
 
-                    // QUANTITY
-                    QuantityDropdown(
-                        quantities = listOf(1, 2, 3, 4),
-                        selectedIndex = selectedIndex2,
-                        onQuantityChanged = onQuantity2Changed,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                        Spacer(modifier = Modifier.height(paddingMedium))
+                        HorizontalDivider()
+                        Spacer(modifier = Modifier.height(paddingMedium))
 
-                    // POSOLOGY
-                    PrimaryOutlinedTextField(
-                        value = posology2,
-                        placeholder = stringResource(R.string.posology_hint),
-                        onValueChanged = onPosology2Changed,
-                        modifier = Modifier.fillMaxWidth(),
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            imeAction = ImeAction.Done,
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = { onAddPrescription() }
-                        ),
-                    )
+                        // MEDICATION #3
+                        Text(
+                            text = stringResource(R.string.medication_3_title),
+                            color = AppConstants.mainGreen,
+                            fontWeight = FontWeight.SemiBold,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
 
-                    Spacer(modifier = Modifier.height(paddingMedium))
-                    HorizontalDivider()
-                    Spacer(modifier = Modifier.height(paddingMedium))
+                        Spacer(modifier = Modifier.height(paddingSmall))
 
-                    // MEDICATION #3
-                    PredictiveTextField(
-                        value = medication3,
-                        placeholder = stringResource(R.string.medication_hint),
-                        suggestions = Medicine.load(context = LocalContext.current),
-                        onValueChanged = onMedication3Changed,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                        PredictiveTextField(
+                            value = medication3,
+                            placeholder = stringResource(R.string.medication_hint),
+                            suggestions = Medicine.load(context = LocalContext.current),
+                            onValueChanged = onMedication3Changed,
+                            modifier = Modifier.fillMaxWidth()
+                        )
 
-                    Spacer(modifier = Modifier.height(paddingSmall))
+                        Spacer(modifier = Modifier.height(paddingSmall))
 
-                    // QUANTITY
-                    QuantityDropdown(
-                        quantities = listOf(1, 2, 3, 4),
-                        selectedIndex = selectedIndex3,
-                        onQuantityChanged = onQuantity3Changed,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                        // QUANTITY
+                        QuantityDropdown(
+                            quantities = listOf(1, 2, 3, 4),
+                            selectedIndex = selectedIndex3,
+                            onQuantityChanged = onQuantity3Changed,
+                            modifier = Modifier.fillMaxWidth()
+                        )
 
-                    // POSOLOGY
-                    PrimaryOutlinedTextField(
-                        value = posology3,
-                        placeholder = stringResource(R.string.posology_hint),
-                        onValueChanged = onPosology3Changed,
-                        modifier = Modifier.fillMaxWidth(),
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            imeAction = ImeAction.Done,
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = { onAddPrescription() }
-                        ),
-                    )
+                        // POSOLOGY
+                        PrimaryOutlinedTextField(
+                            value = posology3,
+                            placeholder = stringResource(R.string.posology_hint),
+                            onValueChanged = onPosology3Changed,
+                            modifier = Modifier.fillMaxWidth(),
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                imeAction = ImeAction.Done,
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onDone = { onAddPrescription() }
+                            ),
+                        )
 
-                    Spacer(modifier = Modifier.height(paddingMedium))
-                    HorizontalDivider()
-                    Spacer(modifier = Modifier.height(paddingMedium))
+                        Spacer(modifier = Modifier.height(paddingMedium))
+                        HorizontalDivider()
+                        Spacer(modifier = Modifier.height(paddingMedium))
 
-                    // MEDICATION #4
-                    PredictiveTextField(
-                        value = medication4,
-                        placeholder = stringResource(R.string.medication_hint),
-                        suggestions = Medicine.load(context = LocalContext.current),
-                        onValueChanged = onMedication4Changed,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                        // MEDICATION #4
+                        Text(
+                            text = stringResource(R.string.medication_4_title),
+                            color = AppConstants.mainGreen,
+                            fontWeight = FontWeight.SemiBold,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
 
-                    Spacer(modifier = Modifier.height(paddingSmall))
+                        Spacer(modifier = Modifier.height(paddingSmall))
 
-                    // QUANTITY
-                    QuantityDropdown(
-                        quantities = listOf(1, 2, 3, 4),
-                        selectedIndex = selectedIndex4,
-                        onQuantityChanged = onQuantity4Changed,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                        PredictiveTextField(
+                            value = medication4,
+                            placeholder = stringResource(R.string.medication_hint),
+                            suggestions = Medicine.load(context = LocalContext.current),
+                            onValueChanged = onMedication4Changed,
+                            modifier = Modifier.fillMaxWidth()
+                        )
 
-                    // POSOLOGY
-                    PrimaryOutlinedTextField(
-                        value = posology4,
-                        placeholder = stringResource(R.string.posology_hint),
-                        onValueChanged = onPosology4Changed,
-                        modifier = Modifier.fillMaxWidth(),
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            imeAction = ImeAction.Done,
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = { onAddPrescription() }
-                        ),
-                    )
+                        Spacer(modifier = Modifier.height(paddingSmall))
 
-                    Spacer(modifier = Modifier.height(paddingMedium))
-                    HorizontalDivider()
-                    Spacer(modifier = Modifier.height(paddingMedium))
+                        // QUANTITY
+                        QuantityDropdown(
+                            quantities = listOf(1, 2, 3, 4),
+                            selectedIndex = selectedIndex4,
+                            onQuantityChanged = onQuantity4Changed,
+                            modifier = Modifier.fillMaxWidth()
+                        )
 
-                    // ADD BUTTON
-                    PrimaryButton(
-                        iconImg = Icons.Filled.AddCircle,
-                        text = stringResource(R.string.add_button),
-                        onClick = onAddPrescription,
-                        enabled = doctor.isNotBlank() &&
-                                affection.isNotBlank() &&
-                                medication1.isNotBlank(),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
+                        // POSOLOGY
+                        PrimaryOutlinedTextField(
+                            value = posology4,
+                            placeholder = stringResource(R.string.posology_hint),
+                            onValueChanged = onPosology4Changed,
+                            modifier = Modifier.fillMaxWidth(),
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                imeAction = ImeAction.Done,
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onDone = { onAddPrescription() }
+                            ),
+                        )
+
+                        Spacer(modifier = Modifier.height(paddingMedium))
+                        HorizontalDivider()
+                        Spacer(modifier = Modifier.height(paddingMedium))
+
+                        // ADD BUTTON
+                        PrimaryButton(
+                            iconImg = Icons.Filled.AddCircle,
+                            text = stringResource(R.string.add_button),
+                            onClick = onAddPrescription,
+                            enabled = doctor.isNotBlank() &&
+                                    affection.isNotBlank() &&
+                                    medication1.isNotBlank(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        )
                     }
 
                     // DISMISS BUTTON

@@ -115,4 +115,8 @@
     <string name="page_about">About...</string>
     <string name="coverage_label_and_value">Coverage %s</string>
     <string name="quantity_label">Quantity</string>
+    <string name="medication_1_title">Medecine 1</string>
+    <string name="medication_2_title">Medecine 2</string>
+    <string name="medication_3_title">Medecine 3</string>
+    <string name="medication_4_title">Medicine 4</string>
 </resources>
