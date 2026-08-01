@@ -1,5 +1,7 @@
 package com.nanoporetech.scainter.ui.menu
 
+import android.R.attr.duration
+import android.R.id.message
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.annotation.StringRes
@@ -30,9 +32,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -86,6 +90,8 @@ import com.nanoporetech.scainter.ui.hospitalisation.NewHospitalisationScreen
 import com.nanoporetech.scainter.ui.support.SupportScreen
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.theme.ScaInterTheme
+import com.nanoporetech.scainter.ui.utils.AppSnackbarVisuals
+import com.nanoporetech.scainter.ui.utils.SnackbarType
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.collections.forEach
@@ -206,7 +212,19 @@ fun TabScreen(
             )
         },
         snackbarHost = {
-            SnackbarHost(snackbarHostState)
+            SnackbarHost(snackbarHostState) { data ->
+                val visuals = data.visuals as? AppSnackbarVisuals
+
+                Snackbar(
+                    containerColor = when (visuals?.type) {
+                        SnackbarType.Success -> Color(0xFF2E7D32)
+                        SnackbarType.Error -> MaterialTheme.colorScheme.error
+                        null -> MaterialTheme.colorScheme.inverseSurface
+                    }
+                ) {
+                    Text(data.visuals.message)
+                }
+            }
         },
         bottomBar = {
             DockBottomNavigationBar(
@@ -241,14 +259,19 @@ fun TabScreen(
                         when (navResult) {
                             NavResult.NewConsultationSuccess.name -> {
                                 snackbarHostState.showSnackbar(
-                                    message = context.getString(R.string.new_consultation_success_message),
-                                    duration = SnackbarDuration.Short
+                                    AppSnackbarVisuals(
+                                        message = context.getString(R.string.new_consultation_success_message),
+                                        type = SnackbarType.Success
+                                    )
                                 )
                             }
                             NavResult.NewConsultationFailed.name -> {
                                 snackbarHostState.showSnackbar(
-                                    message = context.getString(R.string.err_unknown_error),
-                                    duration = SnackbarDuration.Long
+                                    AppSnackbarVisuals(
+                                        message = context.getString(R.string.err_unknown_error),
+                                        type = SnackbarType.Error,
+                                        duration = SnackbarDuration.Long
+                                    )
                                 )
                             }
                             null -> Unit
