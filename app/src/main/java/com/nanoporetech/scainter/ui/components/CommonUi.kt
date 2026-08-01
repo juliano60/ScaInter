@@ -78,7 +78,8 @@ fun CardHeader(
     title: String,
     iconImg: ImageVector,
     modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colorScheme.onPrimaryContainer,
+    textColor: Color = Color.Black,
+    tintColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -87,15 +88,15 @@ fun CardHeader(
         Icon(
             imageVector = iconImg,
             contentDescription = null,
-            tint = color,
+            tint = tintColor,
             modifier = Modifier.size(dimensionResource(R.dimen.icon_small))
         )
-        Spacer(modifier = Modifier.width(dimensionResource(R.dimen.padding_small)))
+        Spacer(modifier = Modifier.width(dimensionResource(R.dimen.padding_xsmall)))
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,
             fontSize = 18.sp,
-            color = color,
+            color = textColor,
             fontWeight = FontWeight.Bold,
         )
     }
@@ -163,7 +164,7 @@ fun CardBodyTwoLines(
                         Text(
                             text = item.label,
                             style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            color = Color.Black,
                             fontWeight = if (keyIsBold) FontWeight.SemiBold else FontWeight.Normal,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
@@ -602,6 +603,7 @@ fun PolicyHolderInfo(
         Spacer(modifier.height(dimensionResource(R.dimen.padding_medium)))
 
         Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
@@ -610,7 +612,7 @@ fun PolicyHolderInfo(
                 text = name,
                 style = MaterialTheme.typography.titleMedium,
                 fontSize = 18.sp,
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                color = Color.Black,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -627,7 +629,7 @@ fun PolicyHolderInfo(
             Text(
                 text = stringResource(R.string.coverage_label_and_value, coverPercent),
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
+                color = Color.Black
             )
 
             Text(

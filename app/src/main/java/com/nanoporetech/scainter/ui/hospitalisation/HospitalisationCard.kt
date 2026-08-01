@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Assignment
 import androidx.compose.material.icons.filled.Bed
-import androidx.compose.material.icons.outlined.MonitorHeart
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -22,10 +21,8 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.nanoporetech.scainter.R
-import com.nanoporetech.scainter.model.Hospitalisation
 import com.nanoporetech.scainter.ui.components.CardHeader
 import com.nanoporetech.scainter.ui.components.CardRow
-import com.nanoporetech.scainter.ui.examination.ExaminationCard
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.theme.ScaInterTheme
 
@@ -54,7 +51,8 @@ fun HospitalisationCard(
             CardHeader(
                 title = stringResource(R.string.hospitalisation_menu_sub),
                 iconImg = Icons.Filled.Bed,
-                color = Color.White,
+                textColor = Color.White,
+                tintColor = Color.White,
                 modifier = Modifier
             )
 

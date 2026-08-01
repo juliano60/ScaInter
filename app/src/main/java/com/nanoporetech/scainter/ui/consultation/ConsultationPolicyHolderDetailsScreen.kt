@@ -290,8 +290,9 @@ fun InsuranceInfo(
                 .padding(paddingMedium)
         ) {
             CardHeader(
-                title = stringResource(R.string.policy_status_title),
+                title = stringResource(R.string.consultation_info_title),
                 iconImg = Icons.Filled.AttachFile,
+                textColor = Color.Black,
                 modifier = Modifier
                     .padding(bottom = paddingMedium)
             )

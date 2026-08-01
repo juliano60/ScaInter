@@ -1,5 +1,6 @@
 package com.nanoporetech.scainter.ui.examination
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +16,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.nanoporetech.scainter.R
+import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.data.DataSource
 import com.nanoporetech.scainter.model.Examination
 import com.nanoporetech.scainter.ui.utils.displayedDateAndTime
@@ -56,8 +60,6 @@ fun ExaminationListScreen(
         LazyColumn(
             modifier = modifier
                 .fillMaxSize()
-            //.safeContentPadding()
-            //.statusBarsPadding()
         ) {
             items(examinations) { examination  ->
                 ExaminationRowItem(
@@ -82,53 +84,61 @@ fun ExaminationRowItem(
     onRowClick: (Examination) -> Unit,
 ) {
     val paddingSmall = dimensionResource(R.dimen.padding_xsmall)
+    val paddingMedium = dimensionResource(R.dimen.padding_medium)
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
+    Card(
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
+        elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.elevation_small)),
         modifier = modifier
-            .clickable(
-                onClick = { onRowClick(examination) }
-            )
     ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(paddingSmall)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-            ) {
-                Icon(
-                    Icons.Default.Person,
-                    contentDescription = null
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .padding(paddingMedium)
+                .clickable(
+                    onClick = { onRowClick(examination) }
                 )
-                Spacer(Modifier.width(paddingSmall))
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(paddingSmall)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                ) {
+                    Icon(
+                        Icons.Default.Person,
+                        contentDescription = null
+                    )
+                    Spacer(Modifier.width(paddingSmall))
+
+                    Text(
+                        text = examination.fullname,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
 
                 Text(
-                    text = examination.fullname,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    text = examination.displayedReason.ifBlank { stringResource(R.string.not_available) },
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+
+                Text(
+                    text = displayedDateAndTime(examination.creationDate),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
-            Text(
-                text = examination.displayedReason.ifBlank { stringResource(R.string.not_available) },
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
+            Spacer(Modifier.weight(1.0f))
 
-            Text(
-                text = displayedDateAndTime(examination.creationDate),
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null
             )
         }
-
-        Spacer(Modifier.weight(1.0f))
-
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-            contentDescription = null
-        )
     }
 }
 
@@ -145,6 +155,8 @@ fun ExaminationListScreenPreview() {
             examinations = DataSource.examinations(),
             //examinations = emptyList(),
             modifier = Modifier
+                .fillMaxSize()
+                .background(color = AppConstants.lightGreen)
                 .padding(dimensionResource(R.dimen.padding_medium))
         )
     }

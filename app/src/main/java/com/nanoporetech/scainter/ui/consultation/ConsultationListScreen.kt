@@ -1,5 +1,6 @@
 package com.nanoporetech.scainter.ui.consultation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +16,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +32,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.nanoporetech.scainter.R
+import com.nanoporetech.scainter.conf.AppConstants
+import com.nanoporetech.scainter.data.DataSource
 import com.nanoporetech.scainter.model.Consultation
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.utils.displayedDateAndTime
@@ -56,8 +61,6 @@ fun ConsultationListScreen(
         LazyColumn(
             modifier = modifier
                 .fillMaxSize()
-                //.safeContentPadding()
-                //.statusBarsPadding()
         ) {
             items(consultations) { consultation  ->
                 ConsultationRowItem(
@@ -82,54 +85,61 @@ fun ConsultationRowItem(
     onRowClick: (Consultation) -> Unit,
 ) {
     val paddingSmall = dimensionResource(R.dimen.padding_xsmall)
+    val paddingMedium = dimensionResource(R.dimen.padding_medium)
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
+    Card(
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
+        elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.elevation_small)),
         modifier = modifier
-            .clickable(
-                onClick = { onRowClick(consultation) }
-            )
     ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(paddingSmall)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    //.border(1.dp, color = Color.Yellow)
-            ) {
-                Icon(
-                    Icons.Default.Person,
-                    contentDescription = null
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .padding(paddingMedium)
+                .clickable(
+                    onClick = { onRowClick(consultation) }
                 )
-                Spacer(Modifier.width(paddingSmall))
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(paddingSmall)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                ) {
+                    Icon(
+                        Icons.Default.Person,
+                        contentDescription = null
+                    )
+                    Spacer(Modifier.width(paddingSmall))
+
+                    Text(
+                        text = consultation.fullname,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
 
                 Text(
-                    text = consultation.fullname,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    text = consultation.act,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+
+                Text(
+                    text = displayedDateAndTime(consultation.creationDate),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
-            Text(
-                text = consultation.act,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
+            Spacer(Modifier.weight(1.0f))
 
-            Text(
-                text = displayedDateAndTime(consultation.creationDate),
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null
             )
         }
-
-        Spacer(Modifier.weight(1.0f))
-
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-            contentDescription = null
-        )
     }
 }
 
@@ -142,12 +152,13 @@ fun ConsultationListScreenPreview() {
         Surface(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(dimensionResource(R.dimen.padding_medium))
         ) {
             ConsultationListScreen(
-                //consultations = DataSource.consultations(),
-                consultations = emptyList(),
+                consultations = DataSource.consultations(),
+                //consultations = emptyList(),
                 modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = AppConstants.lightGreen)
                     .padding(dimensionResource(R.dimen.padding_medium))
             )
         }

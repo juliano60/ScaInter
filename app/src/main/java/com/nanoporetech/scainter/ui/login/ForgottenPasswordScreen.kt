@@ -20,7 +20,6 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -38,12 +37,6 @@ import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.ui.components.CardHeader
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.theme.ScaInterTheme
-import compose.icons.FontAwesomeIcons
-import compose.icons.fontawesomeicons.Brands
-import compose.icons.fontawesomeicons.Solid
-import compose.icons.fontawesomeicons.brands.Whatsapp
-import compose.icons.fontawesomeicons.solid.Mobile
-import compose.icons.fontawesomeicons.solid.Phone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -81,7 +74,7 @@ fun ForgottenPasswordScreen(
                     CardHeader(
                         title = stringResource(R.string.sca_technical_support),
                         iconImg = Icons.Outlined.HeadsetMic,
-                        color = ScaInterTheme.extendedColors.mainGreen.color,
+                        tintColor = ScaInterTheme.extendedColors.mainGreen.color,
                         modifier = Modifier.fillMaxWidth()
                     )
 
