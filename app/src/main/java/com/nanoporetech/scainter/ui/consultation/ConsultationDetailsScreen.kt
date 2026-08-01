@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -165,10 +166,6 @@ fun PrescriptionSection(
                     .padding(bottom = paddingMedium)
             )
 
-            CardBody(items = items)
-
-            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
-
             if (consultation.prescriptions.isEmpty()) {
                 PrescriptionButton(
                     onNewPrescription = onNewPrescription,
@@ -176,6 +173,10 @@ fun PrescriptionSection(
                         .fillMaxWidth()
                 )
             } else {
+                CardBody(items = items)
+
+                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
+
                 PrescriptionDetails(
                     consultation = consultation,
                     modifier = Modifier

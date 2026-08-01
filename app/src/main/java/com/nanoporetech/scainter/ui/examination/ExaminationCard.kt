@@ -54,6 +54,7 @@ fun ExaminationCard(
             CardHeaderDrawable(
                 title = stringResource(R.string.examination_menu_sub),
                 iconImg = painterResource(R.drawable.vital_signs),
+                textColor = Color.White,
                 color = Color.White,
                 modifier = Modifier
             )

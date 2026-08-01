@@ -107,6 +107,7 @@ fun CardHeaderDrawable(
     title: String,
     iconImg: Painter,
     modifier: Modifier = Modifier,
+    textColor: Color = Color.Black,
     color: Color = MaterialTheme.colorScheme.onPrimaryContainer,
 ) {
     Row(
@@ -124,7 +125,7 @@ fun CardHeaderDrawable(
             text = title,
             style = MaterialTheme.typography.titleMedium,
             fontSize = 18.sp,
-            color = color,
+            color = textColor,
             fontWeight = FontWeight.SemiBold,
         )
     }
@@ -265,7 +266,7 @@ fun CardBody(
                     Text(
                         text = item.label,
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        color = Color.Black,
                         fontWeight = if (keyIsBold) FontWeight.SemiBold else FontWeight.Normal,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,

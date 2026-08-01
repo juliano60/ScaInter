@@ -56,6 +56,7 @@ fun ConsultationCard(
             CardHeaderDrawable(
                 title = stringResource(R.string.consultation_menu_sub),
                 iconImg = painterResource(R.drawable.stethoscope),
+                textColor = Color.White,
                 color = MaterialTheme.colorScheme.surfaceContainerLowest,
                 modifier = Modifier
             )
