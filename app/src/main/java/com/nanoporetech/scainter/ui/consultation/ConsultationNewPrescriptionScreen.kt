@@ -28,6 +28,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,13 +55,16 @@ import com.nanoporetech.scainter.ui.components.ConfirmationDialog
 import com.nanoporetech.scainter.ui.components.PredictiveTextField
 import com.nanoporetech.scainter.ui.components.PrimaryButton
 import com.nanoporetech.scainter.ui.components.PrimaryOutlinedTextField
+import com.nanoporetech.scainter.ui.events.UiEvent
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun ConsultationNewPrescriptionScreen(
     consultationId: String,
     modifier: Modifier = Modifier,
-    onBack: () -> Unit = {},
+    onSubmitSuccess: () -> Unit = {},
+    onSubmitError: (Int) -> Unit = {},
     viewModel: MedicalPrescriptionViewModel = viewModel(
         factory = MedicalPrescriptionViewModel.provideFactory(
             consultationId = consultationId
@@ -69,6 +73,20 @@ fun ConsultationNewPrescriptionScreen(
 )
 {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    // convert from model.events to nav_result
+    LaunchedEffect(Unit) {
+        viewModel.events.collectLatest { event ->
+            when (event) {
+                is UiEvent.Success -> {
+                    onSubmitSuccess()
+                }
+                is UiEvent.Error -> {
+                    onSubmitError(event.errorId)
+                }
+            }
+        }
+    }
 
     ConsultationNewPrescriptionContent(
         state = uiState,
@@ -87,7 +105,7 @@ fun ConsultationNewPrescriptionScreen(
         onMedication3Changed = viewModel::setMedication3,
         onQuantity3Changed = viewModel::setQuantity3,
         onPosology3Changed = viewModel::setPosology3,
-        onSendPrescription = viewModel::addPrescription,
+        onSendPrescription = viewModel::addPrescription
     )
 }
 

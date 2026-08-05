@@ -105,6 +105,7 @@ private const val CONSULTATION_ID_ARGUMENT = "consultationId"
 enum class NavResult {
     NewConsultationSuccess,
     NewConsultationFailed,
+    NewPrescriptionSuccess,
 }
 
 enum class ScaAppScreen(@StringRes val title: Int) {
@@ -282,6 +283,14 @@ fun TabScreen(
                                     )
                                 )
                             }
+                            NavResult.NewPrescriptionSuccess.name -> {
+                                snackbarHostState.showSnackbar(
+                                    AppSnackbarVisuals(
+                                        message = context.getString(R.string.new_prescription_added),
+                                        type = SnackbarType.Success
+                                    )
+                                )
+                            }
                             null -> Unit
                         }
                         // now clear old nav result
@@ -418,6 +427,28 @@ fun TabScreen(
 
                     ConsultationNewPrescriptionScreen(
                         consultationId = consultationId,
+                        onSubmitSuccess = {
+                            navController
+                                .getBackStackEntry(
+                                ScaAppScreen.HealthCareDashboard.name)
+                                .savedStateHandle["nav_result"] = NavResult.NewPrescriptionSuccess.name
+
+                            navController.popBackStack(
+                                ScaAppScreen.HealthCareDashboard.name,
+                                inclusive = false
+                            )
+                        },
+                        onSubmitError = { errorId ->
+                            scope.launch {
+                                snackbarHostState.showSnackbar(
+                                    AppSnackbarVisuals(
+                                        message = context.getString(errorId),
+                                        type = SnackbarType.Error,
+                                        duration = SnackbarDuration.Long
+                                    )
+                                )
+                            }
+                        },
                         modifier = Modifier
                             .fillMaxSize()
                             .background(color = AppConstants.lightGreen)
