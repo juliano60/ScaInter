@@ -35,8 +35,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isShiftPressed
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
@@ -70,8 +76,7 @@ fun ConsultationNewPrescriptionScreen(
             consultationId = consultationId
         )
     )
-)
-{
+) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     // convert from model.events to nav_result
@@ -129,15 +134,29 @@ fun ConsultationNewPrescriptionContent(
     onPosology3Changed: (String) -> Unit = {},
     onSendPrescription: () -> Unit = {}
 ) {
+    val focusManager = LocalFocusManager.current
+
     Column(
         modifier = modifier
+            .onPreviewKeyEvent { event ->
+                if (event.type == KeyEventType.KeyDown && event.key == Key.Tab) {
+                    focusManager.moveFocus(
+                        if (event.isShiftPressed) {
+                            FocusDirection.Previous
+                        } else {
+                            FocusDirection.Next
+                        }
+                    )
+                } else {
+                    false
+                }
+            }
             .verticalScroll(
                 rememberScrollState()
             )
     ) {
         val paddingMedium = dimensionResource(R.dimen.padding_medium)
         val paddingSmall = dimensionResource(R.dimen.padding_small)
-        val focusManager = LocalFocusManager.current
         var showConfirmationPrompt by remember { mutableStateOf(false) }
         val isFormValid = state.doctor.isNotBlank() && state.affection.isNotBlank() &&
                 state.medication.isNotBlank()
