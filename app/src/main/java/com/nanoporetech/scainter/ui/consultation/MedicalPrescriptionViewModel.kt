@@ -3,14 +3,20 @@ package com.nanoporetech.scainter.ui.consultation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.ScaInterApplication
 import com.nanoporetech.scainter.data.PrescriptionUiState
 import com.nanoporetech.scainter.data.ScaDataRepository
+import com.nanoporetech.scainter.ui.events.UiEvent
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 data class Prescription (
     val name: String,
@@ -21,11 +27,15 @@ data class Prescription (
 private const val MAX_PRESCRIPTIONS = 4
 
 class MedicalPrescriptionViewModel(
+    private val consultationId: String,
     private val repository: ScaDataRepository
 ): ViewModel() {
 
-    private var _uiState = MutableStateFlow(PrescriptionUiState())
+    private var _uiState = MutableStateFlow(PrescriptionUiState(consultationId = consultationId))
     val uiState = _uiState.asStateFlow()
+
+    private val _events = MutableSharedFlow<UiEvent>()
+    val events = _events.asSharedFlow()
 
     fun setDoctor(name: String) {
         _uiState.update {
@@ -36,24 +46,6 @@ class MedicalPrescriptionViewModel(
     fun setAffection(code: String) {
         _uiState.update {
             it.copy(affection = code)
-        }
-    }
-
-    fun setPosology4(value: String) {
-        _uiState.update {
-            it.copy(posology4 = value)
-        }
-    }
-
-    fun setQuantity4(index: Int) {
-        _uiState.update {
-            it.copy(quantityIndex4 = index)
-        }
-    }
-
-    fun setMedication4(value: String) {
-        _uiState.update {
-            it.copy(medication4 = value)
         }
     }
 
@@ -111,56 +103,99 @@ class MedicalPrescriptionViewModel(
         }
     }
 
-    fun addPrescription() {
-        val state = _uiState.value
-
-        val newPrescriptions = listOf(
-            Prescription(
-                name = state.medication1,
-                quantityIndex = state.quantityIndex1,
-                posology = state.posology1
-            ),
-            Prescription(
-                name = state.medication2,
-                quantityIndex = state.quantityIndex2,
-                posology = state.posology2
-            ),
-            Prescription(
-                name = state.medication3,
-                quantityIndex = state.quantityIndex3,
-                posology = state.posology3
-            ),
-            Prescription(
-                name = state.medication4,
-                quantityIndex = state.quantityIndex4,
-                posology = state.posology4
-            )
-        )
-
-        val namesToReplace = newPrescriptions
-            .mapTo(mutableSetOf()) { it.name }
-
-        val updatedPrescriptions =
-            state.prescriptions.filterNot { it.name in namesToReplace } +
-                    newPrescriptions
-
-        if (updatedPrescriptions.size > MAX_PRESCRIPTIONS) {
-            return
-        }
-
-        _uiState.update { currentState ->
-            currentState.copy(
-                prescriptions = updatedPrescriptions,
-                isDialogOpen = false
-            )
+    fun setPosology(value: String) {
+        _uiState.update {
+            it.copy(posology = value)
         }
     }
 
-    fun removePrescription(item: Prescription) {
+    fun setQuantity(index: Int) {
         _uiState.update {
-            it.copy(
-                prescriptions = it.prescriptions - item
+            it.copy(quantityIndex = index)
+        }
+    }
+
+    fun setMedication(value: String) {
+        _uiState.update {
+            it.copy(medication = value)
+        }
+    }
+
+    private fun quantityFromIndex(
+        medication: String, index: Int): String =
+        if (medication.isBlank()) "0" else (index + 1).toString()
+
+    fun addPrescription() {
+        val submittedState = _uiState.value
+
+        val newPrescriptions = listOf(
+            Prescription(
+                name = submittedState.medication,
+                quantityIndex = submittedState.quantityIndex,
+                posology = submittedState.posology
+            ),
+            Prescription(
+                name = submittedState.medication1,
+                quantityIndex = submittedState.quantityIndex1,
+                posology = submittedState.posology1
+            ),
+            Prescription(
+                name = submittedState.medication2,
+                quantityIndex = submittedState.quantityIndex2,
+                posology = submittedState.posology2
+            ),
+            Prescription(
+                name = submittedState.medication3,
+                quantityIndex = submittedState.quantityIndex3,
+                posology = submittedState.posology3
             )
+        )
+            .filter { it.name.isNotBlank() }
+            .map {
+                it.copy(
+                    name = it.name.trim(),
+                    posology = it.posology.trim()
+                )
+            }
+            .distinctBy { it.name.trim().lowercase() }
+
+        if (newPrescriptions.isEmpty()) {
+            return
+        }
+
+        // now send prescription to server
+        viewModelScope.launch {
+            val successful = runCatching {
+                repository.updatePrescription(
+                    consultationId = submittedState.consultationId,
+                    doctor = submittedState.doctor,
+                    affection = submittedState.affection,
+                    medicament = submittedState.medication,
+                    quantity = quantityFromIndex(submittedState.medication, submittedState.quantityIndex),
+                    posologie = submittedState.posology,
+                    medicament1 = submittedState.medication1,
+                    quantity1 = quantityFromIndex(submittedState.medication1, submittedState.quantityIndex1),
+                    posologie1 = submittedState.posology1,
+                    medicament2 = submittedState.medication2,
+                    quantity2 = quantityFromIndex(submittedState.medication2, submittedState.quantityIndex2),
+                    posologie2 = submittedState.posology2,
+                    medicament3 = submittedState.medication3,
+                    quantity3 = quantityFromIndex(submittedState.medication3, submittedState.quantityIndex3),
+                    posologie3 = submittedState.posology3,
+                )
+            }.getOrDefault(false)
+
+            if (successful) {
+                _uiState.update {
+                    it.copy(
+                        prescriptions = newPrescriptions,
+                        isDialogOpen = false
+                    )
+                }
+                _events.emit(UiEvent.Success(R.string.new_prescription_added))
+            } else {
+                _events.emit(UiEvent.Error(R.string.new_prescription_error))
+            }
         }
     }
 
@@ -175,9 +210,6 @@ class MedicalPrescriptionViewModel(
     fun openDialog() {
         _uiState.update {
             it.copy(
-                //medication = "",
-                //quantityIndex = 0,
-                //posology = "",
                 isDialogOpen = true)
         }
     }
@@ -188,24 +220,17 @@ class MedicalPrescriptionViewModel(
         }
     }
 
-    fun editPrescription(prescription: Prescription) {
-        _uiState.update {
-            it.copy(
-                //medication = prescription.name,
-                //quantityIndex = prescription.quantityIndex,
-                //posology = prescription.posology,
-                isDialogOpen = true
-            )
-        }
-    }
-
     companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
+        fun provideFactory(
+            consultationId: String,
+        ): ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                val application = (this[APPLICATION_KEY] as ScaInterApplication)
+                val application = this[APPLICATION_KEY] as ScaInterApplication
                 val repository = application.container.scaDataRepository
+
                 MedicalPrescriptionViewModel(
-                    repository = repository,
+                    consultationId = consultationId,
+                    repository = repository
                 )
             }
         }

@@ -37,6 +37,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.OutlinedTextFieldDefaults.contentPadding
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -461,7 +462,7 @@ fun PrimaryButton(
     modifier: Modifier = Modifier,
     iconImg: ImageVector? = null,
     onClick: () -> Unit = {},
-    enabled: Boolean = true
+    enabled: Boolean = true,
 ) {
     val paddingMedium = dimensionResource(R.dimen.padding_medium)
 
@@ -477,7 +478,7 @@ fun PrimaryButton(
             vertical = paddingMedium,
         ),
         enabled = enabled,
-        modifier = modifier
+        modifier = modifier,
     ) {
         if (iconImg != null) {
             Icon(
@@ -543,42 +544,57 @@ fun PrescriptionRow(
     }
 
     if (showDeleteDialog) {
-        AlertDialog(
-            onDismissRequest = {
+        ConfirmationDialog(
+            title = stringResource(R.string.remove_medication_prompt),
+            message = stringResource(
+                R.string.confirmation_prompt,
+                item.name
+            ),
+            onConfirm = {
+                onRemovePrescription(item)
                 showDeleteDialog = false
             },
-            title = {
-                Text(stringResource(R.string.remove_medication_prompt))
+            onDismiss = {
+                showDeleteDialog = false
             },
-            text = {
-                Text(
-                    stringResource(
-                        R.string.confirmation_prompt,
-                        item.name
-                    )
-                )
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        onRemovePrescription(item)
-                        showDeleteDialog = false
-                    }
-                ) {
-                    Text(stringResource(R.string.confirm_button))
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        showDeleteDialog = false
-                    }
-                ) {
-                    Text(stringResource(R.string.cancel_button))
-                }
-            }
         )
     }
+}
+
+@Composable
+fun ConfirmationDialog(
+    title: String,
+    message: String,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
+    confirmText: String = stringResource(R.string.confirm_button),
+    dismissText: String = stringResource(R.string.cancel_button)
+) {
+    AlertDialog(
+        modifier = modifier,
+        onDismissRequest = onDismiss,
+        title = {
+            Text(title)
+        },
+        text = {
+            Text(message)
+        },
+        confirmButton = {
+            TextButton(
+                onClick = onConfirm
+            ) {
+                Text(confirmText)
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss
+            ) {
+                Text(dismissText)
+            }
+        }
+    )
 }
 
 @Composable

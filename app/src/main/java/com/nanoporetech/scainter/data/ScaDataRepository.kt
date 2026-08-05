@@ -1,6 +1,5 @@
 package com.nanoporetech.scainter.data
 
-import android.R.attr.action
 import android.util.Log
 import com.nanoporetech.scainter.model.Consultation
 import com.nanoporetech.scainter.model.Examination
@@ -63,6 +62,10 @@ interface ScaDataRepository {
     suspend fun fetchFamilyMembers(familyId: String): FetchFamilyMembersResult
     suspend fun fetchPolicyHolders(memberIds: String, providerName: String): FetchPolicyHoldersResult
     suspend fun newConsultation(provider: String, userId: String, cost: String, act: String): Boolean
+
+    suspend fun updatePrescription(consultationId: String, doctor: String, affection: String, medicament: String, quantity: String, posologie: String,
+                                    medicament1: String, quantity1: String, posologie1: String, medicament2: String, quantity2: String,
+                                    posologie2: String, medicament3: String, quantity3: String, posologie3: String): Boolean
 }
 
 private const val TAG = "ScaNetworkDataRepository"
@@ -259,6 +262,66 @@ class ScaNetworkDataRepository(
                 userId = userId,
                 cost = cost,
                 act = act
+            )
+            when {
+                response.isSuccessful -> {
+                    response.body()?.isOk() ?: false
+                }
+
+                response.code() in 500..599 -> {
+                    Log.e(TAG, "Server error: ${response.code()}")
+                    false
+                }
+
+                else -> {
+                    Log.e(TAG, "Request failed: ${response.code()}")
+                    false
+                }
+            }
+        } catch (e: IOException) {
+            Log.e(TAG, "Network error", e)
+            false
+        } catch (e: Exception) {
+            Log.e(TAG, "Unknown error", e)
+            false
+        }
+    }
+
+    override suspend fun updatePrescription(
+        consultationId: String,
+        doctor: String,
+        affection: String,
+        medicament: String,
+        quantity: String,
+        posologie: String,
+        medicament1: String,
+        quantity1: String,
+        posologie1: String,
+        medicament2: String,
+        quantity2: String,
+        posologie2: String,
+        medicament3: String,
+        quantity3: String,
+        posologie3: String
+    ): Boolean {
+        return try {
+            val response = scaApiService.updatePrescription(
+                action = "confirm_prescription",
+                consultationId = consultationId,
+                doctor = doctor,
+                affection = affection,
+                medicament = medicament,
+                quantity = quantity,
+                posologie = posologie,
+                medicament1 = medicament1,
+                quantity1 = quantity1,
+                posologie1 = posologie1,
+                medicament2 = medicament2,
+                quantity2 = quantity2,
+                posologie2 = posologie2,
+                medicament3 = medicament3,
+                quantity3 = quantity3,
+                posologie3 = posologie3
             )
             when {
                 response.isSuccessful -> {

@@ -120,4 +120,9 @@
     <string name="medication_2_title">Médicament 2</string>
     <string name="medication_3_title">Médicament 3</string>
     <string name="medication_4_title">Médicament 4</string>
+    <string name="change_prescription_button">Modifier prescription</string>
+    <string name="new_prescription_added">Nouvelle prescription médicale établie.</string>
+    <string name="new_prescription_error">Erreur lors de la création de la prescription.</string>
+    <string name="send_button">Envoyer</string>
+    <string name="new_prescription_confirmation">Confirmer la prescription?</string>
 </resources>

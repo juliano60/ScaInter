@@ -59,6 +59,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -76,7 +77,8 @@ import com.nanoporetech.scainter.ui.qrcode.CodeScannerScreen
 import com.nanoporetech.scainter.ui.consultation.ConsultationDetailsScreen
 import com.nanoporetech.scainter.ui.consultation.ConsultationFamilyMembersListScreen
 import com.nanoporetech.scainter.ui.consultation.ConsultationListScreen
-import com.nanoporetech.scainter.ui.consultation.MedicalPrescriptionScreen
+import com.nanoporetech.scainter.ui.consultation.ConsultationNewPrescriptionScreen
+import com.nanoporetech.scainter.ui.consultation.MedicalPrescriptionViewModel
 import com.nanoporetech.scainter.ui.consultation.NewConsultationScreen
 import com.nanoporetech.scainter.ui.consultation.NewConsultationViewModel
 import com.nanoporetech.scainter.ui.consultation.PolicyHolderDetailsScreen
@@ -98,6 +100,7 @@ import kotlin.collections.forEach
 
 
 private const val TAG = "TabScreen"
+private const val CONSULTATION_ID_ARGUMENT = "consultationId"
 
 enum class NavResult {
     NewConsultationSuccess,
@@ -177,7 +180,9 @@ fun TabScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     var showConfirmationPrompt by rememberSaveable { mutableStateOf(false) }
+    var showConfirmationUpOneLevel by rememberSaveable { mutableStateOf(false) }
     var showExitPrompt by rememberSaveable { mutableStateOf(false) }
+    val consultationDetailsRoute = "${ScaAppScreen.ConsultationDetails.name}/{$CONSULTATION_ID_ARGUMENT}"
 
     fun onTabPressed(route: String) {
         navController.navigate(route) {
@@ -201,6 +206,9 @@ fun TabScreen(
                     when {
                         current?.startsWith(ScaAppScreen.ConsultationNewConsultation.name) == true -> {
                             showConfirmationPrompt = true
+                        }
+                        current?.startsWith(ScaAppScreen.ConsultationNewPrescription.name) == true -> {
+                            showConfirmationUpOneLevel = true
                         }
                         current?.startsWith(ScaAppScreen.CodeScanner.name) == true -> {
                             showConfirmationPrompt = true
@@ -369,29 +377,51 @@ fun TabScreen(
                     )
                 }
                 composable(
-                    route = "${ScaAppScreen.ConsultationDetails.name}/{consultationId}",
+                    route = consultationDetailsRoute,
                     arguments = listOf(
-                        navArgument("consultationId") {
+                        navArgument(CONSULTATION_ID_ARGUMENT) {
                             type = NavType.IntType
                         }
                     )
                 ) { backStackEntry ->
-                    val consultationId = backStackEntry.arguments?.getInt("consultationId")
-                    ConsultationDetailsScreen(
-                        consultation = uiState.consultations.first { it.id == consultationId },
-                        onNewPrescription = {
-                            navController.navigate(ScaAppScreen.ConsultationNewPrescription.name)
-                        },
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(dimensionResource(R.dimen.padding_medium))
+                    val consultationId = requireNotNull(
+                        backStackEntry.arguments?.getInt(CONSULTATION_ID_ARGUMENT)
                     )
+
+                    val consultation = uiState.consultations.find {
+                        it.id == consultationId
+                    }
+
+                    if (consultation != null) {
+                        ConsultationDetailsScreen(
+                            consultation = consultation,
+                            onNewPrescription = {
+                                navController.navigate(
+                                    route = ScaAppScreen.ConsultationNewPrescription.name
+                                )
+                            },
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(dimensionResource(R.dimen.padding_medium))
+                        )
+                    }
                 }
-                composable(route = ScaAppScreen.ConsultationNewPrescription.name) {
-                    MedicalPrescriptionScreen(
+                composable(route = ScaAppScreen.ConsultationNewPrescription.name) { backStackEntry ->
+                    // grab the consultation id from the parent route
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry(consultationDetailsRoute)
+                    }
+
+                    val consultationId = requireNotNull(
+                        parentEntry.arguments?.getInt(CONSULTATION_ID_ARGUMENT)
+                    ).toString()
+
+                    ConsultationNewPrescriptionScreen(
+                        consultationId = consultationId,
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(dimensionResource(R.dimen.padding_medium))
+                            .background(color = AppConstants.lightGreen)
+                            .padding(dimensionResource(R.dimen.padding_medium)),
                     )
                 }
                 composable(route = ScaAppScreen.ConsultationNewConsultation.name) {
@@ -595,6 +625,20 @@ fun TabScreen(
         }
     }
 
+    // navigate up one level
+    if (showConfirmationUpOneLevel) {
+        showAlert(
+            title = R.string.confirmation_generic_title,
+            message = R.string.confirmation_abort_prompt,
+            onDismiss = { showConfirmationUpOneLevel = false },
+            onConfirm = {
+                showConfirmationUpOneLevel = false
+                navController.popBackStack()
+            }
+        )
+    }
+
+    // navigate up to main menu
     if (showConfirmationPrompt) {
         showAlert(
             title = R.string.confirmation_generic_title,

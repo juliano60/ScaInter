@@ -20,7 +20,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -50,6 +49,20 @@ private const val TAG = "ConsultationDetailsScreen"
 
 @Composable
 fun ConsultationDetailsScreen(
+    consultation: Consultation,
+    onNewPrescription: () -> Unit,
+    modifier: Modifier = Modifier,
+)
+{
+    ConsultationDetailsContent(
+        consultation = consultation,
+        onNewPrescription = onNewPrescription,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun ConsultationDetailsContent(
     consultation: Consultation,
     modifier: Modifier = Modifier,
     onNewPrescription: () -> Unit = {},
@@ -281,10 +294,24 @@ fun ConsultationDetailsScreenPreview() {
                     .background(AppConstants.lightGreen)
                     .padding(dimensionResource(R.dimen.padding_medium))
             ) {
-                ConsultationDetailsScreen(
+                ConsultationDetailsContent(
                     // 0-1 - with prescriptions
                     // 2 - without prescriptions
-                    consultation = DataSource.consultations()[2]
+                    consultation = DataSource.consultations()[2],
+                    /*state = PrescriptionUiState(
+                        prescriptions = listOf(
+                            Prescription(
+                                name = "Medicament 1",
+                                quantityIndex = 1,
+                                posology = "",
+                            ),
+                            Prescription(
+                                name = "Medicament 2",
+                                quantityIndex = 2,
+                                posology = "",
+                            )
+                        )
+                    ),*/
                 )
             }
         }
