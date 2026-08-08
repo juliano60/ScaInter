@@ -1,5 +1,6 @@
 package com.nanoporetech.scainter.ui.components
 
+import android.R.attr.maxLines
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -205,7 +206,6 @@ fun PrescriptionCardBody(
     items: List<PrescriptionCardItem>,
     modifier: Modifier = Modifier,
     indentRight: Boolean = false,
-    keyIsBold: Boolean = true,
     firstColumnWeight: Float = 0.4f,
     secondColumnWeight: Float = 0.6f,
 ) {
@@ -215,10 +215,10 @@ fun PrescriptionCardBody(
                 .fillMaxWidth()
             ) {
                 Text(
-                    text = item.name,
+                    text = item.name.uppercase(),
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    fontWeight = if (keyIsBold) FontWeight.SemiBold else FontWeight.Normal,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
@@ -227,7 +227,8 @@ fun PrescriptionCardBody(
                 Text(
                     text = item.quantity,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = item.valueColor ?: MaterialTheme.colorScheme.onPrimaryContainer,
+                    color = item.valueColor ?: Color.Black,
+                    fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .weight(secondColumnWeight),
                     textAlign = if (indentRight) TextAlign.End else TextAlign.Start
@@ -237,7 +238,7 @@ fun PrescriptionCardBody(
                 .fillMaxWidth()
             ) {
                 Text(
-                    text = item.posology,
+                    text = item.posology.uppercase(),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     fontWeight = FontWeight.Normal,

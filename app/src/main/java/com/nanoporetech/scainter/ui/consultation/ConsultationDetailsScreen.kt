@@ -227,7 +227,6 @@ fun PrescriptionDetails(
         items = items,
         firstColumnWeight = 0.9f,
         secondColumnWeight = 0.1f,
-        keyIsBold = false,
         indentRight = true,
         modifier = modifier
     )
