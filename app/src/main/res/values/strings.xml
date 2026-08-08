@@ -124,4 +124,6 @@
     <string name="new_prescription_error">Error creating new prescription.</string>
     <string name="send_button">Send</string>
     <string name="new_prescription_confirmation">Confirm new prescription?</string>
+    <string name="consultations_loaded_message">Consultations loaded successfully.</string>
+    <string name="consultations_loaded_error_message">Error loading consultations.</string>
 </resources>

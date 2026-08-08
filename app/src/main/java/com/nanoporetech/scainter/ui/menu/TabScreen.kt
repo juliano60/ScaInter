@@ -258,7 +258,50 @@ fun TabScreen(
                 startDestination = ScaAppScreen.HealthCareDashboard.name,
                 modifier = Modifier
             ) {
-                composable(route = ScaAppScreen.HealthCareDashboard.name) { backStackEntry ->
+                composable(route = ScaAppScreen.HealthCareDashboard.name) {
+                    HealthCareScreen(
+                        provider = uiState.provider,
+                        onViewConsultations = {
+                            navController.navigate(ScaAppScreen.ConsultationList.name)
+                        },
+                        onViewExaminations = {
+                            scope.launch {
+                                val success = onFetchExaminations()
+                                if (success) {
+                                    navController.navigate(ScaAppScreen.ExaminationList.name)
+                                }
+                            }
+                        },
+                        onViewHospitalisations = {
+                            scope.launch {
+                                val success = onFetchHospitalisations()
+                                if (success) {
+                                    navController.navigate(ScaAppScreen.HospitalisationList.name)
+                                }
+                            }
+                        },
+                        onNewConsultation = {
+                            navController.navigate(ScaAppScreen.ConsultationNewConsultation.name)
+                        },
+                        onNewExamination = {
+                            navController.navigate(ScaAppScreen.ExaminationNewExamination.name)
+                        },
+                        onNewHospitalisation = {
+                            navController.navigate(ScaAppScreen.HospitalisationNewHospitalisation.name)
+                        },
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(dimensionResource(R.dimen.padding_medium))
+                    )
+                }
+                composable(route = ScaAppScreen.Support.name) {
+                    SupportScreen(
+                        onBack = {},
+                        modifier = Modifier
+                            .fillMaxSize()
+                    )
+                }
+                composable(route = ScaAppScreen.ConsultationList.name) { backStackEntry ->
                     val navResult by backStackEntry
                         .savedStateHandle
                         .getStateFlow<String?>("nav_result", null)
@@ -299,56 +342,8 @@ fun TabScreen(
                         }
                     }
 
-                    HealthCareScreen(
-                        provider = uiState.provider,
-                        onViewConsultations = {
-                            scope.launch {
-                                val success = onFetchConsultations()
-                                if (success) {
-                                    navController.navigate(ScaAppScreen.ConsultationList.name)
-                                }
-                            }
-                        },
-                        onViewExaminations = {
-                            scope.launch {
-                                val success = onFetchExaminations()
-                                if (success) {
-                                    navController.navigate(ScaAppScreen.ExaminationList.name)
-                                }
-                            }
-                        },
-                        onViewHospitalisations = {
-                            scope.launch {
-                                val success = onFetchHospitalisations()
-                                if (success) {
-                                    navController.navigate(ScaAppScreen.HospitalisationList.name)
-                                }
-                            }
-                        },
-                        onNewConsultation = {
-                            navController.navigate(ScaAppScreen.ConsultationNewConsultation.name)
-                        },
-                        onNewExamination = {
-                            navController.navigate(ScaAppScreen.ExaminationNewExamination.name)
-                        },
-                        onNewHospitalisation = {
-                            navController.navigate(ScaAppScreen.HospitalisationNewHospitalisation.name)
-                        },
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(dimensionResource(R.dimen.padding_medium))
-                    )
-                }
-                composable(route = ScaAppScreen.Support.name) {
-                    SupportScreen(
-                        onBack = {},
-                        modifier = Modifier
-                            .fillMaxSize()
-                    )
-                }
-                composable(route = ScaAppScreen.ConsultationList.name) {
                     ConsultationListScreen(
-                        consultations = uiState.consultations,
+                        providerName = uiState.provider.name,
                         onRowClick = { consultation ->
                             navController.navigate(
                                 route = "${ScaAppScreen.ConsultationDetails.name}/${consultation.id}"
@@ -623,10 +618,11 @@ fun TabScreen(
                                         .savedStateHandle["nav_result"] = NavResult.NewConsultationSuccess.name
 
                                     // then navigate
-                                    navController.popBackStack(
-                                        ScaAppScreen.HealthCareDashboard.name,
-                                        inclusive = false
-                                    )
+                                    navController.navigate(ScaAppScreen.ConsultationList.name) {
+                                        popUpTo(ScaAppScreen.HealthCareDashboard.name) {
+                                            inclusive = false
+                                        }
+                                    }
                                 }
                                 is UiEvent.Error -> {
                                     snackbarHostState.showSnackbar(

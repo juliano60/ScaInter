@@ -125,4 +125,6 @@
     <string name="new_prescription_error">Erreur lors de la création de la prescription.</string>
     <string name="send_button">Envoyer</string>
     <string name="new_prescription_confirmation">Confirmer la prescription?</string>
+    <string name="consultations_loaded_message">Liste des consultations mise à jour.</string>
+    <string name="consultations_loaded_error_message">Error lors de la mise  à jour des consultations.</string>
 </resources>

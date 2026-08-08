@@ -295,23 +295,7 @@ fun ConsultationDetailsScreenPreview() {
                     .padding(dimensionResource(R.dimen.padding_medium))
             ) {
                 ConsultationDetailsContent(
-                    // 0-1 - with prescriptions
-                    // 2 - without prescriptions
-                    consultation = DataSource.consultations()[2],
-                    /*state = PrescriptionUiState(
-                        prescriptions = listOf(
-                            Prescription(
-                                name = "Medicament 1",
-                                quantityIndex = 1,
-                                posology = "",
-                            ),
-                            Prescription(
-                                name = "Medicament 2",
-                                quantityIndex = 2,
-                                posology = "",
-                            )
-                        )
-                    ),*/
+                    consultation = DataSource.consultations()[0],
                 )
             }
         }
