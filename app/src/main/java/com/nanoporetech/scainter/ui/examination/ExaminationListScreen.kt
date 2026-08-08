@@ -18,12 +18,14 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -31,19 +33,55 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.data.DataSource
+import com.nanoporetech.scainter.data.DataSource.consultations
+import com.nanoporetech.scainter.model.Consultation
 import com.nanoporetech.scainter.model.Examination
+import com.nanoporetech.scainter.ui.consultation.ConsultationListContent
+import com.nanoporetech.scainter.ui.consultation.ListConsultationsViewModel
 import com.nanoporetech.scainter.ui.utils.displayedDateAndTime
 
 @Composable
 fun ExaminationListScreen(
+    providerName: String,
+    modifier: Modifier = Modifier,
+    onRowClick: (Examination) -> Unit = {},
+    viewModel: ListExaminationsViewModel = viewModel(
+        factory = ListExaminationsViewModel.provideFactory(
+            providerName = providerName
+        )
+    )
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    ExaminationListContent(
+        examinations = uiState.examinations,
+        isLoading = uiState.isLoading,
+        modifier = modifier,
+        onRowClick = onRowClick
+    )
+}
+
+@Composable
+fun ExaminationListContent(
     examinations: List<Examination>,
+    isLoading: Boolean,
     modifier: Modifier = Modifier,
     onRowClick: (Examination) -> Unit = {},
 ) {
-    if (examinations.isEmpty()) {
+    if (isLoading) {
+        Box(
+            modifier = modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+    } else if (examinations.isEmpty()) {
         Box(
             modifier = modifier
                 .fillMaxSize(),
@@ -151,8 +189,9 @@ fun ExaminationListScreenPreview() {
         modifier = Modifier
             .fillMaxSize()
     ) {
-        ExaminationListScreen(
+        ExaminationListContent(
             examinations = DataSource.examinations(),
+            isLoading = false,
             //examinations = emptyList(),
             modifier = Modifier
                 .fillMaxSize()

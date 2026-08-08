@@ -1,7 +1,5 @@
 package com.nanoporetech.scainter.ui.menu
 
-import android.R.attr.duration
-import android.R.id.message
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.annotation.StringRes
@@ -12,8 +10,8 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
@@ -36,7 +34,6 @@ import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -59,7 +56,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -73,13 +69,11 @@ import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.data.AppUiState
 import com.nanoporetech.scainter.data.DataSource
 import com.nanoporetech.scainter.ui.components.showAlert
-import com.nanoporetech.scainter.ui.qrcode.CodeScannerScreen
 import com.nanoporetech.scainter.ui.consultation.ConsultationDetailsScreen
 import com.nanoporetech.scainter.ui.consultation.ConsultationFamilyMembersListScreen
 import com.nanoporetech.scainter.ui.consultation.ConsultationListScreen
 import com.nanoporetech.scainter.ui.consultation.ConsultationNewPrescriptionScreen
 import com.nanoporetech.scainter.ui.consultation.ListConsultationsViewModel
-import com.nanoporetech.scainter.ui.consultation.MedicalPrescriptionViewModel
 import com.nanoporetech.scainter.ui.consultation.NewConsultationScreen
 import com.nanoporetech.scainter.ui.consultation.NewConsultationViewModel
 import com.nanoporetech.scainter.ui.consultation.PolicyHolderDetailsScreen
@@ -90,6 +84,7 @@ import com.nanoporetech.scainter.ui.examination.NewExaminationScreen
 import com.nanoporetech.scainter.ui.hospitalisation.HospitalisationFamilyMembersListScreen
 import com.nanoporetech.scainter.ui.hospitalisation.HospitalisationListScreen
 import com.nanoporetech.scainter.ui.hospitalisation.NewHospitalisationScreen
+import com.nanoporetech.scainter.ui.qrcode.CodeScannerScreen
 import com.nanoporetech.scainter.ui.support.SupportScreen
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.theme.ScaInterTheme
@@ -97,7 +92,6 @@ import com.nanoporetech.scainter.ui.utils.AppSnackbarVisuals
 import com.nanoporetech.scainter.ui.utils.SnackbarType
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlin.collections.forEach
 
 
 private const val TAG = "TabScreen"
@@ -152,9 +146,6 @@ fun TabScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     onLogout: () -> Unit = {},
-    onFetchConsultations: suspend () -> Boolean = { false },
-    onFetchExaminations: suspend () -> Boolean = { false },
-    onFetchHospitalisations: suspend () -> Boolean = { false }
 ) {
     val tabs = listOf(
         TabSpec(
@@ -266,20 +257,10 @@ fun TabScreen(
                             navController.navigate(ScaAppScreen.ConsultationList.name)
                         },
                         onViewExaminations = {
-                            scope.launch {
-                                val success = onFetchExaminations()
-                                if (success) {
-                                    navController.navigate(ScaAppScreen.ExaminationList.name)
-                                }
-                            }
+                            navController.navigate(ScaAppScreen.ExaminationList.name)
                         },
                         onViewHospitalisations = {
-                            scope.launch {
-                                val success = onFetchHospitalisations()
-                                if (success) {
-                                    navController.navigate(ScaAppScreen.HospitalisationList.name)
-                                }
-                            }
+                            navController.navigate(ScaAppScreen.HospitalisationList.name)
                         },
                         onNewConsultation = {
                             navController.navigate(ScaAppScreen.ConsultationNewConsultation.name)
@@ -357,7 +338,7 @@ fun TabScreen(
                 }
                 composable(route = ScaAppScreen.ExaminationList.name) {
                     ExaminationListScreen(
-                        examinations = uiState.examinations,
+                        providerName = uiState.provider.name,
                         /*onRowClick = { consultation ->
                             navController.navigate(
                                 route = "${ScaAppScreen.ExaminationDetailsScreen.name}/${consultation.id}"
@@ -370,7 +351,7 @@ fun TabScreen(
                 }
                 composable(route = ScaAppScreen.HospitalisationList.name) {
                     HospitalisationListScreen(
-                        hospitalisations = uiState.hospitalisations,
+                        providerName = uiState.provider.name,
                         /*onRowClick = { consultation ->
                             navController.navigate(
                                 route = "${ScaAppScreen.ExaminationDetailsScreen.name}/${consultation.id}"

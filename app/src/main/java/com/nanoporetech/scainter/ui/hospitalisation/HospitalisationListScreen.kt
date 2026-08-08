@@ -24,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -31,6 +32,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.data.DataSource
@@ -40,7 +43,29 @@ import com.nanoporetech.scainter.ui.utils.displayedDateAndTime
 
 @Composable
 fun HospitalisationListScreen(
+    providerName: String,
+    modifier: Modifier = Modifier,
+    onRowClick: (Hospitalisation) -> Unit = {},
+    viewModel: ListHospitalisationsViewModel = viewModel(
+        factory = ListHospitalisationsViewModel .provideFactory(
+            providerName = providerName
+        )
+    )
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    HospitalisationListContent(
+        hospitalisations = uiState.hospitalisations,
+        isLoading = uiState.isLoading,
+        modifier = modifier,
+        onRowClick = onRowClick
+    )
+}
+
+@Composable
+fun HospitalisationListContent(
     hospitalisations: List<Hospitalisation>,
+    isLoading: Boolean,
     modifier: Modifier = Modifier,
     onRowClick: (Hospitalisation) -> Unit = {},
 ) {
@@ -154,8 +179,9 @@ fun HospitalisationListScreenPreview() {
         modifier = Modifier
             .fillMaxSize()
     ) {
-        HospitalisationListScreen(
+        HospitalisationListContent(
             hospitalisations = DataSource.hospitalisations(),
+            isLoading = false,
             //hospitalisations = emptyList(),
             modifier = Modifier
                 .fillMaxSize()
