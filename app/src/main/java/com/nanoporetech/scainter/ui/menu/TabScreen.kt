@@ -96,6 +96,8 @@ import kotlinx.coroutines.launch
 
 private const val TAG = "TabScreen"
 private const val CONSULTATION_ID_ARGUMENT = "consultationId"
+private const val EXAMINATION_ID_ARGUMENT = "examinationId"
+private const val HOSPITALISATION_ID_ARGUMENT = "hospitalisationId"
 
 enum class NavResult {
     NewConsultationSuccess,
@@ -250,6 +252,8 @@ fun TabScreen(
                 startDestination = ScaAppScreen.HealthCareDashboard.name,
                 modifier = Modifier
             ) {
+                // DASHBOARD VIEW
+
                 composable(route = ScaAppScreen.HealthCareDashboard.name) {
                     HealthCareScreen(
                         provider = uiState.provider,
@@ -276,6 +280,9 @@ fun TabScreen(
                             .padding(dimensionResource(R.dimen.padding_medium))
                     )
                 }
+
+                // SUPPORT VIEW
+
                 composable(route = ScaAppScreen.Support.name) {
                     SupportScreen(
                         onBack = {},
@@ -283,14 +290,20 @@ fun TabScreen(
                             .fillMaxSize()
                     )
                 }
+
+                // LISTING VIEWS
+
                 composable(route = ScaAppScreen.ConsultationList.name) { backStackEntry ->
-                    val navResult by backStackEntry
+                    val dashboardEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry(ScaAppScreen.HealthCareDashboard.name)
+                    }
+                    val dashboardNavResult by dashboardEntry
                         .savedStateHandle
                         .getStateFlow<String?>("nav_result", null)
                         .collectAsState()
 
-                    LaunchedEffect(navResult) {
-                        when (navResult) {
+                    LaunchedEffect(dashboardNavResult) {
+                        when (dashboardNavResult) {
                             NavResult.NewConsultationSuccess.name -> {
                                 snackbarHostState.showSnackbar(
                                     AppSnackbarVisuals(
@@ -319,8 +332,8 @@ fun TabScreen(
                             null -> Unit
                         }
                         // now clear old nav result
-                        if (navResult != null) {
-                            backStackEntry.savedStateHandle["nav_result"] = null
+                        if (dashboardNavResult != null) {
+                            dashboardEntry.savedStateHandle["nav_result"] = null
                         }
                     }
 
@@ -362,6 +375,9 @@ fun TabScreen(
                             .padding(dimensionResource(R.dimen.padding_medium))
                     )
                 }
+
+                // DETAILS VIEWS
+
                 composable(
                     route = consultationDetailsRoute,
                     arguments = listOf(
@@ -406,6 +422,9 @@ fun TabScreen(
                         )
                     }
                 }
+
+                // NEW OPERATION VIEWS
+
                 composable(route = ScaAppScreen.ConsultationNewPrescription.name) { backStackEntry ->
                     // grab the consultation id from the parent route
                     val parentEntry = remember(backStackEntry) {
@@ -424,10 +443,11 @@ fun TabScreen(
                                 ScaAppScreen.HealthCareDashboard.name)
                                 .savedStateHandle["nav_result"] = NavResult.NewPrescriptionSuccess.name
 
-                            navController.popBackStack(
-                                ScaAppScreen.HealthCareDashboard.name,
-                                inclusive = false
-                            )
+                            navController.navigate(ScaAppScreen.ConsultationList.name) {
+                                popUpTo(ScaAppScreen.HealthCareDashboard.name) {
+                                    inclusive = false
+                                }
+                            }
                         },
                         onSubmitError = { errorId ->
                             scope.launch {
@@ -446,6 +466,7 @@ fun TabScreen(
                             .padding(dimensionResource(R.dimen.padding_medium)),
                     )
                 }
+
                 composable(route = ScaAppScreen.ConsultationNewConsultation.name) {
                     NewConsultationScreen(
                         onScanQrCode = {
@@ -491,6 +512,9 @@ fun TabScreen(
                             .padding(dimensionResource(R.dimen.padding_medium)),
                     )
                 }
+
+                // CODE SCANNER
+
                 composable(
                     route = ScaAppScreen.codeScannerRoute,
                     arguments = listOf(
@@ -534,6 +558,9 @@ fun TabScreen(
                             .padding(dimensionResource(R.dimen.padding_medium))
                     )
                 }
+
+                // FAMILY MEMBERS LIST
+                
                 composable(route = ScaAppScreen.ExaminationFamilyMembersList.name) {
                     ExaminationFamilyMembersListScreen(
                         familyId = scanResult,
@@ -572,6 +599,9 @@ fun TabScreen(
                             .padding(dimensionResource(R.dimen.padding_medium))
                     )
                 }
+
+                // POLICYHOLDER DETAILS
+
                 composable(
                     route = "${ScaAppScreen.ConsultationPolicyHolderDetails.name}/{policyHolderId}",
                     arguments = listOf(
