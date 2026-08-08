@@ -368,11 +368,24 @@ fun PredictiveTextField(
     onValueChanged: (String) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val filteredSuggestions = suggestions
-        .filter {
-            value.isNotBlank() && it.contains(value, ignoreCase = true)
-        }
-        .take(10)
+    val filteredSuggestions = if (value.isNotBlank()) {
+        val startsWith = suggestions
+            .filter {
+                value.isNotBlank() && it.startsWith(value, ignoreCase = true)
+            }
+            .take(10)
+
+        val remaining = 10 - startsWith.size
+
+        startsWith + suggestions
+            .filter {
+                !it.startsWith(value, ignoreCase = true) &&
+                        it.contains(value, ignoreCase = true)
+            }
+            .take(remaining)
+    } else {
+        emptyList()
+    }
 
     ExposedDropdownMenuBox(
         expanded = expanded && filteredSuggestions.isNotEmpty(),
