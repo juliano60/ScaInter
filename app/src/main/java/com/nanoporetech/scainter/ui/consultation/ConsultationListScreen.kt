@@ -18,13 +18,13 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,7 +38,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.data.DataSource
-import com.nanoporetech.scainter.data.DataSource.consultations
 import com.nanoporetech.scainter.model.Consultation
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.utils.displayedDateAndTime
@@ -58,6 +57,7 @@ fun ConsultationListScreen(
 
     ConsultationListContent(
         consultations = uiState.consultations,
+        isLoading = uiState.isLoading,
         modifier = modifier,
         onRowClick = onRowClick
     )
@@ -66,10 +66,19 @@ fun ConsultationListScreen(
 @Composable
 fun ConsultationListContent(
     consultations: List<Consultation>,
+    isLoading: Boolean,
     modifier: Modifier = Modifier,
     onRowClick: (Consultation) -> Unit = {},
 ) {
-    if (consultations.isEmpty()) {
+    if (isLoading) {
+        Box(
+            modifier = modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+    } else if (consultations.isEmpty()) {
         Box(
             modifier = modifier
                 .fillMaxSize(),
@@ -180,6 +189,7 @@ fun ConsultationListScreenPreview() {
         ) {
             ConsultationListContent(
                 consultations = DataSource.consultations(),
+                isLoading = false,
                 //consultations = emptyList(),
                 modifier = Modifier
                     .fillMaxSize()

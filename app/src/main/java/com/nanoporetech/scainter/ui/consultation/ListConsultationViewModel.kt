@@ -36,15 +36,18 @@ class ListConsultationViewModel(
                 is FetchConsultationsResult.Success -> {
                     _uiState.update {
                         it.copy(
-                            consultations = result.consultations
+                            consultations = result.consultations,
+                            isLoading = false
                         )
                     }
                     _events.emit(UiEvent.Success(R.string.consultations_loaded_message))
                 }
                 is FetchConsultationsResult.NetworkError -> {
+                    _uiState.update { it.copy(isLoading = false) }
                     _events.emit(UiEvent.Error(R.string.err_connection_offline))
                 }
                 else -> {
+                    _uiState.update { it.copy(isLoading = false) }
                     _events.emit(UiEvent.Error(R.string.consultations_loaded_error_message))
                 }
             }
