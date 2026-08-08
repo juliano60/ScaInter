@@ -158,10 +158,6 @@ fun PrescriptionSection(
     modifier: Modifier = Modifier,
 ) {
     val paddingMedium = dimensionResource(R.dimen.padding_medium)
-    val items = listOf(
-        CardItem(stringResource(R.string.prescriber_label), formatDoctorName(consultation.doctor ?: "")),
-        CardItem(stringResource(R.string.affection_label), consultation.affliction ?: "")
-    )
 
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
@@ -186,10 +182,6 @@ fun PrescriptionSection(
                         .fillMaxWidth()
                 )
             } else {
-                CardBody(items = items)
-
-                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
-
                 PrescriptionDetails(
                     consultation = consultation,
                     modifier = Modifier
@@ -254,6 +246,8 @@ fun ConsultationInfo(
         CardItem(stringResource(R.string.date_label),
             displayedDateAndTime(
             consultation.creationDate)),
+        CardItem(stringResource(R.string.prescriber_label), formatDoctorName(consultation.doctor ?: "")),
+        CardItem(stringResource(R.string.affection_label), consultation.affliction ?: "")
     )
 
     val paddingMedium = dimensionResource(R.dimen.padding_medium)

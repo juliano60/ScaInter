@@ -156,7 +156,7 @@ fun CardBodyTwoLines(
         verticalArrangement = Arrangement.spacedBy(paddingSmall),
         modifier = modifier) {
         for (item in items) {
-            if (item.label.isNotBlank()) {
+            if (item.label.isNotBlank() && item.value.isNotBlank()) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(paddingXSmall),
                 ) {
