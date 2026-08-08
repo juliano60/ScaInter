@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class ListConsultationViewModel(
+class ListConsultationsViewModel(
     private val providerName: String,
     private val repository: ScaDataRepository
 ): ViewModel() {
@@ -62,7 +62,7 @@ class ListConsultationViewModel(
                 val application = this[APPLICATION_KEY] as ScaInterApplication
                 val repository = application.container.scaDataRepository
 
-                ListConsultationViewModel(
+                ListConsultationsViewModel(
                     providerName = providerName,
                     repository = repository
                 )

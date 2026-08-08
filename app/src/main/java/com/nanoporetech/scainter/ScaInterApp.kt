@@ -157,7 +157,6 @@ fun ScaInterApp(
             ) {
                 TabScreen(
                     onLogout = model::logout,
-                    onFetchConsultations = model::fetchConsultations,
                     onFetchExaminations = model::fetchExaminations,
                     onFetchHospitalisations = model::fetchHospitalisations,
                     uiState = uiState,

@@ -78,6 +78,7 @@ import com.nanoporetech.scainter.ui.consultation.ConsultationDetailsScreen
 import com.nanoporetech.scainter.ui.consultation.ConsultationFamilyMembersListScreen
 import com.nanoporetech.scainter.ui.consultation.ConsultationListScreen
 import com.nanoporetech.scainter.ui.consultation.ConsultationNewPrescriptionScreen
+import com.nanoporetech.scainter.ui.consultation.ListConsultationsViewModel
 import com.nanoporetech.scainter.ui.consultation.MedicalPrescriptionViewModel
 import com.nanoporetech.scainter.ui.consultation.NewConsultationScreen
 import com.nanoporetech.scainter.ui.consultation.NewConsultationViewModel
@@ -392,6 +393,20 @@ fun TabScreen(
                         backStackEntry.arguments?.getInt(CONSULTATION_ID_ARGUMENT)
                     )
 
+                    // grab parent's view model
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry(
+                            ScaAppScreen.ConsultationList.name
+                        )
+                    }
+
+                    val viewModel: ListConsultationsViewModel = viewModel(
+                        viewModelStoreOwner = parentEntry
+                    )
+
+                    val uiState by viewModel.uiState.collectAsState()
+
+                    // extract consultation with matching consultationId
                     val consultation = uiState.consultations.find {
                         it.id == consultationId
                     }

@@ -47,8 +47,8 @@ fun ConsultationListScreen(
     providerName: String,
     modifier: Modifier = Modifier,
     onRowClick: (Consultation) -> Unit = {},
-    viewModel: ListConsultationViewModel = viewModel(
-        factory = ListConsultationViewModel.provideFactory(
+    viewModel: ListConsultationsViewModel = viewModel(
+        factory = ListConsultationsViewModel.provideFactory(
             providerName = providerName
         )
     )

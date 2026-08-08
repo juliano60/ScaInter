@@ -117,27 +117,6 @@ class AppViewModel(
         }
     }
 
-    suspend fun fetchConsultations(): Boolean {
-        return when (val result = repository.fetchConsultationsFor(_uiState.value.provider.name)) {
-            is FetchConsultationsResult.Success -> {
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        consultations = result.consultations
-                    )
-                }
-                true
-            }
-            is FetchConsultationsResult.NetworkError -> {
-                _events.emit(UiEvent.Error(R.string.err_connection_offline))
-                false
-            }
-            else -> {
-                _events.emit(UiEvent.Error(R.string.err_unknown_error))
-                false
-            }
-        }
-    }
-
     suspend fun fetchExaminations(): Boolean {
         return when (val result = repository.fetchExaminationsFor(_uiState.value.provider.name)) {
             is FetchExaminationsResult.Success -> {

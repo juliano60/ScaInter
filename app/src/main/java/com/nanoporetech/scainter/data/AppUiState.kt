@@ -18,8 +18,6 @@ data class AppUiState(
     val password: String = "",
     /** the rememberMe state */
     val rememberMe: Boolean = false,
-    /** list of consultations for that provider */
-    val consultations: List<Consultation> = emptyList(),
     /** list of examinations for that provider */
     val examinations: List<Examination> = emptyList(),
     /** list of hospitalisations for that provider */
