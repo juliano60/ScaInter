@@ -80,7 +80,6 @@ import com.nanoporetech.scainter.ui.consultation.ConsultationPolicyHolderDetails
 import com.nanoporetech.scainter.ui.events.UiEvent
 import com.nanoporetech.scainter.ui.examination.ExaminationFamilyMembersListScreen
 import com.nanoporetech.scainter.ui.examination.ExaminationListScreen
-import com.nanoporetech.scainter.ui.examination.ExaminationPolicyHolderDetailsContent
 import com.nanoporetech.scainter.ui.examination.ExaminationPolicyHolderDetailsScreen
 import com.nanoporetech.scainter.ui.examination.ExaminationSameDayExamScreen
 import com.nanoporetech.scainter.ui.examination.ExaminationViewModel
@@ -322,7 +321,7 @@ fun TabScreen(
                             NavResult.NewConsultationFailed.name -> {
                                 snackbarHostState.showSnackbar(
                                     AppSnackbarVisuals(
-                                        message = context.getString(R.string.err_unknown_error),
+                                        message = context.getString(R.string.err_unknown_error_message),
                                         type = SnackbarType.Error,
                                         duration = SnackbarDuration.Long
                                     )
@@ -729,9 +728,7 @@ fun TabScreen(
                 composable(route = ScaAppScreen.ExaminationSameDayExamination.name) { backStackEntry ->
                     // grab parent's view model
                     val parentEntry = remember(backStackEntry) {
-                        navController.getBackStackEntry(
-                            ScaAppScreen.ExaminationPolicyHolderDetails.name
-                        )
+                        requireNotNull(navController.previousBackStackEntry)
                     }
 
                     val viewModel: ExaminationViewModel = viewModel(
@@ -741,7 +738,16 @@ fun TabScreen(
                     val localUiState by viewModel.uiState.collectAsState()
 
                     ExaminationSameDayExamScreen(
-                        //reason = localUiState.,
+                        reason = localUiState.reason,
+                        designation = localUiState.designation,
+                        costTotal = localUiState.costTotal,
+                        costSca = localUiState.costSca,
+                        costUser = localUiState.costUser,
+                        isSubmitting = localUiState.isSubmitting,
+                        onReasonChanged = viewModel::setReason,
+                        onDesignationChanged = viewModel::setDesignation,
+                        onCostChanged = viewModel::updateCost,
+                        onSubmitRequest = viewModel::submitRequest,
                         modifier = Modifier
                             .fillMaxSize()
                             .background(color = AppConstants.lightGreen)

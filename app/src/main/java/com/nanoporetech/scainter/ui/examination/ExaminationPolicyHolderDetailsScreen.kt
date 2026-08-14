@@ -49,6 +49,7 @@ fun ExaminationPolicyHolderDetailsScreen(
         factory = ExaminationViewModel.provideFactory(
             providerName = providerName,
             careCoverage = policyHolder.coverExternal,
+            userId = policyHolder.id.toString()
         ),
     )
 ) {

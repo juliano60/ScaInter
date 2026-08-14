@@ -54,6 +54,12 @@ sealed interface FetchPolicyHoldersResult {
     object UnknownError : FetchPolicyHoldersResult
 }
 
+sealed interface NewDayCareExaminationResult {
+    object Success: NewDayCareExaminationResult
+    object NetworkError : NewDayCareExaminationResult
+    object UnknownError : NewDayCareExaminationResult
+}
+
 interface ScaDataRepository {
     suspend fun fetchProvider(username: String, password: String): FetchProviderResult
     suspend fun fetchConsultationsFor(provider: String): FetchConsultationsResult
@@ -66,6 +72,8 @@ interface ScaDataRepository {
     suspend fun updatePrescription(consultationId: String, doctor: String, affection: String, medicament: String, quantity: String, posologie: String,
                                     medicament1: String, quantity1: String, posologie1: String, medicament2: String, quantity2: String,
                                     posologie2: String, medicament3: String, quantity3: String, posologie3: String): Boolean
+
+    suspend fun newDayCareExamination(userId: String, provider: String, reason: String, exam1: String, cost: String): NewDayCareExaminationResult
 }
 
 private const val TAG = "ScaNetworkDataRepository"
@@ -344,6 +352,50 @@ class ScaNetworkDataRepository(
         } catch (e: Exception) {
             Log.e(TAG, "Unknown error", e)
             false
+        }
+    }
+
+    override suspend fun newDayCareExamination(
+        userId: String,
+        provider: String,
+        reason: String,
+        exam1: String,
+        cost: String
+    ): NewDayCareExaminationResult {
+        return try {
+            val response = scaApiService.newDayCareExamination(
+                action = "confirm_one_day_care",
+                userId = userId,
+                provider = provider,
+                reason = reason,
+                exam1 = exam1,
+                cost = cost,
+            )
+            when {
+                response.isSuccessful -> {
+                    if (response.body()?.isOk() == true) {
+                        NewDayCareExaminationResult.Success
+                    } else {
+                        NewDayCareExaminationResult.UnknownError
+                    }
+                }
+
+                response.code() in 500..599 -> {
+                    Log.e(TAG, "Server error: ${response.errorBody()?.string()}")
+                    NewDayCareExaminationResult.UnknownError
+                }
+
+                else -> {
+                    Log.e(TAG, "Request failed: ${response.errorBody()?.string()}")
+                    NewDayCareExaminationResult.UnknownError
+                }
+            }
+        } catch (e: IOException) {
+            Log.e(TAG, "Network error", e)
+            NewDayCareExaminationResult.NetworkError
+        } catch (e: Exception) {
+            Log.e(TAG, "Unknown error", e)
+            NewDayCareExaminationResult.UnknownError
         }
     }
 }

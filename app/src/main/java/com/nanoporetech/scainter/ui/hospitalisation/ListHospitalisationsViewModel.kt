@@ -45,7 +45,7 @@ class ListHospitalisationsViewModel(
                 }
                 is FetchHospitalisationsResult.NetworkError -> {
                     _uiState.update { it.copy(isLoading = false) }
-                    _events.emit(UiEvent.Error(R.string.err_connection_offline))
+                    _events.emit(UiEvent.Error(R.string.err_network_error_message))
                 }
                 else -> {
                     _uiState.update { it.copy(isLoading = false) }

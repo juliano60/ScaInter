@@ -6,9 +6,11 @@ data class ExaminationUiState(
     /** the requested examination */
     val designation: String = "",
     /** the total cost for that examination */
-    val cost: String = "",
+    val costTotal: String = "",
     /** the patient's share of the cost */
-    val patientShare: String = "",
-    /** the provider's share of the cost */
-    val providerShare: String = ""
+    val costUser: String = "",
+    /** the assurer's share of the cost */
+    val costSca: String = "",
+    /** guard against double submission */
+    val isSubmitting: Boolean = false
 )

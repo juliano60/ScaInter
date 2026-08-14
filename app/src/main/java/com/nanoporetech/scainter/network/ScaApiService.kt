@@ -64,6 +64,16 @@ interface ScaApiService {
         @Query(value = "provider") provider: String
     ): Response<List<Examination>>
 
+    @GET("examination_api.php")
+    suspend fun newDayCareExamination(
+        @Query(value = "action") action: String,
+        @Query(value = "id") userId: String,
+        @Query(value = "provider") provider: String,
+        @Query(value = "reason") reason: String,
+        @Query(value = "exam1") exam1: String,
+        @Query(value = "cost") cost: String
+    ): Response<Status>
+
     // hospitalisation.php
 
     @GET("hospitalisation_api.php")

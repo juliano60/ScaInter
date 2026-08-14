@@ -21,10 +21,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
@@ -41,6 +44,7 @@ fun ExaminationSameDayExamScreen(
     costTotal: String = "",
     costSca: String = "",
     costUser: String = "",
+    isSubmitting: Boolean = false,
     onReasonChanged: (String) -> Unit = {},
     onDesignationChanged: (String) -> Unit = {},
     onCostChanged: (String) -> Unit = {},
@@ -48,8 +52,7 @@ fun ExaminationSameDayExamScreen(
     modifier: Modifier
 ) {
     val paddingMedium = dimensionResource(R.dimen.padding_medium)
-
-    fun isFormValid() = reason.isNotBlank() && designation.isNotBlank() && costTotal.isNotBlank()
+    val isFormValid = reason.isNotBlank() && designation.isNotBlank() && costTotal.isNotBlank()
 
     Column(
         modifier = modifier
@@ -64,6 +67,8 @@ fun ExaminationSameDayExamScreen(
             onDesignationChanged = onDesignationChanged,
             onCostChanged = onCostChanged,
             onSubmitRequest = onSubmitRequest,
+            isFormValid = isFormValid,
+            isSubmitting = isSubmitting,
             modifier = Modifier
                 .fillMaxWidth()
         )
@@ -86,7 +91,7 @@ fun ExaminationSameDayExamScreen(
             iconImg = Icons.AutoMirrored.Filled.Send,
             text = stringResource(R.string.send_button),
             onClick = onSubmitRequest,
-            enabled = isFormValid(),
+            enabled = isFormValid && !isSubmitting,
             modifier = Modifier
                 .fillMaxWidth()
         )
@@ -98,6 +103,8 @@ fun CareSection(
     reason: String,
     designation: String,
     costTotal: String,
+    isFormValid: Boolean,
+    isSubmitting: Boolean,
     modifier: Modifier = Modifier,
     onReasonChanged: (String) -> Unit,
     onDesignationChanged: (String) -> Unit,
@@ -107,6 +114,7 @@ fun CareSection(
     val paddingMedium = dimensionResource(R.dimen.padding_medium)
     val paddingSmall = dimensionResource(R.dimen.padding_small)
     val paddingExtraSmall = dimensionResource(R.dimen.padding_xsmall)
+    val focusManager = LocalFocusManager.current
 
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
@@ -135,7 +143,7 @@ fun CareSection(
 
             Spacer(modifier = Modifier.height(paddingSmall))
 
-            // MOTIF DU SOIN
+            // MOTIF DES SOINS
 
             PrimaryOutlinedTextField(
                 value = reason,
@@ -143,10 +151,12 @@ fun CareSection(
                 onValueChanged = onReasonChanged,
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done,
+                    imeAction = ImeAction.Next
                 ),
                 keyboardActions = KeyboardActions(
-                    //onDone = { onSendPrescription() }
+                    onNext = {
+                        focusManager.moveFocus(FocusDirection.Next)
+                    }
                 ),
             )
 
@@ -160,10 +170,12 @@ fun CareSection(
                 onValueChanged = onDesignationChanged,
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done,
+                    imeAction = ImeAction.Next
                 ),
                 keyboardActions = KeyboardActions(
-                    //onDone = { onSendPrescription() }
+                    onNext = {
+                        focusManager.moveFocus(FocusDirection.Next)
+                    }
                 ),
             )
 
@@ -174,13 +186,23 @@ fun CareSection(
             PrimaryOutlinedTextField(
                 value = costTotal,
                 placeholder = stringResource(R.string.exam_cost_hint),
-                onValueChanged = onCostChanged,
+                onValueChanged = { value ->
+                    if (value.all { it.isDigit() }) {
+                        onCostChanged(value)
+                    }
+                },
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(
-                    //onDone = { onSendPrescription() }
+                    onDone = {
+                        if (isFormValid && !isSubmitting) {
+                            focusManager.clearFocus()
+                            onSubmitRequest()
+                        }
+                    }
                 ),
             )
         }

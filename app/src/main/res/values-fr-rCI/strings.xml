@@ -52,9 +52,9 @@
 
     <!-- ERRORS -->
     <string name="scan_qr_code">Scanner un QR code</string>
-    <string name="err_invalid_credentials">Identifiant ou mot de passe incorrect.</string>
-    <string name="err_connection_offline">Connexion réseau indisponible.</string>
-    <string name="err_unknown_error">Une erreur est survenue. Veuillez réessayer.</string>
+    <string name="err_invalid_credentials_message">Identifiant ou mot de passe incorrect.</string>
+    <string name="err_network_error_message">Connexion réseau indisponible.</string>
+    <string name="err_unknown_error_message">Une erreur est survenue. Veuillez réessayer.</string>
     <string name="page_health_care">Centre de Santé</string>
     <string name="page_consultation_list">Mes Consultations</string>
     <string name="page_examination_list">Mes Examinations</string>
@@ -139,6 +139,7 @@
     <string name="exam_reason_hint">Motif des soins</string>
     <string name="exam_designatinon_hint">Désignation</string>
     <string name="exam_cost_hint">Montant</string>
-    <string name="exam_same_day_request_title">Demande de soins d\'un jour</string>
+    <string name="exam_same_day_request_title">Demande de soins</string>
     <string name="exam_regular_request_title">Demande d\'examen</string>
+    <string name="new_same_day_care_success_message">Nouvelle demande de soins  établie.</string>
 </resources>

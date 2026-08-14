@@ -16,10 +16,8 @@ import com.nanoporetech.scainter.notification.DeviceTokenRegistrar
 import com.nanoporetech.scainter.notification.FirebaseDeviceTokenRegistrar
 import com.nanoporetech.scainter.credentials.CredentialsStore
 import com.nanoporetech.scainter.credentials.CredentialsStoreBase
-import com.nanoporetech.scainter.data.FetchConsultationsResult
 import com.nanoporetech.scainter.data.FetchExaminationsResult
 import com.nanoporetech.scainter.data.FetchHospitalisationsResult
-import com.nanoporetech.scainter.model.Consultation
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -93,7 +91,7 @@ class AppViewModel(
                               isLoginError = true
                           )
                       }
-                      _events.emit(UiEvent.Error(R.string.err_invalid_credentials))
+                      _events.emit(UiEvent.Error(R.string.err_invalid_credentials_message))
                   }
                   is FetchProviderResult.NetworkError -> {
                       _uiState.update {
@@ -102,7 +100,7 @@ class AppViewModel(
                               isLoginError = false
                           )
                       }
-                      _events.emit(UiEvent.Error(R.string.err_connection_offline))
+                      _events.emit(UiEvent.Error(R.string.err_network_error_message))
                   }
                   else -> {
                       _uiState.update {
@@ -111,7 +109,7 @@ class AppViewModel(
                               isLoginError = false
                           )
                       }
-                      _events.emit(UiEvent.Error(R.string.err_unknown_error))
+                      _events.emit(UiEvent.Error(R.string.err_unknown_error_message))
                   }
               }
         }
@@ -128,11 +126,11 @@ class AppViewModel(
                 true
             }
             is FetchExaminationsResult.NetworkError -> {
-                _events.emit(UiEvent.Error(R.string.err_connection_offline))
+                _events.emit(UiEvent.Error(R.string.err_network_error_message))
                 false
             }
             else -> {
-                _events.emit(UiEvent.Error(R.string.err_unknown_error))
+                _events.emit(UiEvent.Error(R.string.err_unknown_error_message))
                 false
             }
         }
@@ -149,11 +147,11 @@ class AppViewModel(
                 true
             }
             is FetchHospitalisationsResult.NetworkError -> {
-                _events.emit(UiEvent.Error(R.string.err_connection_offline))
+                _events.emit(UiEvent.Error(R.string.err_network_error_message))
                 false
             }
             else -> {
-                _events.emit(UiEvent.Error(R.string.err_unknown_error))
+                _events.emit(UiEvent.Error(R.string.err_unknown_error_message))
                 false
             }
         }
