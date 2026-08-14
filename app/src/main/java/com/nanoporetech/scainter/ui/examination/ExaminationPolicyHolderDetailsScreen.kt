@@ -25,7 +25,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.data.DataSource
@@ -40,18 +39,10 @@ import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 
 @Composable
 fun ExaminationPolicyHolderDetailsScreen(
-    providerName: String,
     policyHolder: PolicyHolder,
     modifier: Modifier = Modifier,
     onExamination: () -> Unit = {},
     onDayExamination: () -> Unit = {},
-    viewModel: ExaminationViewModel = viewModel(
-        factory = ExaminationViewModel.provideFactory(
-            providerName = providerName,
-            careCoverage = policyHolder.coverExternal,
-            userId = policyHolder.id.toString()
-        ),
-    )
 ) {
     ExaminationPolicyHolderDetailsContent(
         policyHolder = policyHolder,

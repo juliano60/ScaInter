@@ -11,6 +11,7 @@ import com.nanoporetech.scainter.data.FetchFamilyMembersResult
 import com.nanoporetech.scainter.data.FetchPolicyHoldersResult
 import com.nanoporetech.scainter.data.NewExaminationUiState
 import com.nanoporetech.scainter.data.ScaDataRepository
+import com.nanoporetech.scainter.model.PolicyHolder
 import com.nanoporetech.scainter.ui.events.UiEvent
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,6 +30,14 @@ class NewExaminationViewModel(
 
     private val _events = MutableSharedFlow<UiEvent>()
     val events = _events.asSharedFlow()
+
+    fun setPolicyHolder(policyHolder: PolicyHolder) {
+        _uiState.update {
+            it.copy(
+                currentPolicyHolder = policyHolder
+            )
+        }
+    }
 
     init {
         viewModelScope.launch {

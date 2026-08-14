@@ -48,22 +48,38 @@ import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.theme.ScaInterTheme
 
 @Composable
-fun HospitalisationFamilyMembersListScreen(
+fun HospitalisationFamilyMembersListRoute(
     familyId: String,
     providerName: String,
     modifier: Modifier = Modifier,
-    viewModel: NewHospitalisationViewModel = viewModel(
-        factory = NewHospitalisationViewModel.provideFactory(
-            familyId = familyId,
-            providerName = providerName)
-    ),
     onMemberSelected: (Int) -> Unit = {},
     onScanQrCode: () -> Unit = {},
 ) {
+    val viewModel: NewHospitalisationViewModel = viewModel(
+        factory = NewHospitalisationViewModel.provideFactory(
+            familyId = familyId,
+            providerName = providerName
+        )
+    )
     val state by viewModel.uiState.collectAsState()
 
-    HospitalisationFamilyMembersListContent(
+    HospitalisationFamilyMembersListScreen(
         members = state.familyMembers,
+        onMemberSelected = onMemberSelected,
+        onScanQrCode = onScanQrCode,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun HospitalisationFamilyMembersListScreen(
+    members: List<FamilyMember>,
+    modifier: Modifier = Modifier,
+    onMemberSelected: (Int) -> Unit = {},
+    onScanQrCode: () -> Unit = {},
+) {
+    HospitalisationFamilyMembersListContent(
+        members = members,
         onMemberSelected = onMemberSelected,
         onScanQrCode = onScanQrCode,
         modifier = modifier
