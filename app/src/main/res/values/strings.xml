@@ -130,4 +130,14 @@
     <string name="hospitalistions_loaded_message">Hospitalisations loaded successfully.</string>
     <string name="examinations_loaded_error_message">Error loading examinations.</string>
     <string name="hospitalisations_loaded_error_message">Error loading hospitalisations.</string>
+    <string name="policy_type_label">Policy type:</string>
+    <string name="add_examination_button">Add Examination</string>
+    <string name="add_same_day_examination_button">Add a same day examination</string>
+    <string name="examination_same_day_title">Same day care</string>
+    <string name="exam_same_day_details">Request details</string>
+    <string name="exam_reason_hint">Reason for care</string>
+    <string name="exam_designatinon_hint">Designation</string>
+    <string name="exam_cost_hint">Cost</string>
+    <string name="exam_same_day_request_title">Request for day care</string>
+    <string name="exam_regular_request_title">Request for care</string>
 </resources>

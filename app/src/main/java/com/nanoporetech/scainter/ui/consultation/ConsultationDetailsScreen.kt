@@ -13,7 +13,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -30,19 +29,18 @@ import com.nanoporetech.scainter.data.DataSource
 import com.nanoporetech.scainter.model.Consultation
 import com.nanoporetech.scainter.model.imageUrl
 import com.nanoporetech.scainter.model.prescriptions
-import com.nanoporetech.scainter.ui.components.CardBody
 import com.nanoporetech.scainter.ui.components.CardBodyTwoLines
 import com.nanoporetech.scainter.ui.components.CardHeader
 import com.nanoporetech.scainter.ui.components.CardHeaderDrawable
 import com.nanoporetech.scainter.ui.components.CardItem
-import com.nanoporetech.scainter.ui.components.PolicyHolderInfo
+import com.nanoporetech.scainter.ui.components.CostsFragment
+import com.nanoporetech.scainter.ui.components.PolicyHolderInfoFragment
 import com.nanoporetech.scainter.ui.components.PrescriptionCardBody
 import com.nanoporetech.scainter.ui.components.PrescriptionCardItem
 import com.nanoporetech.scainter.ui.components.PrimaryButton
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.utils.capitalized
 import com.nanoporetech.scainter.ui.utils.displayedDateAndTime
-import com.nanoporetech.scainter.ui.utils.formatCurrency
 import com.nanoporetech.scainter.ui.utils.formatDoctorName
 
 private const val TAG = "ConsultationDetailsScreen"
@@ -72,7 +70,7 @@ fun ConsultationDetailsContent(
             .verticalScroll(rememberScrollState()
     )) {
         // SUBSCRIBER INFO
-        PolicyHolderInfo(
+        PolicyHolderInfoFragment(
             name = consultation.fullname,
             internalId = consultation.internalId,
             subscriberName = consultation.subscriberName,
@@ -105,49 +103,15 @@ fun ConsultationDetailsContent(
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
 
         // COSTS SECTION
-        CostsSection(
-            consultation = consultation,
+        CostsFragment(
+            costTotal = consultation.total.toString(),
+            costSca = consultation.totalSca.toString(),
+            costUser = consultation.totalUser.toString(),
             modifier = Modifier
                 .fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
-    }
-}
-
-@Composable
-fun CostsSection(
-    consultation: Consultation,
-    modifier: Modifier = Modifier
-) {
-    val paddingMedium = dimensionResource(R.dimen.padding_medium)
-    val items = listOf(
-        CardItem(stringResource(R.string.total_cost_label), formatCurrency(consultation.total)),
-        CardItem(stringResource(R.string.total_sca_label), formatCurrency(consultation.totalSca)),
-        CardItem(stringResource(R.string.total_holder_label), formatCurrency(consultation.totalUser))
-    )
-
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
-        elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.elevation_small)),
-        modifier = modifier
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(paddingMedium)
-        ) {
-            CardHeader(
-                title = stringResource(R.string.total_cost_title),
-                iconImg = Icons.Filled.Payments,
-                modifier = Modifier
-                    .padding(bottom = paddingMedium)
-            )
-
-            CardBody(
-                items = items,
-                indentRight = true
-            )
-        }
     }
 }
 
@@ -242,12 +206,12 @@ fun ConsultationInfo(
     modifier: Modifier = Modifier
 ) {
     val items = listOf(
+        CardItem(stringResource(R.string.prescriber_label), formatDoctorName(consultation.doctor ?: "")),
+        CardItem(stringResource(R.string.affection_label), consultation.affliction ?: ""),
         CardItem(stringResource(R.string.act_label), consultation.act),
         CardItem(stringResource(R.string.date_label),
             displayedDateAndTime(
-            consultation.creationDate)),
-        CardItem(stringResource(R.string.prescriber_label), formatDoctorName(consultation.doctor ?: "")),
-        CardItem(stringResource(R.string.affection_label), consultation.affliction ?: "")
+            consultation.creationDate))
     )
 
     val paddingMedium = dimensionResource(R.dimen.padding_medium)

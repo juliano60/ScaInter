@@ -131,4 +131,14 @@
     <string name="hospitalistions_loaded_message">Liste des hospitalisations mise à jour.</string>
     <string name="examinations_loaded_error_message">Error lors de la mise  à jour des examinations.</string>
     <string name="hospitalisations_loaded_error_message">Error lors de la mise  à jour des hospitalisations.</string>
+    <string name="policy_type_label">Réseau de soins:</string>
+    <string name="add_examination_button">Saisir un examen</string>
+    <string name="add_same_day_examination_button">Saisir soins d\'un jour</string>
+    <string name="examination_same_day_title">Soins d\'un jour</string>
+    <string name="exam_same_day_details">Détails de la demande</string>
+    <string name="exam_reason_hint">Motif des soins</string>
+    <string name="exam_designatinon_hint">Désignation</string>
+    <string name="exam_cost_hint">Montant</string>
+    <string name="exam_same_day_request_title">Demande de soins d\'un jour</string>
+    <string name="exam_regular_request_title">Demande d\'examen</string>
 </resources>

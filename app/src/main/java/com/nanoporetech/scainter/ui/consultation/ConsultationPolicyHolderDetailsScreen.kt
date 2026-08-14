@@ -42,13 +42,13 @@ import com.nanoporetech.scainter.model.providerDisplayedName
 import com.nanoporetech.scainter.ui.components.CardBodyTwoLines
 import com.nanoporetech.scainter.ui.components.CardHeader
 import com.nanoporetech.scainter.ui.components.CardItem
-import com.nanoporetech.scainter.ui.components.PolicyHolderInfo
+import com.nanoporetech.scainter.ui.components.PolicyHolderInfoFragment
 import com.nanoporetech.scainter.ui.components.PrimaryButton
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.utils.displayedDate
 
 @Composable
-fun PolicyHolderDetailsScreen(
+fun ConsultationPolicyHolderDetailsScreen(
     policyHolder: PolicyHolder,
     modifier: Modifier = Modifier,
     selectedConsultation: String,
@@ -62,7 +62,7 @@ fun PolicyHolderDetailsScreen(
             .verticalScroll(rememberScrollState())
     ) {
         // SUBSCRIBER INFO
-        PolicyHolderInfo(
+        PolicyHolderInfoFragment(
             name = policyHolder.fullname,
             internalId = policyHolder.internalId,
             subscriberName = policyHolder.subscriberName,
@@ -109,7 +109,7 @@ fun PolicyHolderDetailsScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OptionsInfo(
+private fun OptionsInfo(
     policyHolder: PolicyHolder,
     selectedConsultation: String,
     selectedCost: String,
@@ -249,7 +249,7 @@ private fun getStatusColor(status: String): Color {
 }
 
 @Composable
-fun InsuranceInfo(
+private fun InsuranceInfo(
     policyHolder: PolicyHolder,
     modifier: Modifier = Modifier
 ) {
@@ -309,13 +309,13 @@ fun InsuranceInfo(
     showBackground = true,
 )
 @Composable
-fun PolicyHolderDetailsContentPreview() {
+fun ConsultationPolicyHolderDetailsContentPreview() {
     ScaInterAppTheme {
         Surface(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            PolicyHolderDetailsScreen(
+            ConsultationPolicyHolderDetailsScreen(
                 policyHolder =
                     DataSource.policyHolders().first(),
                     //DataSource.policyHolders()[1],  // consumption limit reached

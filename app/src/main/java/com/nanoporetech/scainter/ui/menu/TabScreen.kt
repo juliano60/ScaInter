@@ -76,11 +76,16 @@ import com.nanoporetech.scainter.ui.consultation.ConsultationNewPrescriptionScre
 import com.nanoporetech.scainter.ui.consultation.ListConsultationsViewModel
 import com.nanoporetech.scainter.ui.consultation.NewConsultationScreen
 import com.nanoporetech.scainter.ui.consultation.NewConsultationViewModel
-import com.nanoporetech.scainter.ui.consultation.PolicyHolderDetailsScreen
+import com.nanoporetech.scainter.ui.consultation.ConsultationPolicyHolderDetailsScreen
 import com.nanoporetech.scainter.ui.events.UiEvent
 import com.nanoporetech.scainter.ui.examination.ExaminationFamilyMembersListScreen
 import com.nanoporetech.scainter.ui.examination.ExaminationListScreen
+import com.nanoporetech.scainter.ui.examination.ExaminationPolicyHolderDetailsContent
+import com.nanoporetech.scainter.ui.examination.ExaminationPolicyHolderDetailsScreen
+import com.nanoporetech.scainter.ui.examination.ExaminationSameDayExamScreen
+import com.nanoporetech.scainter.ui.examination.ExaminationViewModel
 import com.nanoporetech.scainter.ui.examination.NewExaminationScreen
+import com.nanoporetech.scainter.ui.examination.NewExaminationViewModel
 import com.nanoporetech.scainter.ui.hospitalisation.HospitalisationFamilyMembersListScreen
 import com.nanoporetech.scainter.ui.hospitalisation.HospitalisationListScreen
 import com.nanoporetech.scainter.ui.hospitalisation.NewHospitalisationScreen
@@ -117,6 +122,8 @@ enum class ScaAppScreen(@StringRes val title: Int) {
     ExaminationNewExamination(title = R.string.new_examination),
     ExaminationFamilyMembersList(title = R.string.new_examination),
     ExaminationPolicyHolderDetails(title = R.string.new_examination),
+    ExaminationSameDayExamination(title=R.string.exam_same_day_request_title),
+    ExaminationRegularExamination(title=R.string.exam_regular_request_title),
     HospitalisationList(title = R.string.page_hospitalisation_list),
     HospitalisationNewHospitalisation(title = R.string.new_hospitalisation),
     HospitalisationFamilyMembersList(title = R.string.new_hospitalisation),
@@ -425,48 +432,6 @@ fun TabScreen(
 
                 // NEW OPERATION VIEWS
 
-                composable(route = ScaAppScreen.ConsultationNewPrescription.name) { backStackEntry ->
-                    // grab the consultation id from the parent route
-                    val parentEntry = remember(backStackEntry) {
-                        navController.getBackStackEntry(consultationDetailsRoute)
-                    }
-
-                    val consultationId = requireNotNull(
-                        parentEntry.arguments?.getInt(CONSULTATION_ID_ARGUMENT)
-                    ).toString()
-
-                    ConsultationNewPrescriptionScreen(
-                        consultationId = consultationId,
-                        onSubmitSuccess = {
-                            navController
-                                .getBackStackEntry(
-                                ScaAppScreen.HealthCareDashboard.name)
-                                .savedStateHandle["nav_result"] = NavResult.NewPrescriptionSuccess.name
-
-                            navController.navigate(ScaAppScreen.ConsultationList.name) {
-                                popUpTo(ScaAppScreen.HealthCareDashboard.name) {
-                                    inclusive = false
-                                }
-                            }
-                        },
-                        onSubmitError = { errorId ->
-                            scope.launch {
-                                snackbarHostState.showSnackbar(
-                                    AppSnackbarVisuals(
-                                        message = context.getString(errorId),
-                                        type = SnackbarType.Error,
-                                        duration = SnackbarDuration.Long
-                                    )
-                                )
-                            }
-                        },
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(color = AppConstants.lightGreen)
-                            .padding(dimensionResource(R.dimen.padding_medium)),
-                    )
-                }
-
                 composable(route = ScaAppScreen.ConsultationNewConsultation.name) {
                     NewConsultationScreen(
                         onScanQrCode = {
@@ -539,6 +504,9 @@ fun TabScreen(
                             .padding(dimensionResource(R.dimen.padding_medium))
                     )
                 }
+
+                // FAMILY MEMBERS LIST
+
                 composable(route = ScaAppScreen.ConsultationFamilyMembersList.name) {
                     ConsultationFamilyMembersListScreen(
                         familyId = scanResult,
@@ -558,8 +526,6 @@ fun TabScreen(
                             .padding(dimensionResource(R.dimen.padding_medium))
                     )
                 }
-
-                // FAMILY MEMBERS LIST
                 
                 composable(route = ScaAppScreen.ExaminationFamilyMembersList.name) {
                     ExaminationFamilyMembersListScreen(
@@ -661,7 +627,7 @@ fun TabScreen(
                     }
 
                     if (policyHolder != null) {
-                        PolicyHolderDetailsScreen(
+                        ConsultationPolicyHolderDetailsScreen(
                             policyHolder = policyHolder,
                             selectedConsultation = uiState.selectedConsultation,
                             selectedCost = uiState.selectedCost,
@@ -673,6 +639,114 @@ fun TabScreen(
                                 .padding(dimensionResource(R.dimen.padding_medium))
                         )
                     }
+                }
+                composable(
+                    route = "${ScaAppScreen.ExaminationPolicyHolderDetails.name}/{policyHolderId}",
+                    arguments = listOf(
+                        navArgument("policyHolderId") {
+                            type = NavType.IntType
+                        }
+                    )
+                ) { backStackEntry ->
+                    val policyHolderId = backStackEntry.arguments?.getInt("policyHolderId")
+
+                    // grab parent's view model
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry(
+                            ScaAppScreen.ExaminationFamilyMembersList.name
+                        )
+                    }
+
+                    val viewModel: NewExaminationViewModel = viewModel(
+                        viewModelStoreOwner = parentEntry
+                    )
+
+                    val localUiState by viewModel.uiState.collectAsState()
+                    val policyHolder = localUiState.policyHolders.firstOrNull { it.id == policyHolderId }
+
+                    Log.d(TAG, "PolicyHolder: $policyHolder")
+
+                    if (policyHolder != null) {
+                        ExaminationPolicyHolderDetailsScreen(
+                            providerName = uiState.provider.name,
+                            policyHolder = policyHolder,
+                            onDayExamination = {
+                                navController.navigate(ScaAppScreen.ExaminationSameDayExamination.name)
+                            },
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(dimensionResource(R.dimen.padding_medium))
+                        )
+                    }
+                }
+
+                // CONSULTATION VIEWS
+
+                composable(route = ScaAppScreen.ConsultationNewPrescription.name) { backStackEntry ->
+                    // grab the consultation id from the parent route
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry(consultationDetailsRoute)
+                    }
+
+                    val consultationId = requireNotNull(
+                        parentEntry.arguments?.getInt(CONSULTATION_ID_ARGUMENT)
+                    ).toString()
+
+                    ConsultationNewPrescriptionScreen(
+                        consultationId = consultationId,
+                        onSubmitSuccess = {
+                            navController
+                                .getBackStackEntry(
+                                    ScaAppScreen.HealthCareDashboard.name)
+                                .savedStateHandle["nav_result"] = NavResult.NewPrescriptionSuccess.name
+
+                            navController.navigate(ScaAppScreen.ConsultationList.name) {
+                                popUpTo(ScaAppScreen.HealthCareDashboard.name) {
+                                    inclusive = false
+                                }
+                            }
+                        },
+                        onSubmitError = { errorId ->
+                            scope.launch {
+                                snackbarHostState.showSnackbar(
+                                    AppSnackbarVisuals(
+                                        message = context.getString(errorId),
+                                        type = SnackbarType.Error,
+                                        duration = SnackbarDuration.Long
+                                    )
+                                )
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(color = AppConstants.lightGreen)
+                            .padding(dimensionResource(R.dimen.padding_medium)),
+                    )
+                }
+
+                // EXAMINATION VIEWS
+
+                composable(route = ScaAppScreen.ExaminationSameDayExamination.name) { backStackEntry ->
+                    // grab parent's view model
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry(
+                            ScaAppScreen.ExaminationPolicyHolderDetails.name
+                        )
+                    }
+
+                    val viewModel: ExaminationViewModel = viewModel(
+                        viewModelStoreOwner = parentEntry
+                    )
+
+                    val localUiState by viewModel.uiState.collectAsState()
+
+                    ExaminationSameDayExamScreen(
+                        //reason = localUiState.,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(color = AppConstants.lightGreen)
+                            .padding(dimensionResource(R.dimen.padding_medium)),
+                    )
                 }
             }
         }
