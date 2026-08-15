@@ -28,20 +28,19 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.isShiftPressed
-import androidx.compose.ui.input.key.onPreviewKeyEvent
-import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -50,8 +49,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.data.Medicine
@@ -61,61 +58,10 @@ import com.nanoporetech.scainter.ui.components.ConfirmationDialog
 import com.nanoporetech.scainter.ui.components.PredictiveTextField
 import com.nanoporetech.scainter.ui.components.PrimaryButton
 import com.nanoporetech.scainter.ui.components.PrimaryOutlinedTextField
-import com.nanoporetech.scainter.ui.events.UiEvent
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
-import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun ConsultationNewPrescriptionScreen(
-    consultationId: String,
-    modifier: Modifier = Modifier,
-    onSubmitSuccess: () -> Unit = {},
-    onSubmitError: (Int) -> Unit = {},
-    viewModel: MedicalPrescriptionViewModel = viewModel(
-        factory = MedicalPrescriptionViewModel.provideFactory(
-            consultationId = consultationId
-        )
-    )
-) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    // convert from model.events to nav_result
-    LaunchedEffect(Unit) {
-        viewModel.events.collectLatest { event ->
-            when (event) {
-                is UiEvent.Success -> {
-                    onSubmitSuccess()
-                }
-                is UiEvent.Error -> {
-                    onSubmitError(event.errorId)
-                }
-            }
-        }
-    }
-
-    ConsultationNewPrescriptionContent(
-        state = uiState,
-        modifier = modifier,
-        onDoctorChanged = viewModel::setDoctor,
-        onAffectionChanged = viewModel::setAffection,
-        onMedicationChanged = viewModel::setMedication,
-        onQuantityChanged = viewModel::setQuantity,
-        onPosologyChanged = viewModel::setPosology,
-        onMedication1Changed = viewModel::setMedication1,
-        onQuantity1Changed = viewModel::setQuantity1,
-        onPosology1Changed = viewModel::setPosology1,
-        onMedication2Changed = viewModel::setMedication2,
-        onQuantity2Changed = viewModel::setQuantity2,
-        onPosology2Changed = viewModel::setPosology2,
-        onMedication3Changed = viewModel::setMedication3,
-        onQuantity3Changed = viewModel::setQuantity3,
-        onPosology3Changed = viewModel::setPosology3,
-        onSendPrescription = viewModel::addPrescription
-    )
-}
-
-@Composable
-fun ConsultationNewPrescriptionContent(
     state: PrescriptionUiState,
     modifier: Modifier = Modifier,
     onDoctorChanged: (String) -> Unit = {},
@@ -512,7 +458,7 @@ fun ConsultationNewPrescriptionScreenPreview() {
                     .background(AppConstants.lightGreen)
                     .padding(dimensionResource(R.dimen.padding_medium))
             ) {
-                ConsultationNewPrescriptionContent(
+                ConsultationNewPrescriptionScreen(
                     state = PrescriptionUiState(),
                     modifier = Modifier
                         .fillMaxWidth()

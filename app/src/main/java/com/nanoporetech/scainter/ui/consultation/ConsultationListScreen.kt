@@ -25,7 +25,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -33,8 +32,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.data.DataSource
@@ -44,27 +41,6 @@ import com.nanoporetech.scainter.ui.utils.displayedDateAndTime
 
 @Composable
 fun ConsultationListScreen(
-    providerName: String,
-    modifier: Modifier = Modifier,
-    onRowClick: (Consultation) -> Unit = {},
-    viewModel: ListConsultationsViewModel = viewModel(
-        factory = ListConsultationsViewModel.provideFactory(
-            providerName = providerName
-        )
-    )
-) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    ConsultationListContent(
-        consultations = uiState.consultations,
-        isLoading = uiState.isLoading,
-        modifier = modifier,
-        onRowClick = onRowClick
-    )
-}
-
-@Composable
-fun ConsultationListContent(
     consultations: List<Consultation>,
     isLoading: Boolean,
     modifier: Modifier = Modifier,
@@ -187,7 +163,7 @@ fun ConsultationListScreenPreview() {
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            ConsultationListContent(
+            ConsultationListScreen(
                 consultations = DataSource.consultations(),
                 isLoading = false,
                 //consultations = emptyList(),

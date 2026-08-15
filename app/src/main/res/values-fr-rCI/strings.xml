@@ -32,8 +32,8 @@
     <string name="view_hospitalisations">Voir mes hospitalisations</string>
 
     <!-- DESTINATIONS -->
-    <string name="page_home">Accueil</string>
-    <string name="page_support">Assistance</string>
+    <string name="home_title">Accueil</string>
+    <string name="support_title">Assistance</string>
 
     <!-- CONSULTATION PAGE -->
     <string name="act_label">Acte:</string>
@@ -55,10 +55,10 @@
     <string name="err_invalid_credentials_message">Identifiant ou mot de passe incorrect.</string>
     <string name="err_network_error_message">Connexion réseau indisponible.</string>
     <string name="err_unknown_error_message">Une erreur est survenue. Veuillez réessayer.</string>
-    <string name="page_health_care">Centre de Santé</string>
-    <string name="page_consultation_list">Mes Consultations</string>
-    <string name="page_examination_list">Mes Examinations</string>
-    <string name="page_hospitalisation_list">Mes Hospitalisations</string>
+    <string name="health_care_title">Centre de Santé</string>
+    <string name="consultation_list_title">Mes Consultations</string>
+    <string name="examination_list_title">Mes Examinations</string>
+    <string name="hospitalisation_list_title">Mes Hospitalisations</string>
     <string name="consultation_details_title">Détails Consultation</string>
     <string name="medical_prescription_title">Prescription Médicale</string>
     <string name="prescriber_label">Prescripteur:</string>
@@ -113,7 +113,7 @@
     <string name="sca_about_title">MySCA Partners</string>
     <string name="sca_about_text">MySCA Partners est une application mobile qui permet aux utilisateurs d\'accéder à des services de santé via un réseau de soins défini par la société SCA INTER A. Cette application est donc un produit du groupe SCA INTER A.</string>
     <string name="our_contacts">Nos coordonnées:</string>
-    <string name="page_about">À Propos de nous</string>
+    <string name="about_title">À Propos de nous</string>
     <string name="coverage_label_and_value">Couverture %s</string>
     <string name="quantity_label">Quantité</string>
     <string name="medication_1_title">Médicament 1</string>
@@ -142,4 +142,6 @@
     <string name="exam_same_day_request_title">Demande de soins</string>
     <string name="exam_regular_request_title">Demande d\'examen</string>
     <string name="new_same_day_care_success_message">Nouvelle demande de soins  établie.</string>
+    <string name="examination_details_title">Détails Examen</string>
+    <string name="hospitalisation_details_title">Détails Hospitalisation</string>
 </resources>

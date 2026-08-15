@@ -31,7 +31,6 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -39,100 +38,70 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.data.AppUiState
 import com.nanoporetech.scainter.data.DataSource
 import com.nanoporetech.scainter.ui.components.showAlert
-import com.nanoporetech.scainter.ui.consultation.ConsultationDetailsScreen
-import com.nanoporetech.scainter.ui.consultation.ConsultationFamilyMembersListScreen
-import com.nanoporetech.scainter.ui.consultation.ConsultationListScreen
-import com.nanoporetech.scainter.ui.consultation.ConsultationNewPrescriptionScreen
-import com.nanoporetech.scainter.ui.consultation.ConsultationPolicyHolderDetailsScreen
-import com.nanoporetech.scainter.ui.consultation.ListConsultationsViewModel
-import com.nanoporetech.scainter.ui.consultation.NewConsultationScreen
-import com.nanoporetech.scainter.ui.consultation.NewConsultationViewModel
-import com.nanoporetech.scainter.ui.events.UiEvent
-import com.nanoporetech.scainter.ui.examination.ExaminationFamilyMembersListScreen
-import com.nanoporetech.scainter.ui.examination.ExaminationListScreen
-import com.nanoporetech.scainter.ui.examination.ExaminationPolicyHolderDetailsScreen
-import com.nanoporetech.scainter.ui.examination.ExaminationSameDayExamScreen
-import com.nanoporetech.scainter.ui.examination.ExaminationViewModel
-import com.nanoporetech.scainter.ui.examination.NewExaminationScreen
-import com.nanoporetech.scainter.ui.examination.NewExaminationViewModel
-import com.nanoporetech.scainter.ui.hospitalisation.HospitalisationFamilyMembersListScreen
-import com.nanoporetech.scainter.ui.hospitalisation.HospitalisationListScreen
-import com.nanoporetech.scainter.ui.hospitalisation.NewHospitalisationScreen
-import com.nanoporetech.scainter.ui.hospitalisation.NewHospitalisationViewModel
-import com.nanoporetech.scainter.ui.qrcode.CodeScannerScreen
-import com.nanoporetech.scainter.ui.support.SupportScreen
+import com.nanoporetech.scainter.ui.navigation.codeScannerNavigation
+import com.nanoporetech.scainter.ui.navigation.consultationNavigation
+import com.nanoporetech.scainter.ui.navigation.dashboardNavigation
+import com.nanoporetech.scainter.ui.navigation.examinationNavigation
+import com.nanoporetech.scainter.ui.navigation.hospitalisationNavigation
+import com.nanoporetech.scainter.ui.navigation.supportNavigation
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.theme.ScaInterTheme
 import com.nanoporetech.scainter.ui.utils.AppSnackbarVisuals
 import com.nanoporetech.scainter.ui.utils.SnackbarType
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 
 private const val TAG = "TabScreen"
-private const val CONSULTATION_ID_ARGUMENT = "consultationId"
-private const val EXAMINATION_ID_ARGUMENT = "examinationId"
-private const val HOSPITALISATION_ID_ARGUMENT = "hospitalisationId"
 
 enum class NavResult {
     NewConsultationSuccess,
     NewConsultationFailed,
     NewPrescriptionSuccess,
-
     NewSameDayExaminationSuccess,
 }
 
 enum class ScaAppScreen(@StringRes val title: Int) {
-    HealthCareDashboard(title = R.string.page_health_care),
-    ConsultationList(title = R.string.page_consultation_list),
+    HealthCareDashboard(title = R.string.health_care_title),
+    ConsultationList(title = R.string.consultation_list_title),
     ConsultationDetails(title = R.string.consultation_details_title),
     ConsultationNewPrescription(title = R.string.medical_prescription_title),
     ConsultationNewConsultation(title = R.string.new_consultation),
     ConsultationFamilyMembersList(title = R.string.new_consultation),
     ConsultationPolicyHolderDetails(title = R.string.new_consultation),
-    ExaminationList(title = R.string.page_examination_list),
+    ExaminationList(title = R.string.examination_list_title),
+    ExaminationDetails(title = R.string.examination_details_title),
     ExaminationNewExamination(title = R.string.new_examination),
     ExaminationFamilyMembersList(title = R.string.new_examination),
     ExaminationPolicyHolderDetails(title = R.string.new_examination),
     ExaminationSameDayExamination(title=R.string.exam_same_day_request_title),
     ExaminationRegularExamination(title=R.string.exam_regular_request_title),
-    HospitalisationList(title = R.string.page_hospitalisation_list),
+    HospitalisationList(title = R.string.hospitalisation_list_title),
+    HospitalisationDetails(title = R.string.hospitalisation_details_title),
     HospitalisationNewHospitalisation(title = R.string.new_hospitalisation),
     HospitalisationFamilyMembersList(title = R.string.new_hospitalisation),
     HospitalisationPolicyHolderDetails(title = R.string.new_examination),
-    Support(title = R.string.page_about),
+    Support(title = R.string.about_title),
     CodeScanner(title = R.string.code_scanner_title);
 
     companion object {
@@ -162,36 +131,6 @@ object NavGraphs {
     const val EXISTING_HOSPITALISATION = "existing_hospitalisation_flow"
 }
 
-object ConsultationPolicyHolderDetails {
-    const val POLICY_HOLDER_ID = "policyHolderId"
-
-    val route =
-        "${ScaAppScreen.ConsultationPolicyHolderDetails.name}/{$POLICY_HOLDER_ID}"
-
-    fun createRoute(policyHolderId: Int) =
-        "${ScaAppScreen.ConsultationPolicyHolderDetails.name}/$policyHolderId"
-}
-
-object ExaminationPolicyHolderDetails {
-    const val POLICY_HOLDER_ID = "policyHolderId"
-
-    val route =
-        "${ScaAppScreen.ExaminationPolicyHolderDetails.name}/{$POLICY_HOLDER_ID}"
-
-    fun createRoute(policyHolderId: Int) =
-        "${ScaAppScreen.ExaminationPolicyHolderDetails.name}/$policyHolderId"
-}
-
-object HospitalisationPolicyHolderDetails {
-    const val POLICY_HOLDER_ID = "policyHolderId"
-
-    val route =
-        "${ScaAppScreen.HospitalisationPolicyHolderDetails.name}/{$POLICY_HOLDER_ID}"
-
-    fun createRoute(policyHolderId: Int) =
-        "${ScaAppScreen.HospitalisationPolicyHolderDetails.name}/$policyHolderId"
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
@@ -204,36 +143,26 @@ fun TabScreen(
     val tabs = listOf(
         TabSpec(
             route = ScaAppScreen.HealthCareDashboard.name,
-            label = stringResource(R.string.page_home),
+            label = stringResource(R.string.home_title),
             icon = Icons.Outlined.Home
         ),
         TabSpec(
             route = ScaAppScreen.Support.name,
-            label = stringResource(R.string.page_about),
+            label = stringResource(R.string.about_title),
             icon = Icons.Outlined.Info
         )
     )
 
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route ?: ScaAppScreen.HealthCareDashboard.name
-    val currentScreen = when {
-        currentRoute.startsWith(ScaAppScreen.ConsultationDetails.name) ->
-            ScaAppScreen.ConsultationDetails
-        currentRoute.startsWith(ScaAppScreen.ConsultationPolicyHolderDetails.name) ->
-            ScaAppScreen.ConsultationPolicyHolderDetails
-        currentRoute.startsWith(ScaAppScreen.ExaminationPolicyHolderDetails.name) ->
-            ScaAppScreen.ExaminationPolicyHolderDetails
-        currentRoute.startsWith(ScaAppScreen.HospitalisationPolicyHolderDetails.name) ->
-            ScaAppScreen.HospitalisationPolicyHolderDetails
-        else -> ScaAppScreen.entries.firstOrNull { it.name == currentRoute } ?: ScaAppScreen.HealthCareDashboard
-    }
+    val currentScreen = screenForRoute(currentRoute)
+
     var scanResult by rememberSaveable { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
-    val context = LocalContext.current
     var showConfirmationPrompt by rememberSaveable { mutableStateOf(false) }
     var showConfirmationUpOneLevel by rememberSaveable { mutableStateOf(false) }
     var showExitPrompt by rememberSaveable { mutableStateOf(false) }
-    val consultationDetailsRoute = "${ScaAppScreen.ConsultationDetails.name}/{$CONSULTATION_ID_ARGUMENT}"
+
 
     fun onTabPressed(route: String) {
         navController.navigate(route) {
@@ -258,7 +187,16 @@ fun TabScreen(
                         current?.startsWith(ScaAppScreen.ConsultationNewConsultation.name) == true -> {
                             showConfirmationPrompt = true
                         }
+                        current?.startsWith(ScaAppScreen.ExaminationNewExamination.name) == true -> {
+                            showConfirmationPrompt = true
+                        }
+                        current?.startsWith(ScaAppScreen.HospitalisationNewHospitalisation.name) == true -> {
+                            showConfirmationPrompt = true
+                        }
                         current?.startsWith(ScaAppScreen.ConsultationNewPrescription.name) == true -> {
+                            showConfirmationUpOneLevel = true
+                        }
+                        current?.startsWith(ScaAppScreen.ExaminationSameDayExamination.name) == true -> {
                             showConfirmationUpOneLevel = true
                         }
                         current?.startsWith(ScaAppScreen.CodeScanner.name) == true -> {
@@ -295,8 +233,6 @@ fun TabScreen(
         modifier = modifier
     ) { innerPadding ->
 
-        val scope = rememberCoroutineScope()
-
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -308,634 +244,41 @@ fun TabScreen(
                 startDestination = ScaAppScreen.HealthCareDashboard.name,
                 modifier = Modifier
             ) {
-                // DASHBOARD VIEW
+                dashboardNavigation(
+                    navController = navController,
+                    provider = uiState.provider
+                )
 
-                composable(route = ScaAppScreen.HealthCareDashboard.name) {
-                    HealthCareScreen(
-                        provider = uiState.provider,
-                        onViewConsultations = {
-                            navController.navigate(NavGraphs.EXISTING_CONSULTATION)
-                        },
-                        onViewExaminations = {
-                            navController.navigate(NavGraphs.EXISTING_EXAMINATION)
-                        },
-                        onViewHospitalisations = {
-                            navController.navigate(NavGraphs.EXISTING_HOSPITALISATION)
-                        },
-                        onNewConsultation = {
-                            navController.navigate(NavGraphs.NEW_CONSULTATION)
-                        },
-                        onNewExamination = {
-                            navController.navigate(NavGraphs.NEW_EXAMINATION)
-                        },
-                        onNewHospitalisation = {
-                            navController.navigate(NavGraphs.NEW_HOSPITALISATION)
-                        },
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(dimensionResource(R.dimen.padding_medium))
-                    )
-                }
+                supportNavigation()
 
-                // SUPPORT VIEW
+                consultationNavigation(
+                    navController = navController,
+                    providerName = uiState.provider.name,
+                    scanResult = scanResult,
+                    snackbarHostState = snackbarHostState
+                )
 
-                composable(route = ScaAppScreen.Support.name) {
-                    SupportScreen(
-                        onBack = {},
-                        modifier = Modifier
-                            .fillMaxSize()
-                    )
-                }
+                examinationNavigation(
+                    navController = navController,
+                    providerName = uiState.provider.name,
+                    scanResult = scanResult,
+                    snackbarHostState = snackbarHostState
+                )
 
-                // CONSULTATION FLOWS
+                hospitalisationNavigation(
+                    navController = navController,
+                    providerName = uiState.provider.name,
+                    scanResult = scanResult,
+                    snackbarHostState = snackbarHostState
+                )
 
-                navigation(
-                    route = NavGraphs.NEW_CONSULTATION,
-                    startDestination = ScaAppScreen.ConsultationNewConsultation.name
-                ) {
-                    composable(route = ScaAppScreen.ConsultationNewConsultation.name) {
-                        NewConsultationScreen(
-                            onScanQrCode = {
-                                navController.navigate(
-                                    ScaAppScreen.codeScannerRoute(
-                                        ScaAppScreen.ConsultationFamilyMembersList
-                                    )
-                                )
-                            },
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(color = AppConstants.lightGreen)
-                                .padding(dimensionResource(R.dimen.padding_medium)),
-                        )
+                codeScannerNavigation(
+                    navController = navController,
+                    onResultChanged = {
+                        scanResult = it
+                        Log.d(TAG, "QR scan result: $scanResult")
                     }
-
-                    composable(route = ScaAppScreen.ConsultationFamilyMembersList.name) {
-                        val parentEntry = remember(backStackEntry) {
-                            navController.getBackStackEntry(NavGraphs.NEW_CONSULTATION)
-                        }
-
-                        val viewModel: NewConsultationViewModel = viewModel(
-                            viewModelStoreOwner = parentEntry,
-                            factory = NewConsultationViewModel.provideFactory(
-                                familyId = scanResult,
-                                providerName = uiState.provider.name
-                            )
-                        )
-
-                        val state by viewModel.uiState.collectAsStateWithLifecycle()
-
-                        ConsultationFamilyMembersListScreen(
-                            members = state.familyMembers,
-                            onMemberSelected = { policyHolderId ->
-                                navController.navigate(route = ConsultationPolicyHolderDetails.createRoute(policyHolderId))
-                            },
-                            onScanQrCode = {
-                                navController.navigate(
-                                    ScaAppScreen.codeScannerRoute(
-                                        ScaAppScreen.ConsultationFamilyMembersList
-                                    )
-                                )
-                            },
-                            modifier = Modifier
-                                .background(color = AppConstants.lightGreen)
-                                .padding(dimensionResource(R.dimen.padding_medium))
-                        )
-                    }
-
-                    composable(
-                        route = ConsultationPolicyHolderDetails.route,
-                        arguments = listOf(
-                            navArgument(ConsultationPolicyHolderDetails.POLICY_HOLDER_ID) {
-                                type = NavType.IntType
-                            }
-                        )
-                    ) { backStackEntry ->
-                        val policyHolderId = backStackEntry.arguments?.getInt(ConsultationPolicyHolderDetails.POLICY_HOLDER_ID)
-
-                        val parentEntry = remember(backStackEntry) {
-                            navController.getBackStackEntry(NavGraphs.NEW_CONSULTATION)
-                        }
-
-                        val viewModel: NewConsultationViewModel = viewModel(
-                            viewModelStoreOwner = parentEntry
-                        )
-
-                        val uiState by viewModel.uiState.collectAsState()
-                        val policyHolder = uiState.policyHolders.firstOrNull { it.id == policyHolderId }
-
-                        Log.d(TAG, "PolicyHolder: $policyHolder")
-
-                        LaunchedEffect(policyHolder) {
-                            policyHolder?.let {
-                                viewModel.setPolicyHolder(it)
-                            }
-                        }
-
-                        LaunchedEffect(Unit) {
-                            viewModel.events.collectLatest { event ->
-                                when (event) {
-                                    is UiEvent.Success -> {
-                                        // indicate success/failure
-                                        navController
-                                            .getBackStackEntry(ScaAppScreen.HealthCareDashboard.name)
-                                            .savedStateHandle["nav_result"] = NavResult.NewConsultationSuccess.name
-
-                                        // then navigate
-                                        navController.navigate(NavGraphs.EXISTING_CONSULTATION) {
-                                            popUpTo(ScaAppScreen.HealthCareDashboard.name) {
-                                                inclusive = false
-                                            }
-                                        }
-                                    }
-                                    is UiEvent.Error -> {
-                                        snackbarHostState.showSnackbar(
-                                            message = context.getString(event.errorId),
-                                            duration = SnackbarDuration.Long
-                                        )
-                                    }
-                                }
-                            }
-                        }
-
-                        if (policyHolder != null) {
-                            ConsultationPolicyHolderDetailsScreen(
-                                policyHolder = policyHolder,
-                                selectedConsultation = uiState.selectedConsultation,
-                                selectedCost = uiState.selectedCost,
-                                onConsultationSelected = viewModel::setConsultation,
-                                onCostSelected = viewModel::setCost,
-                                onValidate = { viewModel.newConsultation() },
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(dimensionResource(R.dimen.padding_medium))
-                            )
-                        }
-                    }
-                }
-
-                navigation(
-                    route = NavGraphs.EXISTING_CONSULTATION,
-                    startDestination = ScaAppScreen.ConsultationList.name
-                ) {
-                    composable(route = ScaAppScreen.ConsultationList.name) { backStackEntry ->
-                        val dashboardEntry = remember(backStackEntry) {
-                            navController.getBackStackEntry(ScaAppScreen.HealthCareDashboard.name)
-                        }
-                        val dashboardNavResult by dashboardEntry
-                            .savedStateHandle
-                            .getStateFlow<String?>("nav_result", null)
-                            .collectAsState()
-
-                        LaunchedEffect(dashboardNavResult) {
-                            when (dashboardNavResult) {
-                                NavResult.NewConsultationSuccess.name -> {
-                                    snackbarHostState.showSnackbar(
-                                        AppSnackbarVisuals(
-                                            message = context.getString(R.string.new_consultation_success_message),
-                                            type = SnackbarType.Success
-                                        )
-                                    )
-                                }
-                                NavResult.NewConsultationFailed.name -> {
-                                    snackbarHostState.showSnackbar(
-                                        AppSnackbarVisuals(
-                                            message = context.getString(R.string.err_unknown_error_message),
-                                            type = SnackbarType.Error,
-                                            duration = SnackbarDuration.Long
-                                        )
-                                    )
-                                }
-                                NavResult.NewPrescriptionSuccess.name -> {
-                                    snackbarHostState.showSnackbar(
-                                        AppSnackbarVisuals(
-                                            message = context.getString(R.string.new_prescription_added),
-                                            type = SnackbarType.Success
-                                        )
-                                    )
-                                }
-                                null -> Unit
-                            }
-                            // now clear old nav result
-                            if (dashboardNavResult != null) {
-                                dashboardEntry.savedStateHandle["nav_result"] = null
-                            }
-                        }
-
-                        ConsultationListScreen(
-                            providerName = uiState.provider.name,
-                            onRowClick = { consultation ->
-                                navController.navigate(
-                                    route = "${ScaAppScreen.ConsultationDetails.name}/${consultation.id}"
-                                )
-                            },
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(dimensionResource(R.dimen.padding_medium))
-                        )
-                    }
-
-                    composable(
-                        route = consultationDetailsRoute,
-                        arguments = listOf(
-                            navArgument(CONSULTATION_ID_ARGUMENT) {
-                                type = NavType.IntType
-                            }
-                        )
-                    ) { backStackEntry ->
-                        val consultationId = requireNotNull(
-                            backStackEntry.arguments?.getInt(CONSULTATION_ID_ARGUMENT)
-                        )
-
-                        // grab parent's view model
-                        val parentEntry = remember(backStackEntry) {
-                            navController.getBackStackEntry(
-                                NavGraphs.EXISTING_CONSULTATION
-                            )
-                        }
-
-                        val viewModel: ListConsultationsViewModel = viewModel(
-                            viewModelStoreOwner = parentEntry
-                        )
-
-                        val uiState by viewModel.uiState.collectAsState()
-
-                        // extract consultation with matching consultationId
-                        val consultation = uiState.consultations.find {
-                            it.id == consultationId
-                        }
-
-                        if (consultation != null) {
-                            ConsultationDetailsScreen(
-                                consultation = consultation,
-                                onNewPrescription = {
-                                    navController.navigate(
-                                        route = ScaAppScreen.ConsultationNewPrescription.name
-                                    )
-                                },
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(dimensionResource(R.dimen.padding_medium))
-                            )
-                        }
-                    }
-
-                    composable(route = ScaAppScreen.ConsultationNewPrescription.name) { backStackEntry ->
-                        // grab the consultation id from the parent route
-                        val parentEntry = remember(backStackEntry) {
-                            navController.getBackStackEntry(consultationDetailsRoute)
-                        }
-
-                        val consultationId = requireNotNull(
-                            parentEntry.arguments?.getInt(CONSULTATION_ID_ARGUMENT)
-                        ).toString()
-
-                        ConsultationNewPrescriptionScreen(
-                            consultationId = consultationId,
-                            onSubmitSuccess = {
-                                navController
-                                    .getBackStackEntry(
-                                        ScaAppScreen.HealthCareDashboard.name)
-                                    .savedStateHandle["nav_result"] = NavResult.NewPrescriptionSuccess.name
-
-                                navController.navigate(NavGraphs.EXISTING_CONSULTATION) {
-                                    popUpTo(ScaAppScreen.HealthCareDashboard.name) {
-                                        inclusive = false
-                                    }
-                                }
-                            },
-                            onSubmitError = { errorId ->
-                                scope.launch {
-                                    snackbarHostState.showSnackbar(
-                                        AppSnackbarVisuals(
-                                            message = context.getString(errorId),
-                                            type = SnackbarType.Error,
-                                            duration = SnackbarDuration.Long
-                                        )
-                                    )
-                                }
-                            },
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(color = AppConstants.lightGreen)
-                                .padding(dimensionResource(R.dimen.padding_medium)),
-                        )
-                    }
-                }
-
-                // EXAMINATION FLOWS
-
-                navigation(
-                    route = NavGraphs.NEW_EXAMINATION,
-                    startDestination = ScaAppScreen.ExaminationNewExamination.name
-                ) {
-                    composable(route = ScaAppScreen.ExaminationNewExamination.name) {
-                        NewExaminationScreen(
-                            onScanQrCode = {
-                                navController.navigate(
-                                    ScaAppScreen.codeScannerRoute(
-                                        ScaAppScreen.ExaminationFamilyMembersList
-                                    )
-                                )
-                            },
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(color = AppConstants.lightGreen)
-                                .padding(dimensionResource(R.dimen.padding_medium)),
-                        )
-                    }
-
-                    composable(route = ScaAppScreen.ExaminationFamilyMembersList.name) { backStackEntry ->
-                        val parentEntry = remember(backStackEntry) {
-                            navController.getBackStackEntry(NavGraphs.NEW_EXAMINATION)
-                        }
-
-                        val viewModel: NewExaminationViewModel = viewModel(
-                            viewModelStoreOwner = parentEntry,
-                            factory = NewExaminationViewModel.provideFactory(
-                                familyId = scanResult,
-                                providerName = uiState.provider.name
-                            )
-                        )
-
-                        val state by viewModel.uiState.collectAsStateWithLifecycle()
-
-                        ExaminationFamilyMembersListScreen(
-                            members = state.familyMembers,
-                            onMemberSelected = { policyHolderId ->
-                                navController.navigate(route = ExaminationPolicyHolderDetails.createRoute(policyHolderId))
-                            },
-                            onScanQrCode = {
-                                navController.navigate(
-                                    ScaAppScreen.codeScannerRoute(
-                                        ScaAppScreen.ExaminationFamilyMembersList
-                                    )
-                                )
-                            },
-                            modifier = Modifier
-                                .background(color = AppConstants.lightGreen)
-                                .padding(dimensionResource(R.dimen.padding_medium))
-                        )
-                    }
-
-                    composable(
-                        route = ExaminationPolicyHolderDetails.route,
-                        arguments = listOf(
-                            navArgument(ExaminationPolicyHolderDetails.POLICY_HOLDER_ID) {
-                                type = NavType.IntType
-                            }
-                        )
-                    ) { backStackEntry ->
-                        val policyHolderId = backStackEntry.arguments?.getInt(ExaminationPolicyHolderDetails.POLICY_HOLDER_ID)
-
-                        val parentEntry = remember(backStackEntry) {
-                            navController.getBackStackEntry(NavGraphs.NEW_EXAMINATION)
-                        }
-
-                        val viewModel: NewExaminationViewModel = viewModel(
-                            viewModelStoreOwner = parentEntry
-                        )
-
-                        val localUiState by viewModel.uiState.collectAsStateWithLifecycle()
-                        val policyHolder = localUiState.policyHolders.firstOrNull { it.id == policyHolderId }
-
-                        Log.d(TAG, "PolicyHolder: $policyHolder")
-
-                        // NOTE: do the setPolicyHolder in a LaunchedEffect to avoid repeated recompositions
-                        LaunchedEffect(policyHolder) {
-                            policyHolder?.let {
-                                viewModel.setPolicyHolder(it)
-                            }
-                        }
-
-                        if (policyHolder != null) {
-                            ExaminationPolicyHolderDetailsScreen(
-                                policyHolder = policyHolder,
-                                onDayExamination = {
-                                    navController.navigate(ScaAppScreen.ExaminationSameDayExamination.name)
-                                },
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(dimensionResource(R.dimen.padding_medium))
-                            )
-                        }
-                    }
-
-                    composable(route = ScaAppScreen.ExaminationSameDayExamination.name) { backStackEntry ->
-                        val parentEntry = remember(backStackEntry) {
-                            navController.getBackStackEntry(NavGraphs.NEW_EXAMINATION)
-                        }
-
-                        val newExaminationViewModel: NewExaminationViewModel = viewModel(
-                            viewModelStoreOwner = parentEntry
-                        )
-
-                        val newExaminationUiState by newExaminationViewModel.uiState.collectAsStateWithLifecycle()
-                        val policyHolder = newExaminationUiState.currentPolicyHolder
-
-                        if (policyHolder != null) {
-                            val viewModel: ExaminationViewModel = viewModel(
-                                viewModelStoreOwner = parentEntry,
-                                key = "same_day_examination_${policyHolder.id}",
-                                factory = ExaminationViewModel.provideFactory(
-                                    providerName = uiState.provider.name,
-                                    careCoverage = policyHolder.coverExternal,
-                                    userId = policyHolder.id.toString()
-                                )
-                            )
-
-                            // convert from model.events to nav_result
-                            LaunchedEffect(viewModel) {
-                                viewModel.events.collect { event ->
-                                    when (event) {
-                                        is UiEvent.Success -> {
-                                            navController
-                                                .getBackStackEntry(
-                                                    ScaAppScreen.HealthCareDashboard.name)
-                                                .savedStateHandle["nav_result"] = NavResult.NewSameDayExaminationSuccess.name
-
-                                            navController.navigate(NavGraphs.EXISTING_EXAMINATION) {
-                                                popUpTo(ScaAppScreen.HealthCareDashboard.name) {
-                                                    inclusive = false
-                                                }
-                                            }
-                                        }
-                                        is UiEvent.Error -> {
-                                            snackbarHostState.showSnackbar(
-                                                AppSnackbarVisuals(
-                                                    message = context.getString(event.errorId),
-                                                    type = SnackbarType.Error,
-                                                    duration = SnackbarDuration.Long
-                                                )
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-
-                            val localUiState by viewModel.uiState.collectAsState()
-
-                            ExaminationSameDayExamScreen(
-                                reason = localUiState.reason,
-                                designation = localUiState.designation,
-                                costTotal = localUiState.costTotal,
-                                costSca = localUiState.costSca,
-                                costUser = localUiState.costUser,
-                                isSubmitting = localUiState.isSubmitting,
-                                onReasonChanged = viewModel::setReason,
-                                onDesignationChanged = viewModel::setDesignation,
-                                onCostChanged = viewModel::updateCost,
-                                onSubmitRequest = viewModel::submitRequest,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(color = AppConstants.lightGreen)
-                                    .padding(dimensionResource(R.dimen.padding_medium)),
-                            )
-                        }
-                    }
-                }
-
-                navigation(
-                    route = NavGraphs.EXISTING_EXAMINATION,
-                    startDestination = ScaAppScreen.ExaminationList.name
-                ) {
-                    composable(route = ScaAppScreen.ExaminationList.name) { backStackEntry ->
-                        val dashboardEntry = remember(backStackEntry) {
-                            navController.getBackStackEntry(ScaAppScreen.HealthCareDashboard.name)
-                        }
-                        val dashboardNavResult by dashboardEntry
-                            .savedStateHandle
-                            .getStateFlow<String?>("nav_result", null)
-                            .collectAsState()
-
-                        LaunchedEffect(dashboardNavResult) {
-                            when (dashboardNavResult) {
-                                NavResult.NewSameDayExaminationSuccess.name -> {
-                                    snackbarHostState.showSnackbar(
-                                        AppSnackbarVisuals(
-                                            message = context.getString(R.string.new_same_day_care_success_message),
-                                            type = SnackbarType.Success
-                                        )
-                                    )
-                                }
-                                null -> Unit
-                            }
-                            // now clear old nav result
-                            if (dashboardNavResult != null) {
-                                dashboardEntry.savedStateHandle["nav_result"] = null
-                            }
-                        }
-
-                        ExaminationListScreen(
-                            providerName = uiState.provider.name,
-                            /*onRowClick = { consultation ->
-                            navController.navigate(
-                                route = "${ScaAppScreen.ExaminationDetailsScreen.name}/${consultation.id}"
-                            )
-                        },*/
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(dimensionResource(R.dimen.padding_medium))
-                        )
-                    }
-                }
-
-                // HOSPITALISATION FLOWS
-
-                navigation(
-                    route = NavGraphs.NEW_HOSPITALISATION,
-                    startDestination = ScaAppScreen.HospitalisationNewHospitalisation.name
-                ) {
-                    composable(route = ScaAppScreen.HospitalisationNewHospitalisation.name) {
-                        NewHospitalisationScreen(
-                            onScanQrCode = {
-                                navController.navigate(
-                                    ScaAppScreen.codeScannerRoute(
-                                        ScaAppScreen.HospitalisationFamilyMembersList
-                                    )
-                                )
-                            },
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(color = AppConstants.lightGreen)
-                                .padding(dimensionResource(R.dimen.padding_medium)),
-                        )
-                    }
-
-                    composable(route = ScaAppScreen.HospitalisationFamilyMembersList.name) {
-                        val viewModel: NewHospitalisationViewModel = viewModel(
-                            factory = NewHospitalisationViewModel.provideFactory(
-                                familyId = scanResult,
-                                providerName = uiState.provider.name
-                            )
-                        )
-                        val state by viewModel.uiState.collectAsState()
-
-                        HospitalisationFamilyMembersListScreen(
-                            members = state.familyMembers,
-                            onMemberSelected = { policyHolderId ->
-                                navController.navigate(route = "${ScaAppScreen.HospitalisationPolicyHolderDetails.name}/${policyHolderId}")
-                            },
-                            onScanQrCode = {
-                                navController.navigate(
-                                    ScaAppScreen.codeScannerRoute(
-                                        ScaAppScreen.HospitalisationFamilyMembersList
-                                    )
-                                )
-                            },
-                            modifier = Modifier
-                                .background(color = AppConstants.lightGreen)
-                                .padding(dimensionResource(R.dimen.padding_medium))
-                        )
-                    }
-                }
-
-                navigation(
-                    route = NavGraphs.EXISTING_HOSPITALISATION,
-                    startDestination = ScaAppScreen.HospitalisationList.name
-                ) {
-                    composable(route = ScaAppScreen.HospitalisationList.name) {
-                        HospitalisationListScreen(
-                            providerName = uiState.provider.name,
-                            /*onRowClick = { consultation ->
-                            navController.navigate(
-                                route = "${ScaAppScreen.ExaminationDetailsScreen.name}/${consultation.id}"
-                            )
-                        },*/
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(dimensionResource(R.dimen.padding_medium))
-                        )
-                    }
-                }
-
-                // CODE SCANNER
-
-                composable(
-                    route = ScaAppScreen.codeScannerRoute,
-                    arguments = listOf(
-                        navArgument(ScaAppScreen.RETURN_TO_ARGUMENT) {
-                            type = NavType.StringType
-                        }
-                    )) { backStackEntry ->
-
-                    val returnTo = backStackEntry.arguments
-                        ?.getString(ScaAppScreen.RETURN_TO_ARGUMENT)
-                        ?: return@composable
-
-                    CodeScannerScreen(
-                        onScanResult = {
-                            scanResult = it
-                            Log.d(TAG, "QR scan result: $scanResult")
-                            navController.popBackStack()
-                            navController.navigate(returnTo) {
-                                launchSingleTop = true
-                            }
-                        },
-                        modifier = Modifier
-                            .background(color = AppConstants.lightGreen)
-                            .padding(dimensionResource(R.dimen.padding_medium))
-                    )
-                }
+                )
             }
         }
     }
@@ -978,6 +321,26 @@ fun TabScreen(
                 onLogout()
             }
         )
+    }
+}
+
+private fun screenForRoute(route: String): ScaAppScreen {
+    return when {
+        route.startsWith(ScaAppScreen.ConsultationDetails.name) ->
+            ScaAppScreen.ConsultationDetails
+        route.startsWith(ScaAppScreen.ExaminationDetails.name) ->
+            ScaAppScreen.ExaminationDetails
+        route.startsWith(ScaAppScreen.HospitalisationDetails.name) ->
+            ScaAppScreen.HospitalisationDetails
+        route.startsWith(ScaAppScreen.ConsultationPolicyHolderDetails.name) ->
+            ScaAppScreen.ConsultationPolicyHolderDetails
+        route.startsWith(ScaAppScreen.ExaminationPolicyHolderDetails.name) ->
+            ScaAppScreen.ExaminationPolicyHolderDetails
+        route.startsWith(ScaAppScreen.HospitalisationPolicyHolderDetails.name) ->
+            ScaAppScreen.HospitalisationPolicyHolderDetails
+        else ->
+            ScaAppScreen.entries.firstOrNull { it.name == route }
+                ?: ScaAppScreen.HealthCareDashboard
     }
 }
 

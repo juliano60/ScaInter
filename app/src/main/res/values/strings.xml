@@ -31,8 +31,8 @@
     <string name="view_hospitalisations">View hospitalisations</string>
 
     <!-- DESTINATIONS -->
-    <string name="page_home">Home</string>
-    <string name="page_support">Support</string>
+    <string name="home_title">Home</string>
+    <string name="support_title">Support</string>
 
     <!-- CONSULTATION PAGE -->
     <string name="act_label">Act:</string>
@@ -54,10 +54,10 @@
     <string name="err_invalid_credentials_message">Username or password incorrect.</string>
     <string name="err_network_error_message">Network unavailable.</string>
     <string name="err_unknown_error_message">Unknown error. Please try again later.</string>
-    <string name="page_health_care">Health Centre</string>
-    <string name="page_consultation_list">Consultations</string>
-    <string name="page_examination_list">Examinations</string>
-    <string name="page_hospitalisation_list">Hospitalisations</string>
+    <string name="health_care_title">Health Centre</string>
+    <string name="consultation_list_title">Consultations</string>
+    <string name="examination_list_title">Examinations</string>
+    <string name="hospitalisation_list_title">Hospitalisations</string>
     <string name="consultation_details_title">Consultation Details</string>
     <string name="medical_prescription_title">Medical Prescription</string>
     <string name="prescriber_label">Prescriber:</string>
@@ -112,7 +112,7 @@
     <string name="sca_about_title">MySCA Partners</string>
     <string name="sca_about_text">MySCA Partners is a mobile application that allows users to access healthcare services through a care network defined by the company SCA INTER A. This application is therefore a product of the SCA INTER A group.</string>
     <string name="our_contacts">Our contact details:</string>
-    <string name="page_about">About...</string>
+    <string name="about_title">About...</string>
     <string name="coverage_label_and_value">Coverage %s</string>
     <string name="quantity_label">Quantity</string>
     <string name="medication_1_title">Medecine 1</string>
@@ -141,4 +141,6 @@
     <string name="exam_same_day_request_title">Request for day care</string>
     <string name="exam_regular_request_title">Request for care</string>
     <string name="new_same_day_care_success_message">New same day care added successfully</string>
+    <string name="examination_details_title">Examination Details</string>
+    <string name="hospitalisation_details_title">Hospitalisation Details</string>
 </resources>
