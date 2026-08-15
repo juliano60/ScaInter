@@ -74,21 +74,22 @@ import com.nanoporetech.scainter.ui.consultation.ConsultationDetailsScreen
 import com.nanoporetech.scainter.ui.consultation.ConsultationFamilyMembersListRoute
 import com.nanoporetech.scainter.ui.consultation.ConsultationListScreen
 import com.nanoporetech.scainter.ui.consultation.ConsultationNewPrescriptionScreen
+import com.nanoporetech.scainter.ui.consultation.ConsultationPolicyHolderDetailsScreen
 import com.nanoporetech.scainter.ui.consultation.ListConsultationsViewModel
 import com.nanoporetech.scainter.ui.consultation.NewConsultationScreen
 import com.nanoporetech.scainter.ui.consultation.NewConsultationViewModel
-import com.nanoporetech.scainter.ui.consultation.ConsultationPolicyHolderDetailsScreen
 import com.nanoporetech.scainter.ui.events.UiEvent
-import com.nanoporetech.scainter.ui.examination.ExaminationFamilyMembersListRoute
+import com.nanoporetech.scainter.ui.examination.ExaminationFamilyMembersListScreen
 import com.nanoporetech.scainter.ui.examination.ExaminationListScreen
 import com.nanoporetech.scainter.ui.examination.ExaminationPolicyHolderDetailsScreen
 import com.nanoporetech.scainter.ui.examination.ExaminationSameDayExamScreen
 import com.nanoporetech.scainter.ui.examination.ExaminationViewModel
 import com.nanoporetech.scainter.ui.examination.NewExaminationScreen
 import com.nanoporetech.scainter.ui.examination.NewExaminationViewModel
-import com.nanoporetech.scainter.ui.hospitalisation.HospitalisationFamilyMembersListRoute
+import com.nanoporetech.scainter.ui.hospitalisation.HospitalisationFamilyMembersListScreen
 import com.nanoporetech.scainter.ui.hospitalisation.HospitalisationListScreen
 import com.nanoporetech.scainter.ui.hospitalisation.NewHospitalisationScreen
+import com.nanoporetech.scainter.ui.hospitalisation.NewHospitalisationViewModel
 import com.nanoporetech.scainter.ui.qrcode.CodeScannerScreen
 import com.nanoporetech.scainter.ui.support.SupportScreen
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
@@ -598,9 +599,17 @@ fun TabScreen(
                     }
 
                     composable(route = ScaAppScreen.ExaminationFamilyMembersList.name) {
-                        ExaminationFamilyMembersListRoute(
-                            familyId = scanResult,
-                            providerName = uiState.provider.name,
+                        val viewModel: NewExaminationViewModel = viewModel(
+                            factory = NewExaminationViewModel.provideFactory(
+                                familyId = scanResult,
+                                providerName = uiState.provider.name
+                            )
+                        )
+
+                        val state by viewModel.uiState.collectAsState()
+
+                        ExaminationFamilyMembersListScreen(
+                            members = state.familyMembers,
                             onMemberSelected = { policyHolderId ->
                                 navController.navigate(route = "${ScaAppScreen.ExaminationPolicyHolderDetails.name}/${policyHolderId}")
                             },
@@ -742,9 +751,16 @@ fun TabScreen(
                     }
 
                     composable(route = ScaAppScreen.HospitalisationFamilyMembersList.name) {
-                        HospitalisationFamilyMembersListRoute(
-                            familyId = scanResult,
-                            providerName = uiState.provider.name,
+                        val viewModel: NewHospitalisationViewModel = viewModel(
+                            factory = NewHospitalisationViewModel.provideFactory(
+                                familyId = scanResult,
+                                providerName = uiState.provider.name
+                            )
+                        )
+                        val state by viewModel.uiState.collectAsState()
+
+                        HospitalisationFamilyMembersListScreen(
+                            members = state.familyMembers,
                             onMemberSelected = { policyHolderId ->
                                 navController.navigate(route = "${ScaAppScreen.HospitalisationPolicyHolderDetails.name}/${policyHolderId}")
                             },
