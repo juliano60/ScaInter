@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
@@ -29,13 +30,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.ui.components.CardHeader
 import com.nanoporetech.scainter.ui.components.CostsFragment
 import com.nanoporetech.scainter.ui.components.PrimaryButton
 import com.nanoporetech.scainter.ui.components.PrimaryOutlinedTextField
+import com.nanoporetech.scainter.ui.events.UiEvent
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun ExaminationSameDayExamScreen(

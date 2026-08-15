@@ -109,6 +109,8 @@ enum class NavResult {
     NewConsultationSuccess,
     NewConsultationFailed,
     NewPrescriptionSuccess,
+
+    NewSameDayExaminationSuccess,
 }
 
 enum class ScaAppScreen(@StringRes val title: Int) {
@@ -157,6 +159,36 @@ object NavGraphs {
 
     const val NEW_HOSPITALISATION = "new_hospitalisation_flow"
     const val EXISTING_HOSPITALISATION = "existing_hospitalisation_flow"
+}
+
+object ConsultationPolicyHolderDetails {
+    const val POLICY_HOLDER_ID = "policyHolderId"
+
+    val route =
+        "${ScaAppScreen.ConsultationPolicyHolderDetails.name}/{$POLICY_HOLDER_ID}"
+
+    fun createRoute(policyHolderId: Int) =
+        "${ScaAppScreen.ConsultationPolicyHolderDetails.name}/$policyHolderId"
+}
+
+object ExaminationPolicyHolderDetails {
+    const val POLICY_HOLDER_ID = "policyHolderId"
+
+    val route =
+        "${ScaAppScreen.ExaminationPolicyHolderDetails.name}/{$POLICY_HOLDER_ID}"
+
+    fun createRoute(policyHolderId: Int) =
+        "${ScaAppScreen.ExaminationPolicyHolderDetails.name}/$policyHolderId"
+}
+
+object HospitalisationPolicyHolderDetails {
+    const val POLICY_HOLDER_ID = "policyHolderId"
+
+    val route =
+        "${ScaAppScreen.HospitalisationPolicyHolderDetails.name}/{$POLICY_HOLDER_ID}"
+
+    fun createRoute(policyHolderId: Int) =
+        "${ScaAppScreen.HospitalisationPolicyHolderDetails.name}/$policyHolderId"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -341,7 +373,7 @@ fun TabScreen(
                             familyId = scanResult,
                             providerName = uiState.provider.name,
                             onMemberSelected = { policyHolderId ->
-                                navController.navigate(route = "${ScaAppScreen.ConsultationPolicyHolderDetails.name}/${policyHolderId}")
+                                navController.navigate(route = ConsultationPolicyHolderDetails.createRoute(policyHolderId))
                             },
                             onScanQrCode = {
                                 navController.navigate(
@@ -357,14 +389,14 @@ fun TabScreen(
                     }
 
                     composable(
-                        route = "${ScaAppScreen.ConsultationPolicyHolderDetails.name}/{policyHolderId}",
+                        route = ConsultationPolicyHolderDetails.route,
                         arguments = listOf(
-                            navArgument("policyHolderId") {
+                            navArgument(ConsultationPolicyHolderDetails.POLICY_HOLDER_ID) {
                                 type = NavType.IntType
                             }
                         )
                     ) { backStackEntry ->
-                        val policyHolderId = backStackEntry.arguments?.getInt("policyHolderId")
+                        val policyHolderId = backStackEntry.arguments?.getInt(ConsultationPolicyHolderDetails.POLICY_HOLDER_ID)
 
                         val parentEntry = remember(backStackEntry) {
                             navController.getBackStackEntry(NavGraphs.NEW_CONSULTATION)
@@ -616,7 +648,7 @@ fun TabScreen(
                         ExaminationFamilyMembersListScreen(
                             members = state.familyMembers,
                             onMemberSelected = { policyHolderId ->
-                                navController.navigate(route = "${ScaAppScreen.ExaminationPolicyHolderDetails.name}/${policyHolderId}")
+                                navController.navigate(route = ExaminationPolicyHolderDetails.createRoute(policyHolderId))
                             },
                             onScanQrCode = {
                                 navController.navigate(
@@ -632,14 +664,14 @@ fun TabScreen(
                     }
 
                     composable(
-                        route = "${ScaAppScreen.ExaminationPolicyHolderDetails.name}/{policyHolderId}",
+                        route = ExaminationPolicyHolderDetails.route,
                         arguments = listOf(
-                            navArgument("policyHolderId") {
+                            navArgument(ExaminationPolicyHolderDetails.POLICY_HOLDER_ID) {
                                 type = NavType.IntType
                             }
                         )
                     ) { backStackEntry ->
-                        val policyHolderId = backStackEntry.arguments?.getInt("policyHolderId")
+                        val policyHolderId = backStackEntry.arguments?.getInt(ExaminationPolicyHolderDetails.POLICY_HOLDER_ID)
 
                         val parentEntry = remember(backStackEntry) {
                             navController.getBackStackEntry(NavGraphs.NEW_EXAMINATION)
@@ -697,6 +729,35 @@ fun TabScreen(
                                 )
                             )
 
+                            // convert from model.events to nav_result
+                            LaunchedEffect(viewModel) {
+                                viewModel.events.collect { event ->
+                                    when (event) {
+                                        is UiEvent.Success -> {
+                                            navController
+                                                .getBackStackEntry(
+                                                    ScaAppScreen.HealthCareDashboard.name)
+                                                .savedStateHandle["nav_result"] = NavResult.NewSameDayExaminationSuccess.name
+
+                                            navController.navigate(NavGraphs.EXISTING_EXAMINATION) {
+                                                popUpTo(ScaAppScreen.HealthCareDashboard.name) {
+                                                    inclusive = false
+                                                }
+                                            }
+                                        }
+                                        is UiEvent.Error -> {
+                                            snackbarHostState.showSnackbar(
+                                                AppSnackbarVisuals(
+                                                    message = context.getString(event.errorId),
+                                                    type = SnackbarType.Error,
+                                                    duration = SnackbarDuration.Long
+                                                )
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+
                             val localUiState by viewModel.uiState.collectAsState()
 
                             ExaminationSameDayExamScreen(
@@ -723,7 +784,33 @@ fun TabScreen(
                     route = NavGraphs.EXISTING_EXAMINATION,
                     startDestination = ScaAppScreen.ExaminationList.name
                 ) {
-                    composable(route = ScaAppScreen.ExaminationList.name) {
+                    composable(route = ScaAppScreen.ExaminationList.name) { backStackEntry ->
+                        val dashboardEntry = remember(backStackEntry) {
+                            navController.getBackStackEntry(ScaAppScreen.HealthCareDashboard.name)
+                        }
+                        val dashboardNavResult by dashboardEntry
+                            .savedStateHandle
+                            .getStateFlow<String?>("nav_result", null)
+                            .collectAsState()
+
+                        LaunchedEffect(dashboardNavResult) {
+                            when (dashboardNavResult) {
+                                NavResult.NewSameDayExaminationSuccess.name -> {
+                                    snackbarHostState.showSnackbar(
+                                        AppSnackbarVisuals(
+                                            message = context.getString(R.string.new_same_day_care_success_message),
+                                            type = SnackbarType.Success
+                                        )
+                                    )
+                                }
+                                null -> Unit
+                            }
+                            // now clear old nav result
+                            if (dashboardNavResult != null) {
+                                dashboardEntry.savedStateHandle["nav_result"] = null
+                            }
+                        }
+
                         ExaminationListScreen(
                             providerName = uiState.provider.name,
                             /*onRowClick = { consultation ->
