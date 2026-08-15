@@ -598,8 +598,13 @@ fun TabScreen(
                         )
                     }
 
-                    composable(route = ScaAppScreen.ExaminationFamilyMembersList.name) {
+                    composable(route = ScaAppScreen.ExaminationFamilyMembersList.name) { backStackEntry ->
+                        val parentEntry = remember(backStackEntry) {
+                            navController.getBackStackEntry(NavGraphs.NEW_EXAMINATION)
+                        }
+
                         val viewModel: NewExaminationViewModel = viewModel(
+                            viewModelStoreOwner = parentEntry,
                             factory = NewExaminationViewModel.provideFactory(
                                 familyId = scanResult,
                                 providerName = uiState.provider.name
@@ -649,9 +654,14 @@ fun TabScreen(
 
                         Log.d(TAG, "PolicyHolder: $policyHolder")
 
-                        if (policyHolder != null) {
-                            viewModel.setPolicyHolder(policyHolder)
+                        // NOTE: do the setPolicyHolder in a LaunchedEffect to avoid repeated recompositions
+                        LaunchedEffect(policyHolder) {
+                            policyHolder?.let {
+                                viewModel.setPolicyHolder(it)
+                            }
+                        }
 
+                        if (policyHolder != null) {
                             ExaminationPolicyHolderDetailsScreen(
                                 policyHolder = policyHolder,
                                 onDayExamination = {

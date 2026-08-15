@@ -132,7 +132,7 @@
     <string name="hospitalisations_loaded_error_message">Error loading hospitalisations.</string>
     <string name="policy_type_label">Policy type:</string>
     <string name="add_examination_button">Add Examination</string>
-    <string name="add_same_day_examination_button">Add a same day examination</string>
+    <string name="add_same_day_examination_button">Add aame day examination</string>
     <string name="examination_same_day_title">Same day care</string>
     <string name="exam_same_day_details">Request details</string>
     <string name="exam_reason_hint">Reason for care</string>

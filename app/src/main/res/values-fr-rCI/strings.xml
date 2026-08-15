@@ -132,8 +132,8 @@
     <string name="examinations_loaded_error_message">Error lors de la mise  à jour des examinations.</string>
     <string name="hospitalisations_loaded_error_message">Error lors de la mise  à jour des hospitalisations.</string>
     <string name="policy_type_label">Réseau de soins:</string>
-    <string name="add_examination_button">Saisir un examen</string>
-    <string name="add_same_day_examination_button">Saisir soins d\'un jour</string>
+    <string name="add_examination_button">Demande d\'examen</string>
+    <string name="add_same_day_examination_button">Demande de soins d\'un jour</string>
     <string name="examination_same_day_title">Soins d\'un jour</string>
     <string name="exam_same_day_details">Détails de la demande</string>
     <string name="exam_reason_hint">Motif des soins</string>

@@ -27,6 +27,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
@@ -139,21 +140,27 @@ fun PrimaryButton(
             vertical = paddingMedium,
         ),
         enabled = enabled,
-        modifier = modifier,
+        modifier = modifier
     ) {
-        if (iconImg != null) {
-            Icon(
-                imageVector = iconImg,
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(end = dimensionResource(R.dimen.padding_small))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            if (iconImg != null) {
+                Icon(
+                    imageVector = iconImg,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(end = dimensionResource(R.dimen.padding_small))
+                )
+            }
+
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodyLarge,
             )
         }
-
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyLarge
-        )
     }
 }
 
