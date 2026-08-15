@@ -56,6 +56,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -71,7 +72,7 @@ import com.nanoporetech.scainter.data.AppUiState
 import com.nanoporetech.scainter.data.DataSource
 import com.nanoporetech.scainter.ui.components.showAlert
 import com.nanoporetech.scainter.ui.consultation.ConsultationDetailsScreen
-import com.nanoporetech.scainter.ui.consultation.ConsultationFamilyMembersListRoute
+import com.nanoporetech.scainter.ui.consultation.ConsultationFamilyMembersListScreen
 import com.nanoporetech.scainter.ui.consultation.ConsultationListScreen
 import com.nanoporetech.scainter.ui.consultation.ConsultationNewPrescriptionScreen
 import com.nanoporetech.scainter.ui.consultation.ConsultationPolicyHolderDetailsScreen
@@ -369,9 +370,22 @@ fun TabScreen(
                     }
 
                     composable(route = ScaAppScreen.ConsultationFamilyMembersList.name) {
-                        ConsultationFamilyMembersListRoute(
-                            familyId = scanResult,
-                            providerName = uiState.provider.name,
+                        val parentEntry = remember(backStackEntry) {
+                            navController.getBackStackEntry(NavGraphs.NEW_CONSULTATION)
+                        }
+
+                        val viewModel: NewConsultationViewModel = viewModel(
+                            viewModelStoreOwner = parentEntry,
+                            factory = NewConsultationViewModel.provideFactory(
+                                familyId = scanResult,
+                                providerName = uiState.provider.name
+                            )
+                        )
+
+                        val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+                        ConsultationFamilyMembersListScreen(
+                            members = state.familyMembers,
                             onMemberSelected = { policyHolderId ->
                                 navController.navigate(route = ConsultationPolicyHolderDetails.createRoute(policyHolderId))
                             },
@@ -643,7 +657,7 @@ fun TabScreen(
                             )
                         )
 
-                        val state by viewModel.uiState.collectAsState()
+                        val state by viewModel.uiState.collectAsStateWithLifecycle()
 
                         ExaminationFamilyMembersListScreen(
                             members = state.familyMembers,
@@ -681,7 +695,7 @@ fun TabScreen(
                             viewModelStoreOwner = parentEntry
                         )
 
-                        val localUiState by viewModel.uiState.collectAsState()
+                        val localUiState by viewModel.uiState.collectAsStateWithLifecycle()
                         val policyHolder = localUiState.policyHolders.firstOrNull { it.id == policyHolderId }
 
                         Log.d(TAG, "PolicyHolder: $policyHolder")
@@ -715,7 +729,7 @@ fun TabScreen(
                             viewModelStoreOwner = parentEntry
                         )
 
-                        val newExaminationUiState by newExaminationViewModel.uiState.collectAsState()
+                        val newExaminationUiState by newExaminationViewModel.uiState.collectAsStateWithLifecycle()
                         val policyHolder = newExaminationUiState.currentPolicyHolder
 
                         if (policyHolder != null) {

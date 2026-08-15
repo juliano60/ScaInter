@@ -25,8 +25,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,7 +36,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.data.DataSource
@@ -47,47 +44,9 @@ import com.nanoporetech.scainter.ui.components.SubHeader
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.theme.ScaInterTheme
 
-@Composable
-fun ConsultationFamilyMembersListRoute(
-    familyId: String,
-    providerName: String,
-    modifier: Modifier = Modifier,
-    onMemberSelected: (Int) -> Unit = {},
-    onScanQrCode: () -> Unit = {},
-) {
-    val viewModel: NewConsultationViewModel = viewModel(
-        factory = NewConsultationViewModel.provideFactory(
-            familyId = familyId,
-            providerName = providerName
-        )
-    )
-    val state by viewModel.uiState.collectAsState()
-
-    ConsultationFamilyMembersListScreen(
-        members = state.familyMembers,
-        onMemberSelected = onMemberSelected,
-        onScanQrCode = onScanQrCode,
-        modifier = modifier
-    )
-}
 
 @Composable
 fun ConsultationFamilyMembersListScreen(
-    members: List<FamilyMember>,
-    modifier: Modifier = Modifier,
-    onMemberSelected: (Int) -> Unit = {},
-    onScanQrCode: () -> Unit = {},
-) {
-    ConsultationFamilyMembersListContent(
-        members = members,
-        onMemberSelected = onMemberSelected,
-        onScanQrCode = onScanQrCode,
-        modifier = modifier
-    )
-}
-
-@Composable
-fun ConsultationFamilyMembersListContent(
     members: List<FamilyMember>,
     modifier: Modifier = Modifier,
     onMemberSelected: (Int) -> Unit = {},
@@ -233,7 +192,7 @@ fun ConsultationFamilyMembersListContentPreview() {
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            ConsultationFamilyMembersListContent(
+            ConsultationFamilyMembersListScreen(
                 members = DataSource.policyHolderFamilyMembers(),
                 modifier = Modifier
                     .background(color = AppConstants.lightGreen)
