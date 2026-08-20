@@ -5,17 +5,19 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import androidx.navigation.navArgument
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.ui.hospitalisation.HospitalisationFamilyMembersListScreen
@@ -36,13 +38,6 @@ object HospitalisationPolicyHolderDetails {
 
     fun createRoute(policyHolderId: Int) =
         "${ScaAppScreen.HospitalisationPolicyHolderDetails.name}/$policyHolderId"
-}
-
-object HospitalisationFamilyMembersList {
-    const val FAMILY_ID = "familyId"
-
-    val route =
-        "${ScaAppScreen.HospitalisationFamilyMembersList.name}/{$FAMILY_ID}"
 }
 
 object HospitalisationDetails {
@@ -89,13 +84,28 @@ private fun NavGraphBuilder.newHospitalisationGraph(
     providerName: String,
     snackbarHostState: SnackbarHostState,
 ) {
-    composable(route = ScaAppScreen.HospitalisationNewHospitalisation.name) {
+    composable(route = ScaAppScreen.HospitalisationNewHospitalisation.name) { backStackEntry ->
+        val scanResult by backStackEntry.savedStateHandle
+            .getStateFlow<String?>(SCAN_RESULT, null)
+            .collectAsStateWithLifecycle()
+
+        LaunchedEffect(scanResult) {
+            scanResult?.let { familyId ->
+                val parentEntry = navController.getBackStackEntry(
+                    NavGraphs.NEW_HOSPITALISATION
+                )
+                parentEntry.savedStateHandle[FAMILY_ID] = familyId
+                backStackEntry.savedStateHandle[SCAN_RESULT] = null
+                navController.navigate(
+                    route = ScaAppScreen.HospitalisationFamilyMembersList.name
+                )
+            }
+        }
+
         NewHospitalisationScreen(
             onScanQrCode = {
                 navController.navigate(
-                    ScaAppScreen.codeScannerRoute(
-                        HospitalisationFamilyMembersList.route
-                    )
+                    route = ScaAppScreen.CodeScanner.name
                 )
             },
             modifier = Modifier
@@ -105,22 +115,36 @@ private fun NavGraphBuilder.newHospitalisationGraph(
         )
     }
 
-    composable(route = ScaAppScreen.HospitalisationFamilyMembersList.name,
-        arguments = listOf(
-            navArgument(ConsultationFamilyMembersList.FAMILY_ID) {
-                type = NavType.StringType
+    composable(route = ScaAppScreen.HospitalisationFamilyMembersList.name) { backStackEntry ->
+        val parentEntry = remember(backStackEntry) {
+            navController.getBackStackEntry(NavGraphs.NEW_HOSPITALISATION)
+        }
+
+        val viewModel = newHospitalisationViewModel(
+            navController,
+            backStackEntry,
+            providerName
+        )
+
+        val scanResult by backStackEntry.savedStateHandle
+            .getStateFlow<String?>(SCAN_RESULT, null)
+            .collectAsStateWithLifecycle()
+
+        val familyId by parentEntry.savedStateHandle
+            .getStateFlow<String?>(FAMILY_ID, null)
+            .collectAsStateWithLifecycle()
+
+        LaunchedEffect(scanResult) {
+            scanResult?.let { newFamilyId ->
+                parentEntry.savedStateHandle[FAMILY_ID] = newFamilyId
+                backStackEntry.savedStateHandle[SCAN_RESULT] = null
             }
-        )
-    ) { backStackEntry ->
-        val familyId = requireNotNull(
-            backStackEntry.arguments?.getString(HospitalisationFamilyMembersList.FAMILY_ID)
-        )
-        val viewModel: NewHospitalisationViewModel = viewModel(
-            factory = NewHospitalisationViewModel.provideFactory(
-                familyId = familyId,
-                providerName = providerName
-            )
-        )
+        }
+
+        LaunchedEffect(familyId) {
+            familyId?.let(viewModel::loadFamily)
+        }
+
         val state by viewModel.uiState.collectAsStateWithLifecycle()
 
         HospitalisationFamilyMembersListScreen(
@@ -130,9 +154,7 @@ private fun NavGraphBuilder.newHospitalisationGraph(
             },
             onScanQrCode = {
                 navController.navigate(
-                    ScaAppScreen.codeScannerRoute(
-                        ScaAppScreen.HospitalisationFamilyMembersList
-                    )
+                    route = ScaAppScreen.CodeScanner
                 )
             },
             modifier = Modifier
@@ -140,6 +162,24 @@ private fun NavGraphBuilder.newHospitalisationGraph(
                 .padding(dimensionResource(R.dimen.padding_medium))
         )
     }
+}
+
+@Composable
+private fun newHospitalisationViewModel(
+    navController: NavController,
+    backStackEntry: NavBackStackEntry,
+    providerName: String
+): NewHospitalisationViewModel {
+    val parentEntry = remember(backStackEntry) {
+        navController.getBackStackEntry(NavGraphs.NEW_HOSPITALISATION)
+    }
+
+    return viewModel(
+        viewModelStoreOwner = parentEntry,
+        factory = NewHospitalisationViewModel.provideFactory(
+            providerName = providerName
+        )
+    )
 }
 
 @SuppressLint("LocalContextGetResourceValueCall")
@@ -151,9 +191,9 @@ private fun NavGraphBuilder.existingHospitalisationGraph(
     composable(route = ScaAppScreen.HospitalisationList.name) {
         HospitalisationListScreen(
             providerName = providerName,
-            /*onRowClick = { consultation ->
+            /*onRowClick = { hospitalisation ->
             navController.navigate(
-                route = "${ScaAppScreen.ExaminationDetailsScreen.name}/${consultation.id}"
+                route = "${ScaAppScreen.HospitalisationDetailsScreen.name}/${hospitalisation.id}"
             )
         },*/
             modifier = Modifier

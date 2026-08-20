@@ -23,7 +23,6 @@ import kotlinx.coroutines.launch
 
 
 class NewConsultationViewModel(
-    private val familyId: String,
     private val providerName: String,
     private val repository: ScaDataRepository
 ): ViewModel() {
@@ -34,7 +33,7 @@ class NewConsultationViewModel(
     private val _events = MutableSharedFlow<UiEvent>()
     val events = _events.asSharedFlow()
 
-    init {
+    fun loadFamily(familyId: String) {
         viewModelScope.launch {
             // load family members
             when (val result = repository.fetchFamilyMembers(familyId = familyId)) {
@@ -141,7 +140,6 @@ class NewConsultationViewModel(
 
     companion object {
         fun provideFactory(
-            familyId: String,
             providerName: String,
         ): ViewModelProvider.Factory = viewModelFactory {
             initializer {
@@ -149,7 +147,6 @@ class NewConsultationViewModel(
                 val repository = application.container.scaDataRepository
 
                 NewConsultationViewModel(
-                    familyId = familyId,
                     providerName = providerName,
                     repository = repository
                 )

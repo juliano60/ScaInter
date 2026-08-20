@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class NewExaminationViewModel(
-    private val familyId: String,
     private val providerName: String,
     private val repository: ScaDataRepository
 ): ViewModel() {
@@ -39,7 +38,7 @@ class NewExaminationViewModel(
         }
     }
 
-    init {
+    fun loadFamily(familyId: String) {
         viewModelScope.launch {
             // load family members
             when (val result = repository.fetchFamilyMembers(familyId = familyId)) {
@@ -90,7 +89,6 @@ class NewExaminationViewModel(
 
     companion object {
         fun provideFactory(
-            familyId: String,
             providerName: String,
         ): ViewModelProvider.Factory = viewModelFactory {
             initializer {
@@ -98,7 +96,6 @@ class NewExaminationViewModel(
                 val repository = application.container.scaDataRepository
 
                 NewExaminationViewModel(
-                    familyId = familyId,
                     providerName = providerName,
                     repository = repository
                 )

@@ -103,15 +103,6 @@ enum class ScaAppScreen(@StringRes val title: Int) {
     HospitalisationPolicyHolderDetails(title = R.string.new_examination),
     Support(title = R.string.about_title),
     CodeScanner(title = R.string.code_scanner_title);
-
-    companion object {
-        const val RETURN_TO_ARGUMENT = "returnTo"
-        val codeScannerRoute = "${CodeScanner.name}/{$RETURN_TO_ARGUMENT}"
-        fun codeScannerRoute(returnTo: ScaAppScreen): String =
-            "${CodeScanner.name}/${returnTo.name}"
-        fun codeScannerRoute(returnToRoute: String): String =
-            "${CodeScanner.name}/${Uri.encode(returnToRoute)}"
-    }
 }
 private data class TabSpec(
     /** route is the destination route **/

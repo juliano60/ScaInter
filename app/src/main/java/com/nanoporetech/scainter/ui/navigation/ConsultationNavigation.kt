@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -15,6 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -62,14 +64,6 @@ object ConsultationDetails {
         "${ScaAppScreen.ConsultationDetails.name}/$consultationId"
 }
 
-object ConsultationFamilyMembersList {
-    const val FAMILY_ID = "familyId"
-
-    val route =
-        "${ScaAppScreen.ConsultationFamilyMembersList.name}/{$FAMILY_ID}"
-}
-
-
 fun NavGraphBuilder.consultationNavigation(
     navController: NavController,
     providerName: String,
@@ -104,13 +98,28 @@ private fun NavGraphBuilder.newConsultationGraph(
     providerName: String,
     snackbarHostState: SnackbarHostState) {
 
-    composable(route = ScaAppScreen.ConsultationNewConsultation.name) {
+    composable(route = ScaAppScreen.ConsultationNewConsultation.name) { backStackEntry ->
+        val scanResult by backStackEntry.savedStateHandle
+            .getStateFlow<String?>(SCAN_RESULT, null)
+            .collectAsStateWithLifecycle()
+
+        LaunchedEffect(scanResult) {
+            scanResult?.let { familyId ->
+                val parentEntry = navController.getBackStackEntry(
+                    NavGraphs.NEW_CONSULTATION
+                )
+                parentEntry.savedStateHandle[FAMILY_ID] = familyId
+                backStackEntry.savedStateHandle[SCAN_RESULT] = null
+                navController.navigate(
+                    route = ScaAppScreen.ConsultationFamilyMembersList.name
+                )
+            }
+        }
+
         NewConsultationScreen(
             onScanQrCode = {
                 navController.navigate(
-                    ScaAppScreen.codeScannerRoute(
-                        ConsultationFamilyMembersList.route
-                    )
+                    route = ScaAppScreen.CodeScanner.name
                 )
             },
             modifier = Modifier
@@ -120,28 +129,35 @@ private fun NavGraphBuilder.newConsultationGraph(
         )
     }
 
-    composable(route = ConsultationFamilyMembersList.route,
-            arguments = listOf(
-                navArgument(ConsultationFamilyMembersList.FAMILY_ID) {
-                    type = NavType.StringType
-                }
-            )
-        ) { backStackEntry ->
-        val familyId = requireNotNull(
-            backStackEntry.arguments?.getString(ConsultationFamilyMembersList.FAMILY_ID)
-        )
-
+    composable(route = ScaAppScreen.ConsultationFamilyMembersList.name) { backStackEntry ->
         val parentEntry = remember(backStackEntry) {
             navController.getBackStackEntry(NavGraphs.NEW_CONSULTATION)
         }
 
-        val viewModel: NewConsultationViewModel = viewModel(
-            viewModelStoreOwner = parentEntry,
-            factory = NewConsultationViewModel.provideFactory(
-                familyId = familyId,
-                providerName = providerName
-            )
+        val viewModel = newConsultationViewModel(
+            navController,
+            backStackEntry,
+            providerName
         )
+
+        val scanResult by backStackEntry.savedStateHandle
+            .getStateFlow<String?>(SCAN_RESULT, null)
+            .collectAsStateWithLifecycle()
+
+        val familyId by parentEntry.savedStateHandle
+            .getStateFlow<String?>(FAMILY_ID, null)
+            .collectAsStateWithLifecycle()
+
+        LaunchedEffect(scanResult) {
+            scanResult?.let { newFamilyId ->
+                parentEntry.savedStateHandle[FAMILY_ID] = newFamilyId
+                backStackEntry.savedStateHandle[SCAN_RESULT] = null
+            }
+        }
+
+        LaunchedEffect(familyId) {
+            familyId?.let(viewModel::loadFamily)
+        }
 
         val state by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -152,9 +168,7 @@ private fun NavGraphBuilder.newConsultationGraph(
             },
             onScanQrCode = {
                 navController.navigate(
-                    ScaAppScreen.codeScannerRoute(
-                        ConsultationFamilyMembersList.route
-                    )
+                    route = ScaAppScreen.CodeScanner.name
                 )
             },
             modifier = Modifier
@@ -234,6 +248,24 @@ private fun NavGraphBuilder.newConsultationGraph(
             )
         }
     }
+}
+
+@Composable
+private fun newConsultationViewModel(
+    navController: NavController,
+    backStackEntry: NavBackStackEntry,
+    providerName: String
+): NewConsultationViewModel {
+    val parentEntry = remember(backStackEntry) {
+        navController.getBackStackEntry(NavGraphs.NEW_CONSULTATION)
+    }
+
+    return viewModel(
+        viewModelStoreOwner = parentEntry,
+        factory = NewConsultationViewModel.provideFactory(
+            providerName = providerName
+        )
+    )
 }
 
 @SuppressLint("LocalContextGetResourceValueCall")

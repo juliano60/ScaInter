@@ -9,7 +9,6 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.nanoporetech.scainter.ScaInterApplication
 import com.nanoporetech.scainter.data.FetchFamilyMembersResult
 import com.nanoporetech.scainter.data.FetchPolicyHoldersResult
-import com.nanoporetech.scainter.data.NewConsultationUiState
 import com.nanoporetech.scainter.data.NewHospitalisationUiState
 import com.nanoporetech.scainter.data.ScaDataRepository
 import com.nanoporetech.scainter.ui.events.UiEvent
@@ -21,7 +20,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class NewHospitalisationViewModel(
-    private val familyId: String,
     private val providerName: String,
     private val repository: ScaDataRepository
     ): ViewModel() {
@@ -31,7 +29,7 @@ class NewHospitalisationViewModel(
     private val _events = MutableSharedFlow<UiEvent>()
     val events = _events.asSharedFlow()
 
-    init {
+    fun loadFamily(familyId: String) {
         viewModelScope.launch {
             // load family members
             when (val result = repository.fetchFamilyMembers(familyId = familyId)) {
@@ -82,7 +80,6 @@ class NewHospitalisationViewModel(
 
     companion object {
         fun provideFactory(
-            familyId: String,
             providerName: String,
         ): ViewModelProvider.Factory = viewModelFactory {
             initializer {
@@ -90,7 +87,6 @@ class NewHospitalisationViewModel(
                 val repository = application.container.scaDataRepository
 
                 NewHospitalisationViewModel(
-                    familyId = familyId,
                     providerName = providerName,
                     repository = repository
                 )
