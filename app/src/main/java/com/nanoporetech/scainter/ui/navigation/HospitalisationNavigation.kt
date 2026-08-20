@@ -12,8 +12,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.navArgument
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.ui.hospitalisation.HospitalisationFamilyMembersListScreen
@@ -36,6 +38,13 @@ object HospitalisationPolicyHolderDetails {
         "${ScaAppScreen.HospitalisationPolicyHolderDetails.name}/$policyHolderId"
 }
 
+object HospitalisationFamilyMembersList {
+    const val FAMILY_ID = "familyId"
+
+    val route =
+        "${ScaAppScreen.HospitalisationFamilyMembersList.name}/{$FAMILY_ID}"
+}
+
 object HospitalisationDetails {
     const val HOSPITALISATION_ID = "hospitalisationId"
 
@@ -49,7 +58,6 @@ object HospitalisationDetails {
 fun NavGraphBuilder.hospitalisationNavigation(
     navController: NavController,
     providerName: String,
-    scanResult: String,
     snackbarHostState: SnackbarHostState
 ) {
     navigation(
@@ -59,7 +67,6 @@ fun NavGraphBuilder.hospitalisationNavigation(
         newHospitalisationGraph(
             navController = navController,
             providerName = providerName,
-            scanResult = scanResult,
             snackbarHostState = snackbarHostState
         )
     }
@@ -80,7 +87,6 @@ fun NavGraphBuilder.hospitalisationNavigation(
 private fun NavGraphBuilder.newHospitalisationGraph(
     navController: NavController,
     providerName: String,
-    scanResult: String,
     snackbarHostState: SnackbarHostState,
 ) {
     composable(route = ScaAppScreen.HospitalisationNewHospitalisation.name) {
@@ -88,7 +94,7 @@ private fun NavGraphBuilder.newHospitalisationGraph(
             onScanQrCode = {
                 navController.navigate(
                     ScaAppScreen.codeScannerRoute(
-                        ScaAppScreen.HospitalisationFamilyMembersList
+                        HospitalisationFamilyMembersList.route
                     )
                 )
             },
@@ -99,10 +105,19 @@ private fun NavGraphBuilder.newHospitalisationGraph(
         )
     }
 
-    composable(route = ScaAppScreen.HospitalisationFamilyMembersList.name) {
+    composable(route = ScaAppScreen.HospitalisationFamilyMembersList.name,
+        arguments = listOf(
+            navArgument(ConsultationFamilyMembersList.FAMILY_ID) {
+                type = NavType.StringType
+            }
+        )
+    ) { backStackEntry ->
+        val familyId = requireNotNull(
+            backStackEntry.arguments?.getString(HospitalisationFamilyMembersList.FAMILY_ID)
+        )
         val viewModel: NewHospitalisationViewModel = viewModel(
             factory = NewHospitalisationViewModel.provideFactory(
-                familyId = scanResult,
+                familyId = familyId,
                 providerName = providerName
             )
         )

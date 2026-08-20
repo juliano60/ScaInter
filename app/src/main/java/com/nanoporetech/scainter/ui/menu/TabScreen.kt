@@ -1,7 +1,7 @@
 package com.nanoporetech.scainter.ui.menu
 
 import android.annotation.SuppressLint
-import android.util.Log
+import android.net.Uri
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -109,6 +109,8 @@ enum class ScaAppScreen(@StringRes val title: Int) {
         val codeScannerRoute = "${CodeScanner.name}/{$RETURN_TO_ARGUMENT}"
         fun codeScannerRoute(returnTo: ScaAppScreen): String =
             "${CodeScanner.name}/${returnTo.name}"
+        fun codeScannerRoute(returnToRoute: String): String =
+            "${CodeScanner.name}/${Uri.encode(returnToRoute)}"
     }
 }
 private data class TabSpec(
@@ -157,7 +159,6 @@ fun TabScreen(
     val currentRoute = backStackEntry?.destination?.route ?: ScaAppScreen.HealthCareDashboard.name
     val currentScreen = screenForRoute(currentRoute)
 
-    var scanResult by rememberSaveable { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
     var showConfirmationPrompt by rememberSaveable { mutableStateOf(false) }
     var showConfirmationUpOneLevel by rememberSaveable { mutableStateOf(false) }
@@ -254,30 +255,23 @@ fun TabScreen(
                 consultationNavigation(
                     navController = navController,
                     providerName = uiState.provider.name,
-                    scanResult = scanResult,
                     snackbarHostState = snackbarHostState
                 )
 
                 examinationNavigation(
                     navController = navController,
                     providerName = uiState.provider.name,
-                    scanResult = scanResult,
                     snackbarHostState = snackbarHostState
                 )
 
                 hospitalisationNavigation(
                     navController = navController,
                     providerName = uiState.provider.name,
-                    scanResult = scanResult,
                     snackbarHostState = snackbarHostState
                 )
 
                 codeScannerNavigation(
                     navController = navController,
-                    onResultChanged = {
-                        scanResult = it
-                        Log.d(TAG, "QR scan result: $scanResult")
-                    }
                 )
             }
         }

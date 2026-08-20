@@ -13,11 +13,11 @@ import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.ui.menu.ScaAppScreen
 import com.nanoporetech.scainter.ui.qrcode.CodeScannerScreen
+import android.net.Uri
 
 
 fun NavGraphBuilder.codeScannerNavigation(
     navController: NavController,
-    onResultChanged: (String) -> Unit,
 ) {
     composable(
         route = ScaAppScreen.codeScannerRoute,
@@ -33,10 +33,8 @@ fun NavGraphBuilder.codeScannerNavigation(
 
         CodeScannerScreen(
             onScanResult = {
-                onResultChanged(it)
-
                 navController.popBackStack()
-                navController.navigate(returnTo) {
+                navController.navigate(resolveReturnRoute(returnTo, it)) {
                     launchSingleTop = true
                 }
             },
@@ -45,4 +43,9 @@ fun NavGraphBuilder.codeScannerNavigation(
                 .padding(dimensionResource(R.dimen.padding_medium))
         )
     }
+}
+
+private fun resolveReturnRoute(returnTo: String, scanResult: String): String {
+    val replacement = Uri.encode(scanResult)
+    return Regex("\\{[^/]+\\}").replace(returnTo, replacement)
 }

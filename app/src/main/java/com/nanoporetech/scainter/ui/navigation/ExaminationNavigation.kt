@@ -50,6 +50,13 @@ object ExaminationPolicyHolderDetails {
         "${ScaAppScreen.ExaminationPolicyHolderDetails.name}/$policyHolderId"
 }
 
+object ExaminationFamilyMembersList {
+    const val FAMILY_ID = "familyId"
+
+    val route =
+        "${ScaAppScreen.ExaminationFamilyMembersList.name}/{$FAMILY_ID}"
+}
+
 object ExaminationDetails {
     const val EXAMINATION_ID = "examinationId"
 
@@ -63,7 +70,6 @@ object ExaminationDetails {
 fun NavGraphBuilder.examinationNavigation(
     navController: NavController,
     providerName: String,
-    scanResult: String,
     snackbarHostState: SnackbarHostState,
 ) {
     navigation(
@@ -73,7 +79,6 @@ fun NavGraphBuilder.examinationNavigation(
         newExaminationGraph(
             navController = navController,
             providerName = providerName,
-            scanResult = scanResult,
             snackbarHostState = snackbarHostState
         )
     }
@@ -94,7 +99,6 @@ fun NavGraphBuilder.examinationNavigation(
 private fun NavGraphBuilder.newExaminationGraph(
     navController: NavController,
     providerName: String,
-    scanResult: String,
     snackbarHostState: SnackbarHostState,
 ) {
     composable(route = ScaAppScreen.ExaminationNewExamination.name) {
@@ -102,7 +106,7 @@ private fun NavGraphBuilder.newExaminationGraph(
             onScanQrCode = {
                 navController.navigate(
                     ScaAppScreen.codeScannerRoute(
-                        ScaAppScreen.ExaminationFamilyMembersList
+                        ExaminationFamilyMembersList.route
                     )
                 )
             },
@@ -113,7 +117,17 @@ private fun NavGraphBuilder.newExaminationGraph(
         )
     }
 
-    composable(route = ScaAppScreen.ExaminationFamilyMembersList.name) { backStackEntry ->
+    composable(route = ExaminationFamilyMembersList.route,
+            arguments = listOf(
+                navArgument(ExaminationFamilyMembersList.FAMILY_ID) {
+                    type = NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+        val familyId = requireNotNull(
+            backStackEntry.arguments?.getString(ExaminationFamilyMembersList.FAMILY_ID)
+        )
+
         val parentEntry = remember(backStackEntry) {
             navController.getBackStackEntry(NavGraphs.NEW_EXAMINATION)
         }
@@ -121,7 +135,7 @@ private fun NavGraphBuilder.newExaminationGraph(
         val viewModel: NewExaminationViewModel = viewModel(
             viewModelStoreOwner = parentEntry,
             factory = NewExaminationViewModel.provideFactory(
-                familyId = scanResult,
+                familyId = familyId,
                 providerName = providerName
             )
         )

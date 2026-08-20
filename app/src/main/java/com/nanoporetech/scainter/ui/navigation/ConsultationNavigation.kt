@@ -62,11 +62,17 @@ object ConsultationDetails {
         "${ScaAppScreen.ConsultationDetails.name}/$consultationId"
 }
 
+object ConsultationFamilyMembersList {
+    const val FAMILY_ID = "familyId"
+
+    val route =
+        "${ScaAppScreen.ConsultationFamilyMembersList.name}/{$FAMILY_ID}"
+}
+
 
 fun NavGraphBuilder.consultationNavigation(
     navController: NavController,
     providerName: String,
-    scanResult: String,
     snackbarHostState: SnackbarHostState) {
 
     navigation(
@@ -76,7 +82,6 @@ fun NavGraphBuilder.consultationNavigation(
         newConsultationGraph(
             navController = navController,
             providerName = providerName,
-            scanResult = scanResult,
             snackbarHostState = snackbarHostState
         )
     }
@@ -97,7 +102,6 @@ fun NavGraphBuilder.consultationNavigation(
 private fun NavGraphBuilder.newConsultationGraph(
     navController: NavController,
     providerName: String,
-    scanResult: String,
     snackbarHostState: SnackbarHostState) {
 
     composable(route = ScaAppScreen.ConsultationNewConsultation.name) {
@@ -105,7 +109,7 @@ private fun NavGraphBuilder.newConsultationGraph(
             onScanQrCode = {
                 navController.navigate(
                     ScaAppScreen.codeScannerRoute(
-                        ScaAppScreen.ConsultationFamilyMembersList
+                        ConsultationFamilyMembersList.route
                     )
                 )
             },
@@ -116,7 +120,17 @@ private fun NavGraphBuilder.newConsultationGraph(
         )
     }
 
-    composable(route = ScaAppScreen.ConsultationFamilyMembersList.name) { backStackEntry ->
+    composable(route = ConsultationFamilyMembersList.route,
+            arguments = listOf(
+                navArgument(ConsultationFamilyMembersList.FAMILY_ID) {
+                    type = NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+        val familyId = requireNotNull(
+            backStackEntry.arguments?.getString(ConsultationFamilyMembersList.FAMILY_ID)
+        )
+
         val parentEntry = remember(backStackEntry) {
             navController.getBackStackEntry(NavGraphs.NEW_CONSULTATION)
         }
@@ -124,7 +138,7 @@ private fun NavGraphBuilder.newConsultationGraph(
         val viewModel: NewConsultationViewModel = viewModel(
             viewModelStoreOwner = parentEntry,
             factory = NewConsultationViewModel.provideFactory(
-                familyId = scanResult,
+                familyId = familyId,
                 providerName = providerName
             )
         )
@@ -139,7 +153,7 @@ private fun NavGraphBuilder.newConsultationGraph(
             onScanQrCode = {
                 navController.navigate(
                     ScaAppScreen.codeScannerRoute(
-                        ScaAppScreen.ConsultationFamilyMembersList
+                        ConsultationFamilyMembersList.route
                     )
                 )
             },
