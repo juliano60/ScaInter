@@ -367,7 +367,10 @@ private fun NavGraphBuilder.existingConsultationGraph(
         }
 
         val viewModel: ListConsultationsViewModel = viewModel(
-            viewModelStoreOwner = parentEntry
+            viewModelStoreOwner = parentEntry,
+            factory = ListConsultationsViewModel.provideFactory(
+                providerName = providerName
+            )
         )
 
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()

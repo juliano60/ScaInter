@@ -144,4 +144,13 @@
     <string name="new_same_day_care_success_message">Nouvelle demande de soins  établie.</string>
     <string name="examination_details_title">Détails Examen</string>
     <string name="hospitalisation_details_title">Détails Hospitalisation</string>
+    <string name="exam_info_title">Fiche d\'examen</string>
+    <string name="exam_status_label">Statut:</string>
+    <string name="exam_validator_label">Validé par:</string>
+    <string name="exam_doctor_label">Médecin Traitant:</string>
+    <string name="exam_specialty_label">Spécialité:</string>
+    <string name="exam_reason_label">Motif:</string>
+    <string name="exam_designation_label">Examen:</string>
+    <string name="exam_list_title">Liste d\'examens</string>
+    <string name="exam_default_answer">En attente</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.nanoporetech.scainter.model
 
+import com.nanoporetech.scainter.conf.appConfig
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -56,3 +57,8 @@ data class Examination(
             return result
         }
 }
+
+val Examination.imageUrl: String
+    get() {
+        return "${appConfig.httpProtocol}://${appConfig.hostname}${appConfig.imagesPath}/$internalId.jpg"
+    }

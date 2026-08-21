@@ -25,7 +25,10 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
+import com.nanoporetech.scainter.ui.consultation.ConsultationDetailsScreen
+import com.nanoporetech.scainter.ui.consultation.ListConsultationsViewModel
 import com.nanoporetech.scainter.ui.events.UiEvent
+import com.nanoporetech.scainter.ui.examination.ExaminationDetailsScreen
 import com.nanoporetech.scainter.ui.examination.ExaminationFamilyMembersListScreen
 import com.nanoporetech.scainter.ui.examination.ExaminationListScreen
 import com.nanoporetech.scainter.ui.examination.ExaminationPolicyHolderDetailsScreen
@@ -39,6 +42,7 @@ import com.nanoporetech.scainter.ui.menu.NavResult
 import com.nanoporetech.scainter.ui.menu.ScaAppScreen
 import com.nanoporetech.scainter.ui.utils.AppSnackbarVisuals
 import com.nanoporetech.scainter.ui.utils.SnackbarType
+import org.checkerframework.checker.units.qual.Prefix
 
 private const val TAG = "ExaminationNavigation"
 
@@ -339,14 +343,58 @@ private fun NavGraphBuilder.existingExaminationGraph(
         ExaminationListScreen(
             examinations = uiState.examinations,
             isLoading = uiState.isLoading,
-            /*onRowClick = { examination ->
-            navController.navigate(
-                route = "${ScaAppScreen.ExaminationDetailsScreen.name}/${examination.id}"
-            )*/
+            onRowClick = { examination ->
+                navController.navigate(
+                    route = ExaminationDetails.createRoute(examination.id)
+                )
+            },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(dimensionResource(R.dimen.padding_medium))
         )
+    }
+
+    composable(
+        route = ExaminationDetails.route,
+        arguments = listOf(
+            navArgument(ExaminationDetails.EXAMINATION_ID) {
+                type = NavType.IntType
+            }
+        )
+    ) { backStackEntry ->
+        val examinationId = requireNotNull(
+            backStackEntry.arguments?.getInt(ExaminationDetails.EXAMINATION_ID)
+        )
+
+        // grab parent's view model
+        val parentEntry = remember(backStackEntry) {
+            navController.getBackStackEntry(
+                NavGraphs.EXISTING_EXAMINATION
+            )
+        }
+
+        val viewModel: ListExaminationsViewModel = viewModel(
+            viewModelStoreOwner = parentEntry,
+            factory = ListExaminationsViewModel.provideFactory(
+                providerName = providerName
+            )
+        )
+
+        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+        // extract consultation with matching consultationId
+        val examination = uiState.examinations.find {
+            it.id == examinationId
+        }
+
+        if (examination != null) {
+            ExaminationDetailsScreen(
+                examination = examination,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(dimensionResource(R.dimen.padding_medium))
+            )
+        }
     }
 }
 

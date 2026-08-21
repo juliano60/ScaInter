@@ -43,32 +43,17 @@ import com.nanoporetech.scainter.ui.utils.capitalized
 import com.nanoporetech.scainter.ui.utils.displayedDateAndTime
 import com.nanoporetech.scainter.ui.utils.formatDoctorName
 
-private const val TAG = "ConsultationDetailsScreen"
 
 @Composable
 fun ConsultationDetailsScreen(
-    consultation: Consultation,
-    onNewPrescription: () -> Unit,
-    modifier: Modifier = Modifier,
-)
-{
-    ConsultationDetailsContent(
-        consultation = consultation,
-        onNewPrescription = onNewPrescription,
-        modifier = modifier
-    )
-}
-
-@Composable
-fun ConsultationDetailsContent(
     consultation: Consultation,
     modifier: Modifier = Modifier,
     onNewPrescription: () -> Unit = {},
 ) {
     Column(
         modifier = modifier
-            .verticalScroll(rememberScrollState()
-    )) {
+            .verticalScroll(rememberScrollState())
+    ) {
         // SUBSCRIBER INFO
         PolicyHolderInfoFragment(
             name = consultation.fullname,
@@ -154,7 +139,6 @@ fun PrescriptionSection(
             }
         }
     }
-
 }
 
 @Composable
@@ -251,7 +235,7 @@ fun ConsultationDetailsScreenPreview() {
                     .background(AppConstants.lightGreen)
                     .padding(dimensionResource(R.dimen.padding_medium))
             ) {
-                ConsultationDetailsContent(
+                ConsultationDetailsScreen(
                     consultation = DataSource.consultations()[0],
                 )
             }

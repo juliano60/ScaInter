@@ -143,4 +143,13 @@
     <string name="new_same_day_care_success_message">New same day care added successfully</string>
     <string name="examination_details_title">Examination Details</string>
     <string name="hospitalisation_details_title">Hospitalisation Details</string>
+    <string name="exam_info_title">Examination sheet</string>
+    <string name="exam_status_label">Status:</string>
+    <string name="exam_validator_label">Validated by:</string>
+    <string name="exam_doctor_label">Physician:</string>
+    <string name="exam_specialty_label">Specialty:</string>
+    <string name="exam_reason_label">Reason for care:</string>
+    <string name="exam_designation_label">Examination:</string>
+    <string name="exam_list_title">Examinations List</string>
+    <string name="exam_default_answer">Pending</string>
 </resources>
