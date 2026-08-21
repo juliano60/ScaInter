@@ -19,11 +19,13 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,54 +37,68 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.data.DataSource
+import com.nanoporetech.scainter.data.DataSource.consultations
+import com.nanoporetech.scainter.data.DataSource.examinations
 import com.nanoporetech.scainter.model.Consultation
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.utils.displayedDateAndTime
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConsultationListScreen(
     consultations: List<Consultation>,
     isLoading: Boolean,
     modifier: Modifier = Modifier,
     onRowClick: (Consultation) -> Unit = {},
+    onRefresh: () -> Unit = {},
 ) {
-    if (isLoading) {
-        Box(
-            modifier = modifier
-                .fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
-        }
-    } else if (consultations.isEmpty()) {
-        Box(
-            modifier = modifier
-                .fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = stringResource(R.string.no_recent_consultation),
-                style = MaterialTheme.typography.headlineMedium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-            )
-        }
-    } else {
-        LazyColumn(
-            modifier = modifier
-                .fillMaxSize()
-        ) {
-            items(consultations) { consultation  ->
-                ConsultationRowItem(
-                    consultation = consultation,
+    PullToRefreshBox(
+        isRefreshing = isLoading,
+        onRefresh = onRefresh,
+        modifier = modifier.fillMaxSize()
+    ) {
+        when {
+            isLoading && consultations.isEmpty() -> {
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(dimensionResource(R.dimen.padding_small)),
-                    onRowClick = onRowClick
-                )
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.surfaceDim
-                )
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+            consultations.isEmpty() -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(R.string.no_recent_consultation),
+                        style = MaterialTheme.typography.headlineMedium,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                    )
+                }
+            }
+            else -> {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    items(consultations) { consultation  ->
+                        ConsultationRowItem(
+                            consultation = consultation,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(dimensionResource(R.dimen.padding_small)),
+                            onRowClick = onRowClick
+                        )
+                        HorizontalDivider(
+                            color = MaterialTheme.colorScheme.surfaceDim
+                        )
+                    }
+                }
             }
         }
     }

@@ -331,6 +331,10 @@ private fun NavGraphBuilder.existingConsultationGraph(
             )
         )
 
+        LaunchedEffect(Unit) {
+            consultationViewModel.loadConsultations()
+        }
+
         val uiState by consultationViewModel.uiState.collectAsStateWithLifecycle()
 
         ConsultationListScreen(
@@ -341,6 +345,7 @@ private fun NavGraphBuilder.existingConsultationGraph(
                     route = ConsultationDetails.createRoute(consultation.id)
                 )
             },
+            onRefresh = consultationViewModel::loadConsultations,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(dimensionResource(R.dimen.padding_medium))

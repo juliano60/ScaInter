@@ -10,6 +10,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -22,6 +23,7 @@ import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.ui.hospitalisation.HospitalisationFamilyMembersListScreen
 import com.nanoporetech.scainter.ui.hospitalisation.HospitalisationListScreen
+import com.nanoporetech.scainter.ui.hospitalisation.ListHospitalisationsViewModel
 import com.nanoporetech.scainter.ui.hospitalisation.NewHospitalisationScreen
 import com.nanoporetech.scainter.ui.hospitalisation.NewHospitalisationViewModel
 import com.nanoporetech.scainter.ui.menu.NavGraphs
@@ -188,14 +190,43 @@ private fun NavGraphBuilder.existingHospitalisationGraph(
     providerName: String,
     snackbarHostState: SnackbarHostState) {
 
-    composable(route = ScaAppScreen.HospitalisationList.name) {
-        HospitalisationListScreen(
-            providerName = providerName,
-            /*onRowClick = { hospitalisation ->
-            navController.navigate(
-                route = "${ScaAppScreen.HospitalisationDetailsScreen.name}/${hospitalisation.id}"
+    composable(route = ScaAppScreen.HospitalisationList.name) { backStackEntry ->
+        val parentEntry = remember(backStackEntry) {
+            navController.getBackStackEntry(NavGraphs.EXISTING_HOSPITALISATION)
+        }
+
+        val dashboardEntry = remember(backStackEntry) {
+            navController.getBackStackEntry(ScaAppScreen.HealthCareDashboard.name)
+        }
+        val dashboardNavResult by dashboardEntry
+            .savedStateHandle
+            .getStateFlow<String?>("nav_result", null)
+            .collectAsStateWithLifecycle()
+
+        val context = LocalContext.current
+
+        val hospitalisationViewModel: ListHospitalisationsViewModel = viewModel(
+            viewModelStoreOwner = parentEntry,
+            factory = ListHospitalisationsViewModel.provideFactory(
+                providerName = providerName
             )
-        },*/
+        )
+
+        LaunchedEffect(Unit) {
+            hospitalisationViewModel.loadHospitalisations()
+        }
+
+        val uiState by hospitalisationViewModel.uiState.collectAsStateWithLifecycle()
+
+        HospitalisationListScreen(
+            hospitalisations = uiState.hospitalisations,
+            isLoading = uiState.isLoading,
+            onRowClick = { examination ->
+                navController.navigate(
+                    route = HospitalisationDetails.createRoute(examination.id)
+                )
+            },
+            onRefresh = hospitalisationViewModel::loadHospitalisations,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(dimensionResource(R.dimen.padding_medium))

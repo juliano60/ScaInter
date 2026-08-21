@@ -31,7 +31,7 @@ class ListHospitalisationsViewModel(
     private val _events = MutableSharedFlow<UiEvent>()
     val events = _events.asSharedFlow()
 
-    init {
+    fun loadHospitalisations() {
         viewModelScope.launch {
             when (val result = repository.fetchHospitalisationsFor(providerName)) {
                 is FetchHospitalisationsResult.Success -> {

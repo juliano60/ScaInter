@@ -30,7 +30,7 @@ class ListConsultationsViewModel(
     private val _events = MutableSharedFlow<UiEvent>()
     val events = _events.asSharedFlow()
 
-    init {
+    fun loadConsultations() {
         viewModelScope.launch {
             when (val result = repository.fetchConsultationsFor(providerName)) {
                 is FetchConsultationsResult.Success -> {

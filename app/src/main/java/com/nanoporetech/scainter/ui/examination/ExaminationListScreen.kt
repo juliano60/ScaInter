@@ -62,12 +62,7 @@ fun ExaminationListScreen(
                         .fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = stringResource(R.string.no_recent_examination),
-                        style = MaterialTheme.typography.headlineMedium,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                    )
+                    CircularProgressIndicator()
                 }
             }
             examinations.isEmpty() -> {
