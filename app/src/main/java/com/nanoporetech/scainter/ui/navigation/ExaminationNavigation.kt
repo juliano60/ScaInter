@@ -338,6 +338,10 @@ private fun NavGraphBuilder.existingExaminationGraph(
             )
         )
 
+        LaunchedEffect(Unit) {
+            examinationViewModel.loadExaminations()
+        }
+
         val uiState by examinationViewModel.uiState.collectAsStateWithLifecycle()
 
         ExaminationListScreen(
@@ -348,6 +352,7 @@ private fun NavGraphBuilder.existingExaminationGraph(
                     route = ExaminationDetails.createRoute(examination.id)
                 )
             },
+            onRefresh = examinationViewModel::loadExaminations,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(dimensionResource(R.dimen.padding_medium))

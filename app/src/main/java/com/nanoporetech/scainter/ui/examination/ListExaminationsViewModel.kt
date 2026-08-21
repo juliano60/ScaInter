@@ -31,7 +31,7 @@ class ListExaminationsViewModel(
     private val _events = MutableSharedFlow<UiEvent>()
     val events = _events.asSharedFlow()
 
-    init {
+    fun loadExaminations() {
         viewModelScope.launch {
             when (val result = repository.fetchExaminationsFor(providerName)) {
                 is FetchExaminationsResult.Success -> {
