@@ -40,11 +40,10 @@ fun ExaminationCardBody(
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .weight(.8f)
                 )
-            }
-            Row(modifier = Modifier
-                .fillMaxWidth()
-            ) {
+
                 Text(
                     text = item.value.uppercase(),
                     style = MaterialTheme.typography.bodyLarge,
@@ -52,6 +51,8 @@ fun ExaminationCardBody(
                     fontWeight = FontWeight.Normal,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .weight(.2f)
                 )
             }
         }

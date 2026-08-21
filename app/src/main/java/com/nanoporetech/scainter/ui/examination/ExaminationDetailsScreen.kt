@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.nanoporetech.scainter.R
@@ -30,6 +31,7 @@ import com.nanoporetech.scainter.model.Examination
 import com.nanoporetech.scainter.model.imageUrl
 import com.nanoporetech.scainter.ui.components.CardBodyTwoLines
 import com.nanoporetech.scainter.ui.components.CardHeader
+import com.nanoporetech.scainter.ui.components.CardHeaderDrawable
 import com.nanoporetech.scainter.ui.components.CardItem
 import com.nanoporetech.scainter.ui.components.CostsFragment
 import com.nanoporetech.scainter.ui.components.ExaminationCardBody
@@ -170,9 +172,9 @@ fun ExaminationInfo(
             modifier = Modifier
                 .padding(paddingMedium)
         ) {
-            CardHeader(
+            CardHeaderDrawable(
                 title = stringResource(R.string.exam_info_title),
-                iconImg = Icons.AutoMirrored.Filled.Assignment,
+                iconImg = painterResource(R.drawable.vital_signs),
                 modifier = Modifier
                     .padding(bottom = paddingMedium)
             )
