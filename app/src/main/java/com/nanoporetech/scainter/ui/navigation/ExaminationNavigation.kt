@@ -25,8 +25,6 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
-import com.nanoporetech.scainter.ui.consultation.ConsultationDetailsScreen
-import com.nanoporetech.scainter.ui.consultation.ListConsultationsViewModel
 import com.nanoporetech.scainter.ui.events.UiEvent
 import com.nanoporetech.scainter.ui.examination.ExaminationDetailsScreen
 import com.nanoporetech.scainter.ui.examination.ExaminationFamilyMembersListScreen
@@ -42,7 +40,6 @@ import com.nanoporetech.scainter.ui.menu.NavResult
 import com.nanoporetech.scainter.ui.menu.ScaAppScreen
 import com.nanoporetech.scainter.ui.utils.AppSnackbarVisuals
 import com.nanoporetech.scainter.ui.utils.SnackbarType
-import org.checkerframework.checker.units.qual.Prefix
 
 private const val TAG = "ExaminationNavigation"
 
@@ -395,6 +392,8 @@ private fun NavGraphBuilder.existingExaminationGraph(
         if (examination != null) {
             ExaminationDetailsScreen(
                 examination = examination,
+                isRefreshing = uiState.isLoading,
+                onRefresh = viewModel::loadExaminations,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(dimensionResource(R.dimen.padding_medium))

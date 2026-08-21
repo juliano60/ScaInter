@@ -1,12 +1,11 @@
 package com.nanoporetech.scainter.ui.examination
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -14,8 +13,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,58 +37,63 @@ import com.nanoporetech.scainter.ui.components.ExaminationCardItem
 import com.nanoporetech.scainter.ui.components.PolicyHolderInfoFragment
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.utils.displayedDateAndTime
-import org.checkerframework.checker.units.qual.s
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExaminationDetailsScreen(
     examination: Examination,
+    isRefreshing: Boolean,
     modifier: Modifier = Modifier,
+    onRefresh: () -> Unit = {},
 ) {
-    Column(
-        modifier = modifier
-            .verticalScroll(rememberScrollState())
-    )
-    {
-        // SUBSCRIBER INFO
-        PolicyHolderInfoFragment(
-            name = examination.fullname,
-            internalId = examination.internalId,
-            subscriberName = examination.subscriberName,
-            contractType = examination.contractType,
-            imageUrl = examination.imageUrl,
-            coverPercent = examination.coverPercentage,
+    val paddingMedium = dimensionResource(R.dimen.padding_medium)
+
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+        modifier = modifier.fillMaxSize()
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(paddingMedium),
             modifier = Modifier
-                .fillMaxWidth()
-        )
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
+            // SUBSCRIBER INFO
+            PolicyHolderInfoFragment(
+                name = examination.fullname,
+                internalId = examination.internalId,
+                subscriberName = examination.subscriberName,
+                contractType = examination.contractType,
+                imageUrl = examination.imageUrl,
+                coverPercent = examination.coverPercentage,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
 
-        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
+            // EXAMINATION INFO SECTION
+            ExaminationInfo(
+                examination = examination,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
 
-        // EXAMINATION INFO SECTION
-        ExaminationInfo(
-            examination = examination,
-            modifier = Modifier
-                .fillMaxWidth()
-        )
+            // Examination List section
+            ExaminationListSection(
+                examination = examination,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
 
-        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
-
-        // Examination List section
-        ExaminationListSection(
-            examination = examination,
-            modifier = Modifier
-                .fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
-
-        // COSTS SECTION
-        CostsFragment(
-            costTotal = examination.total.toString(),
-            costSca = examination.totalSca.toString(),
-            costUser = examination.totalUser.toString(),
-            modifier = Modifier
-                .fillMaxWidth()
-        )
+            // COSTS SECTION
+            CostsFragment(
+                costTotal = examination.total.toString(),
+                costSca = examination.totalSca.toString(),
+                costUser = examination.totalUser.toString(),
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+        }
     }
 }
 
@@ -194,6 +200,7 @@ fun ExaminationDetailsScreenPreview() {
             ) {
                 ExaminationDetailsScreen(
                     examination = DataSource.examinations()[0],
+                    isRefreshing = false,
                 )
             }
         }
