@@ -152,7 +152,7 @@
     <string name="exam_reason_label">Motif:</string>
     <string name="exam_designation_label">Examen:</string>
     <string name="exam_list_title">Examens demandés</string>
-    <string name="exam_default_answer">En attente</string>
+    <string name="exam_default_answer">En cours</string>
     <string name="exam_request_title">Détails de la demande</string>
     <string name="exam_doctor_hint">Médecin Traitant</string>
     <string name="exam_specialty_hint">Spécialité médicale</string>

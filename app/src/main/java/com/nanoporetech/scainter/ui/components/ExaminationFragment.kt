@@ -13,10 +13,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
+import com.nanoporetech.scainter.ui.utils.capitalized
 
 data class ExaminationCardItem(
     val label: String = "",
@@ -41,18 +43,19 @@ fun ExaminationCardBody(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
-                        .weight(.8f)
+                        .weight(.65f)
                 )
 
                 Text(
-                    text = item.value.uppercase(),
+                    text = item.value.capitalized(),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    textAlign = TextAlign.End,
                     fontWeight = FontWeight.Normal,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
-                        .weight(.2f)
+                        .weight(.35f)
                 )
             }
         }
@@ -73,7 +76,7 @@ fun ExaminationCardBodyPreview() {
             val items = listOf<ExaminationCardItem>(
                 ExaminationCardItem(
                     label = "Label 1",
-                    value = "Value 1"
+                    value = "EN ATTENTE"
                 ),
                 ExaminationCardItem(
                     label = "Label 2",
