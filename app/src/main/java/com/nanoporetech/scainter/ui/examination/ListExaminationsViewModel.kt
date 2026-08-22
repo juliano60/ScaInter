@@ -11,7 +11,7 @@ import com.nanoporetech.scainter.ScaInterApplication
 import com.nanoporetech.scainter.data.FetchExaminationsResult
 import com.nanoporetech.scainter.data.ListExaminationsUiState
 import com.nanoporetech.scainter.data.ScaDataRepository
-import com.nanoporetech.scainter.ui.events.UiEvent
+import com.nanoporetech.scainter.ui.events.UiMessage
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -28,7 +28,7 @@ class ListExaminationsViewModel(
     private var _uiState = MutableStateFlow(ListExaminationsUiState())
     val uiState = _uiState.asStateFlow()
 
-    private val _events = MutableSharedFlow<UiEvent>()
+    private val _events = MutableSharedFlow<UiMessage>()
     val events = _events.asSharedFlow()
 
     fun loadExaminations() {
@@ -41,15 +41,15 @@ class ListExaminationsViewModel(
                             isLoading = false
                         )
                     }
-                    _events.emit(UiEvent.Success(R.string.examinations_loaded_message))
+                    _events.emit(UiMessage.Success(R.string.examinations_loaded_message))
                 }
                 is FetchExaminationsResult.NetworkError -> {
                     _uiState.update { it.copy(isLoading = false) }
-                    _events.emit(UiEvent.Error(R.string.err_network_error_message))
+                    _events.emit(UiMessage.Error(R.string.err_network_error_message))
                 }
                 else -> {
                     _uiState.update { it.copy(isLoading = false) }
-                    _events.emit(UiEvent.Error(R.string.examinations_loaded_error_message))
+                    _events.emit(UiMessage.Error(R.string.examinations_loaded_error_message))
                 }
             }
         }

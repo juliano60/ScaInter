@@ -34,7 +34,7 @@ import com.nanoporetech.scainter.ui.consultation.ListConsultationsViewModel
 import com.nanoporetech.scainter.ui.consultation.MedicalPrescriptionViewModel
 import com.nanoporetech.scainter.ui.consultation.NewConsultationScreen
 import com.nanoporetech.scainter.ui.consultation.NewConsultationViewModel
-import com.nanoporetech.scainter.ui.events.UiEvent
+import com.nanoporetech.scainter.ui.events.UiMessage
 import com.nanoporetech.scainter.ui.menu.NavGraphs
 import com.nanoporetech.scainter.ui.menu.NavResult
 import com.nanoporetech.scainter.ui.menu.ScaAppScreen
@@ -212,7 +212,7 @@ private fun NavGraphBuilder.newConsultationGraph(
         LaunchedEffect(Unit) {
             viewModel.events.collectLatest { event ->
                 when (event) {
-                    is UiEvent.Success -> {
+                    is UiMessage.Success -> {
                         // indicate success/failure
                         navController
                             .getBackStackEntry(ScaAppScreen.HealthCareDashboard.name)
@@ -225,7 +225,7 @@ private fun NavGraphBuilder.newConsultationGraph(
                             }
                         }
                     }
-                    is UiEvent.Error -> {
+                    is UiMessage.Error -> {
                         snackbarHostState.showSnackbar(
                             message = context.getString(event.errorId),
                             duration = SnackbarDuration.Long
@@ -414,7 +414,7 @@ private fun NavGraphBuilder.existingConsultationGraph(
         LaunchedEffect(Unit) {
             prescriptionViewModel.events.collect { event ->
                 when (event) {
-                    is UiEvent.Success -> {
+                    is UiMessage.Success -> {
                         navController
                             .getBackStackEntry(
                                 ScaAppScreen.HealthCareDashboard.name)
@@ -426,7 +426,7 @@ private fun NavGraphBuilder.existingConsultationGraph(
                             }
                         }
                     }
-                    is UiEvent.Error -> {
+                    is UiMessage.Error -> {
                         snackbarHostState.showSnackbar(
                             AppSnackbarVisuals(
                                 message = context.getString(event.errorId),

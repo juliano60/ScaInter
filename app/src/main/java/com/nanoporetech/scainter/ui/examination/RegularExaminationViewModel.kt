@@ -14,7 +14,7 @@ import com.nanoporetech.scainter.data.NewRegularExaminationResult
 import com.nanoporetech.scainter.data.RegularExamUiState
 import com.nanoporetech.scainter.data.ScaDataRepository
 import com.nanoporetech.scainter.model.ExamOption
-import com.nanoporetech.scainter.ui.events.UiEvent
+import com.nanoporetech.scainter.ui.events.UiMessage
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -32,7 +32,7 @@ class RegularExaminationViewModel(
     private var _uiState = MutableStateFlow(RegularExamUiState())
     val uiState = _uiState.asStateFlow()
 
-    private val _events = MutableSharedFlow<UiEvent>()
+    private val _events = MutableSharedFlow<UiMessage>()
     val events = _events.asSharedFlow()
 
     init {
@@ -53,15 +53,15 @@ class RegularExaminationViewModel(
                             isLoadingOptions = false
                         )
                     }
-                    _events.emit(UiEvent.Success(R.string.exam_options_loaded_message))
+                    _events.emit(UiMessage.Success(R.string.exam_options_loaded_message))
                 }
                 is FetchExaminationOptionsResult.NetworkError -> {
                     _uiState.update { it.copy(isLoadingOptions = false) }
-                    _events.emit(UiEvent.Error(R.string.err_network_error_message))
+                    _events.emit(UiMessage.Error(R.string.err_network_error_message))
                 }
                 else -> {
                     _uiState.update { it.copy(isLoadingOptions = false) }
-                    _events.emit(UiEvent.Error(R.string.examinations_loaded_error_message))
+                    _events.emit(UiMessage.Error(R.string.examinations_loaded_error_message))
                 }
             }
         }
@@ -93,15 +93,15 @@ class RegularExaminationViewModel(
                     exam8 = _uiState.value.selectedExaminations[7].id.toString()
                 )) {
                     NewRegularExaminationResult.Success -> {
-                        _events.emit(UiEvent.Success(R.string.new_regular_exam_success_message))
+                        _events.emit(UiMessage.Success(R.string.new_regular_exam_success_message))
                     }
 
                     NewRegularExaminationResult.NetworkError -> {
-                        _events.emit(UiEvent.Error(R.string.err_network_error_message))
+                        _events.emit(UiMessage.Error(R.string.err_network_error_message))
                     }
 
                     NewRegularExaminationResult.UnknownError -> {
-                        _events.emit(UiEvent.Error(R.string.err_unknown_error_message))
+                        _events.emit(UiMessage.Error(R.string.err_unknown_error_message))
                     }
                 }
             } finally {

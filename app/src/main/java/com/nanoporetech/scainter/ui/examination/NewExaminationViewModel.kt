@@ -12,10 +12,7 @@ import com.nanoporetech.scainter.data.FetchPolicyHoldersResult
 import com.nanoporetech.scainter.data.NewExaminationUiState
 import com.nanoporetech.scainter.data.ScaDataRepository
 import com.nanoporetech.scainter.model.PolicyHolder
-import com.nanoporetech.scainter.ui.events.UiEvent
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -26,9 +23,6 @@ class NewExaminationViewModel(
 ): ViewModel() {
     private var _uiState = MutableStateFlow(NewExaminationUiState())
     val uiState = _uiState.asStateFlow()
-
-    private val _events = MutableSharedFlow<UiEvent>()
-    val events = _events.asSharedFlow()
 
     private var loadedFamilyId: String? = null
 
@@ -73,21 +67,17 @@ class NewExaminationViewModel(
                         }
 
                         is FetchPolicyHoldersResult.NetworkError -> {
-                            //_events.emit(UiEvent.Error(R.string.err_connection_offline))
                         }
 
                         else -> {
-                            //_events.emit(UiEvent.Error(R.string.err_unknown_error))
                         }
                     }
                 }
 
                 is FetchFamilyMembersResult.NetworkError -> {
-                    //_events.emit(UiEvent.Error(R.string.err_connection_offline))
                 }
 
                 else -> {
-                    //_events.emit(UiEvent.Error(R.string.err_unknown_error))
                 }
             }
         }

@@ -11,7 +11,7 @@ import com.nanoporetech.scainter.ScaInterApplication
 import com.nanoporetech.scainter.data.ExaminationUiState
 import com.nanoporetech.scainter.data.NewDayCareExaminationResult
 import com.nanoporetech.scainter.data.ScaDataRepository
-import com.nanoporetech.scainter.ui.events.UiEvent
+import com.nanoporetech.scainter.ui.events.UiMessage
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -29,7 +29,7 @@ class SameDayExaminationViewModel(
     private var _uiState = MutableStateFlow(ExaminationUiState())
     val uiState = _uiState.asStateFlow()
 
-    private val _events = MutableSharedFlow<UiEvent>()
+    private val _events = MutableSharedFlow<UiMessage>()
     val events = _events.asSharedFlow()
 
     fun setReason(reason: String) {
@@ -74,15 +74,15 @@ class SameDayExaminationViewModel(
                     cost = _uiState.value.costTotal
                 )) {
                     NewDayCareExaminationResult.Success -> {
-                        _events.emit(UiEvent.Success(R.string.new_same_day_care_success_message))
+                        _events.emit(UiMessage.Success(R.string.new_same_day_care_success_message))
                     }
 
                     NewDayCareExaminationResult.NetworkError -> {
-                        _events.emit(UiEvent.Error(R.string.err_network_error_message))
+                        _events.emit(UiMessage.Error(R.string.err_network_error_message))
                     }
 
                     NewDayCareExaminationResult.UnknownError -> {
-                        _events.emit(UiEvent.Error(R.string.err_unknown_error_message))
+                        _events.emit(UiMessage.Error(R.string.err_unknown_error_message))
                     }
                 }
             } finally {

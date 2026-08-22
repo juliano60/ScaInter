@@ -26,7 +26,7 @@ import androidx.navigation.compose.rememberNavController
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.ui.AppViewModel
 import com.nanoporetech.scainter.ui.menu.TabScreen
-import com.nanoporetech.scainter.ui.UiEvent
+import com.nanoporetech.scainter.ui.AuthEvent
 import com.nanoporetech.scainter.ui.login.ForgottenPasswordScreen
 import com.nanoporetech.scainter.ui.login.LoginScreen
 import kotlinx.coroutines.flow.collectLatest
@@ -52,13 +52,13 @@ fun ScaInterApp(
     LaunchedEffect(Unit) {
         model.events.collectLatest { event ->
             when (event) {
-                UiEvent.LoginSucceeded -> {
+                AuthEvent.LoginSucceeded -> {
                     navController.navigate(route = ScaDestination.TabScreen.name) {
                         // remove LoginScreen from the stack
                         popUpTo(ScaDestination.LoginScreen.name) { inclusive = true }
                     }
                 }
-                UiEvent.LoggedOut -> {
+                AuthEvent.LoggedOut -> {
                     navController.navigate(ScaDestination.LoginScreen.name) {
                         popUpTo(ScaDestination.TabScreen.name) {
                             inclusive = true
@@ -66,7 +66,7 @@ fun ScaInterApp(
                         launchSingleTop = true
                     }
                 }
-                is UiEvent.Error -> {
+                is AuthEvent.Error -> {
                     snackbarHostState.showSnackbar(
                         message = context.getString(event.errorId),
                         withDismissAction = true

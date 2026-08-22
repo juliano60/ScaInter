@@ -10,7 +10,7 @@ import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.ScaInterApplication
 import com.nanoporetech.scainter.data.PrescriptionUiState
 import com.nanoporetech.scainter.data.ScaDataRepository
-import com.nanoporetech.scainter.ui.events.UiEvent
+import com.nanoporetech.scainter.ui.events.UiMessage
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -34,7 +34,7 @@ class MedicalPrescriptionViewModel(
     private var _uiState = MutableStateFlow(PrescriptionUiState(consultationId = consultationId))
     val uiState = _uiState.asStateFlow()
 
-    private val _events = MutableSharedFlow<UiEvent>()
+    private val _events = MutableSharedFlow<UiMessage>()
     val events = _events.asSharedFlow()
 
     fun setDoctor(name: String) {
@@ -192,9 +192,9 @@ class MedicalPrescriptionViewModel(
                         isDialogOpen = false
                     )
                 }
-                _events.emit(UiEvent.Success(R.string.new_prescription_added))
+                _events.emit(UiMessage.Success(R.string.new_prescription_added))
             } else {
-                _events.emit(UiEvent.Error(R.string.new_prescription_error))
+                _events.emit(UiMessage.Error(R.string.new_prescription_error))
             }
         }
     }

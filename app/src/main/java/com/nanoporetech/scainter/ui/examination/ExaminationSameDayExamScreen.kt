@@ -37,7 +37,6 @@ import com.nanoporetech.scainter.ui.components.CardHeader
 import com.nanoporetech.scainter.ui.components.CostsFragment
 import com.nanoporetech.scainter.ui.components.PrimaryButton
 import com.nanoporetech.scainter.ui.components.PrimaryOutlinedTextField
-import com.nanoporetech.scainter.ui.events.UiEvent
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import kotlinx.coroutines.flow.collectLatest
 

@@ -26,7 +26,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
-import com.nanoporetech.scainter.ui.events.UiEvent
+import com.nanoporetech.scainter.ui.events.UiMessage
 import com.nanoporetech.scainter.ui.examination.ExaminationDetailsScreen
 import com.nanoporetech.scainter.ui.examination.ExaminationFamilyMembersListScreen
 import com.nanoporetech.scainter.ui.examination.ExaminationListScreen
@@ -252,7 +252,7 @@ private fun NavGraphBuilder.newExaminationGraph(
             LaunchedEffect(viewModel) {
                 viewModel.events.collect { event ->
                     when (event) {
-                        is UiEvent.Success -> {
+                        is UiMessage.Success -> {
                             val dashboardEntry = navController.getBackStackEntry(ScaAppScreen.HealthCareDashboard.name)
 
                             dashboardEntry.savedStateHandle[NAV_RESULT] = NavResult.NewRegularExaminationSuccess.name
@@ -263,7 +263,7 @@ private fun NavGraphBuilder.newExaminationGraph(
                                 }
                             }
                         }
-                        is UiEvent.Error -> {
+                        is UiMessage.Error -> {
                             snackbarHostState.showSnackbar(
                                 AppSnackbarVisuals(
                                     message = context.getString(event.errorId),
@@ -317,7 +317,7 @@ private fun NavGraphBuilder.newExaminationGraph(
             LaunchedEffect(viewModel) {
                 viewModel.events.collect { event ->
                     when (event) {
-                        is UiEvent.Success -> {
+                        is UiMessage.Success -> {
                             val dashboardEntry = navController.getBackStackEntry(ScaAppScreen.HealthCareDashboard.name)
 
                             dashboardEntry.savedStateHandle[NAV_RESULT] = NavResult.NewSameDayExaminationSuccess.name
@@ -328,7 +328,7 @@ private fun NavGraphBuilder.newExaminationGraph(
                                 }
                             }
                         }
-                        is UiEvent.Error -> {
+                        is UiMessage.Error -> {
                             snackbarHostState.showSnackbar(
                                 AppSnackbarVisuals(
                                     message = context.getString(event.errorId),

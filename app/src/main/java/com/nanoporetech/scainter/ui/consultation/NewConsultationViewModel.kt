@@ -13,7 +13,7 @@ import com.nanoporetech.scainter.data.FetchPolicyHoldersResult
 import com.nanoporetech.scainter.data.NewConsultationUiState
 import com.nanoporetech.scainter.data.ScaDataRepository
 import com.nanoporetech.scainter.model.PolicyHolder
-import com.nanoporetech.scainter.ui.events.UiEvent
+import com.nanoporetech.scainter.ui.events.UiMessage
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -30,7 +30,7 @@ class NewConsultationViewModel(
     private var _uiState = MutableStateFlow(NewConsultationUiState())
     val uiState = _uiState.asStateFlow()
 
-    private val _events = MutableSharedFlow<UiEvent>()
+    private val _events = MutableSharedFlow<UiMessage>()
     val events = _events.asSharedFlow()
 
     fun loadFamily(familyId: String) {
@@ -62,21 +62,21 @@ class NewConsultationViewModel(
                         }
 
                         is FetchPolicyHoldersResult.NetworkError -> {
-                            //_events.emit(UiEvent.Error(R.string.err_connection_offline))
+                            //_events.emit(UiMessage.Error(R.string.err_connection_offline))
                         }
 
                         else -> {
-                            //_events.emit(UiEvent.Error(R.string.err_unknown_error))
+                            //_events.emit(UiMessage.Error(R.string.err_unknown_error))
                         }
                     }
                 }
 
                 is FetchFamilyMembersResult.NetworkError -> {
-                    //_events.emit(UiEvent.Error(R.string.err_connection_offline))
+                    //_events.emit(UiMessage.Error(R.string.err_connection_offline))
                 }
 
                 else -> {
-                    //_events.emit(UiEvent.Error(R.string.err_unknown_error))
+                    //_events.emit(UiMessage.Error(R.string.err_unknown_error))
                 }
             }
         }
@@ -118,10 +118,10 @@ class NewConsultationViewModel(
                 act = _uiState.value.selectedConsultation
             )) {
                 true -> {
-                    _events.emit(UiEvent.Success(R.string.new_consultation_success_message))
+                    _events.emit(UiMessage.Success(R.string.new_consultation_success_message))
                 }
                 else -> {
-                    _events.emit(UiEvent.Error(R.string.err_new_consultation_message))
+                    _events.emit(UiMessage.Error(R.string.err_new_consultation_message))
                 }
             }
         }

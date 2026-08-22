@@ -25,10 +25,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-sealed interface UiEvent {
-    object LoginSucceeded: UiEvent
-    data class Error(@StringRes val errorId: Int): UiEvent
-    object LoggedOut: UiEvent
+sealed interface AuthEvent {
+    object LoginSucceeded: AuthEvent
+    data class Error(@StringRes val errorId: Int): AuthEvent
+    object LoggedOut: AuthEvent
 }
 
 class AppViewModel(
@@ -39,7 +39,7 @@ class AppViewModel(
     private val _uiState = MutableStateFlow(AppUiState())
     val uiState = _uiState.asStateFlow()
 
-    private val _events = MutableSharedFlow<UiEvent>()
+    private val _events = MutableSharedFlow<AuthEvent>()
     val events = _events.asSharedFlow()
 
     init {
@@ -82,7 +82,7 @@ class AppViewModel(
                       }
 
                       deviceTokenRegistrar.registerDeviceToken(result.provider.id.toString())
-                      _events.emit(UiEvent.LoginSucceeded)
+                      _events.emit(AuthEvent.LoginSucceeded)
                   }
                   is FetchProviderResult.AuthenticationFailed -> {
                       _uiState.update {
@@ -91,7 +91,7 @@ class AppViewModel(
                               isLoginError = true
                           )
                       }
-                      _events.emit(UiEvent.Error(R.string.err_invalid_credentials_message))
+                      _events.emit(AuthEvent.Error(R.string.err_invalid_credentials_message))
                   }
                   is FetchProviderResult.NetworkError -> {
                       _uiState.update {
@@ -100,7 +100,7 @@ class AppViewModel(
                               isLoginError = false
                           )
                       }
-                      _events.emit(UiEvent.Error(R.string.err_network_error_message))
+                      _events.emit(AuthEvent.Error(R.string.err_network_error_message))
                   }
                   else -> {
                       _uiState.update {
@@ -109,7 +109,7 @@ class AppViewModel(
                               isLoginError = false
                           )
                       }
-                      _events.emit(UiEvent.Error(R.string.err_unknown_error_message))
+                      _events.emit(AuthEvent.Error(R.string.err_unknown_error_message))
                   }
               }
         }
@@ -126,11 +126,11 @@ class AppViewModel(
                 true
             }
             is FetchExaminationsResult.NetworkError -> {
-                _events.emit(UiEvent.Error(R.string.err_network_error_message))
+                _events.emit(AuthEvent.Error(R.string.err_network_error_message))
                 false
             }
             else -> {
-                _events.emit(UiEvent.Error(R.string.err_unknown_error_message))
+                _events.emit(AuthEvent.Error(R.string.err_unknown_error_message))
                 false
             }
         }
@@ -147,11 +147,11 @@ class AppViewModel(
                 true
             }
             is FetchHospitalisationsResult.NetworkError -> {
-                _events.emit(UiEvent.Error(R.string.err_network_error_message))
+                _events.emit(AuthEvent.Error(R.string.err_network_error_message))
                 false
             }
             else -> {
-                _events.emit(UiEvent.Error(R.string.err_unknown_error_message))
+                _events.emit(AuthEvent.Error(R.string.err_unknown_error_message))
                 false
             }
         }
@@ -166,7 +166,7 @@ class AppViewModel(
         reset()
 
         viewModelScope.launch {
-            _events.emit(UiEvent.LoggedOut)
+            _events.emit(AuthEvent.LoggedOut)
         }
     }
 
