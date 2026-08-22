@@ -151,6 +151,7 @@ private fun NavGraphBuilder.newHospitalisationGraph(
 
         HospitalisationFamilyMembersListScreen(
             members = state.familyMembers,
+            isLoading = state.isLoading,
             onMemberSelected = { policyHolderId ->
                 navController.navigate(route = HospitalisationPolicyHolderDetails.createRoute(policyHolderId))
             },

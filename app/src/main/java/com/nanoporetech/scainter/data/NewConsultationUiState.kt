@@ -15,5 +15,7 @@ data class NewConsultationUiState(
     /** the desired consultation */
     val selectedConsultation: String = "",
     /** the cost for that consultation */
-    val selectedCost: String = ""
+    val selectedCost: String = "",
+    /** we are loading data */
+    val isLoading: Boolean = false
 )

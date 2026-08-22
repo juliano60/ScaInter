@@ -18,7 +18,6 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -37,9 +36,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.data.DataSource
-import com.nanoporetech.scainter.data.DataSource.consultations
-import com.nanoporetech.scainter.data.DataSource.examinations
 import com.nanoporetech.scainter.model.Consultation
+import com.nanoporetech.scainter.ui.components.LoadingScreen
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.utils.displayedDateAndTime
 
@@ -59,13 +57,10 @@ fun ConsultationListScreen(
     ) {
         when {
             isLoading && consultations.isEmpty() -> {
-                Box(
+                LoadingScreen(
                     modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+                        .fillMaxSize()
+                )
             }
             consultations.isEmpty() -> {
                 Box(

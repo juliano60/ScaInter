@@ -164,6 +164,7 @@ private fun NavGraphBuilder.newConsultationGraph(
 
         ConsultationFamilyMembersListScreen(
             members = state.familyMembers,
+            isLoading = state.isLoading,
             onMemberSelected = { policyHolderId ->
                 navController.navigate(route = ConsultationPolicyHolderDetails.createRoute(policyHolderId))
             },

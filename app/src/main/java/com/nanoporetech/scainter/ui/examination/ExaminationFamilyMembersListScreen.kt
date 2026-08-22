@@ -40,6 +40,7 @@ import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.conf.AppConstants
 import com.nanoporetech.scainter.data.DataSource
 import com.nanoporetech.scainter.model.FamilyMember
+import com.nanoporetech.scainter.ui.components.LoadingScreen
 import com.nanoporetech.scainter.ui.components.SubHeader
 import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 import com.nanoporetech.scainter.ui.theme.ScaInterTheme
@@ -48,75 +49,86 @@ import com.nanoporetech.scainter.ui.theme.ScaInterTheme
 @Composable
 fun ExaminationFamilyMembersListScreen(
     members: List<FamilyMember>,
+    isLoading: Boolean,
     modifier: Modifier = Modifier,
     onMemberSelected: (Int) -> Unit = {},
     onScanQrCode: () -> Unit = {},
 ) {
-    Column(modifier) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-            //.border(1.dp, color = Color.Red)
-        ) {
-            Card(
-                shape = RectangleShape,
-                onClick = { onScanQrCode() },
-                colors = CardDefaults.cardColors(
-                    containerColor = AppConstants.lightGreen
-                ),
-                modifier = Modifier
-                    .size(dimensionResource(R.dimen.scanner_icon_size))
-            ) {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .fillMaxSize(),
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.QrCodeScanner,
-                        contentDescription = stringResource(R.string.scan_qr_code),
-                        tint = ScaInterTheme.extendedColors.mainGreen.color,
-                        modifier = Modifier
-                            .size(80.dp)
-                    )
-                }
-            }
-
-            Text(
-                text = stringResource(R.string.scan_qr_code),
-                style = MaterialTheme.typography.headlineSmall,
-                fontSize = 18.sp,
-                color = ScaInterTheme.extendedColors.mainGreen.color,
-                fontWeight = FontWeight.SemiBold,
+    when {
+        isLoading -> {
+            LoadingScreen(
+                modifier = modifier
+                    .fillMaxSize()
             )
         }
+        else -> {
+            Column(modifier) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                    //.border(1.dp, color = Color.Red)
+                ) {
+                    Card(
+                        shape = RectangleShape,
+                        onClick = { onScanQrCode() },
+                        colors = CardDefaults.cardColors(
+                            containerColor = AppConstants.lightGreen
+                        ),
+                        modifier = Modifier
+                            .size(dimensionResource(R.dimen.scanner_icon_size))
+                    ) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .fillMaxSize(),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.QrCodeScanner,
+                                contentDescription = stringResource(R.string.scan_qr_code),
+                                tint = ScaInterTheme.extendedColors.mainGreen.color,
+                                modifier = Modifier
+                                    .size(80.dp)
+                            )
+                        }
+                    }
 
-        // SUB HEADER SECTION
-        SubHeader(
-            title = stringResource(R.string.policy_members),
-            modifier = Modifier
-                .fillMaxWidth()
-        )
+                    Text(
+                        text = stringResource(R.string.scan_qr_code),
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontSize = 18.sp,
+                        color = ScaInterTheme.extendedColors.mainGreen.color,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                }
 
-        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
-
-        // FAMILY MEMBERS
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            items(members) { member ->
-                MemberRowItem(
-                    member = member,
-                    onMemberSelected = onMemberSelected,
+                // SUB HEADER SECTION
+                SubHeader(
+                    title = stringResource(R.string.policy_members),
                     modifier = Modifier
                         .fillMaxWidth()
                 )
 
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.surfaceDim
-                )
+                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
+
+                // FAMILY MEMBERS
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    items(members) { member ->
+                        MemberRowItem(
+                            member = member,
+                            onMemberSelected = onMemberSelected,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        )
+
+                        HorizontalDivider(
+                            color = MaterialTheme.colorScheme.surfaceDim
+                        )
+                    }
+                }
             }
         }
     }
@@ -194,6 +206,7 @@ fun ExaminationFamilyMembersListContentPreview() {
         ) {
             ExaminationFamilyMembersListScreen(
                 members = DataSource.policyHolderFamilyMembers(),
+                isLoading = false,
                 modifier = Modifier
                     .background(color = AppConstants.lightGreen)
                     .padding(dimensionResource(R.dimen.padding_medium))

@@ -12,4 +12,6 @@ data class NewHospitalisationUiState(
     val policyHolders: List<PolicyHolder> = emptyList(),
     /** the current policyholder */
     val currentPolicyHolder: PolicyHolder? = null,
+    /** we are loading data */
+    val isLoading: Boolean = false
 )

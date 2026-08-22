@@ -163,6 +163,7 @@ private fun NavGraphBuilder.newExaminationGraph(
 
         ExaminationFamilyMembersListScreen(
             members = state.familyMembers,
+            isLoading = state.isLoading,
             onMemberSelected = { policyHolderId ->
                 navController.navigate(route = ExaminationPolicyHolderDetails.createRoute(policyHolderId))
             },

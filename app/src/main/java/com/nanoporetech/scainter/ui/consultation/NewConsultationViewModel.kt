@@ -48,7 +48,8 @@ class NewConsultationViewModel(
             it.copy(
                 familyMembers = emptyList(),
                 policyHolders = emptyList(),
-                currentPolicyHolder = null
+                currentPolicyHolder = null,
+                isLoading = true
             )
         }
 
@@ -66,6 +67,11 @@ class NewConsultationViewModel(
 
                     if (fetchFamilyResult.members.isEmpty()) {
                         loadedFamilyId = familyId
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false
+                            )
+                        }
                         return@launch
                     }
 
@@ -78,24 +84,45 @@ class NewConsultationViewModel(
                         is FetchPolicyHoldersResult.Success -> {
                             _uiState.update {
                                 it.copy(
-                                    policyHolders = fetchPolicyResult.members
+                                    policyHolders = fetchPolicyResult.members,
+                                    isLoading = false
                                 )
                             }
                             loadedFamilyId = familyId
                         }
 
                         is FetchPolicyHoldersResult.NetworkError -> {
+                            _uiState.update {
+                                it.copy(
+                                    isLoading = false
+                                )
+                            }
                         }
 
                         else -> {
+                            _uiState.update {
+                                it.copy(
+                                    isLoading = false
+                                )
+                            }
                         }
                     }
                 }
 
                 is FetchFamilyMembersResult.NetworkError -> {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false
+                        )
+                    }
                 }
 
                 else -> {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false
+                        )
+                    }
                 }
             }
         }
