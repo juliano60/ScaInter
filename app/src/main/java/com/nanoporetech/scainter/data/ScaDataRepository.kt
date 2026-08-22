@@ -2,6 +2,7 @@ package com.nanoporetech.scainter.data
 
 import android.util.Log
 import com.nanoporetech.scainter.model.Consultation
+import com.nanoporetech.scainter.model.ExamOption
 import com.nanoporetech.scainter.model.Examination
 import com.nanoporetech.scainter.model.FamilyMember
 import com.nanoporetech.scainter.model.Hospitalisation
@@ -33,6 +34,13 @@ sealed interface FetchExaminationsResult {
     object UnknownError : FetchExaminationsResult
 }
 
+sealed interface FetchExaminationOptionsResult {
+    data class Success(val examOptions: List<ExamOption>) : FetchExaminationOptionsResult
+    object NetworkError : FetchExaminationOptionsResult
+    object ServerError: FetchExaminationOptionsResult
+    object UnknownError : FetchExaminationOptionsResult
+}
+
 sealed interface FetchHospitalisationsResult {
     data class Success(val hospitalisations: List<Hospitalisation>) : FetchHospitalisationsResult
     object NetworkError : FetchHospitalisationsResult
@@ -60,10 +68,18 @@ sealed interface NewDayCareExaminationResult {
     object UnknownError : NewDayCareExaminationResult
 }
 
+sealed interface NewRegularExaminationResult {
+    object Success: NewRegularExaminationResult
+    object NetworkError : NewRegularExaminationResult
+    object UnknownError : NewRegularExaminationResult
+}
+
 interface ScaDataRepository {
     suspend fun fetchProvider(username: String, password: String): FetchProviderResult
     suspend fun fetchConsultationsFor(provider: String): FetchConsultationsResult
     suspend fun fetchExaminationsFor(provider: String): FetchExaminationsResult
+
+    suspend fun fetchExaminationOptions(provider: String, insuranceType: String): FetchExaminationOptionsResult
     suspend fun fetchHospitalisationsFor(provider: String): FetchHospitalisationsResult
     suspend fun fetchFamilyMembers(familyId: String): FetchFamilyMembersResult
     suspend fun fetchPolicyHolders(memberIds: String, providerName: String): FetchPolicyHoldersResult
@@ -74,6 +90,10 @@ interface ScaDataRepository {
                                     posologie2: String, medicament3: String, quantity3: String, posologie3: String): Boolean
 
     suspend fun newDayCareExamination(userId: String, provider: String, reason: String, exam1: String, cost: String): NewDayCareExaminationResult
+
+    suspend fun newRegularExamination(userId: String, provider: String, doctor: String, specialty: String, insuranceType: String, reason: String,
+                                      exam1: String, exam2: String, exam3: String, exam4: String,
+                                      exam5: String, exam6: String, exam7: String, exam8: String): NewRegularExaminationResult
 }
 
 private const val TAG = "ScaNetworkDataRepository"
@@ -163,6 +183,38 @@ class ScaNetworkDataRepository(
         } catch (e: Exception) {
             Log.e(TAG, "Unknown error", e)
             FetchExaminationsResult.UnknownError
+        }
+    }
+
+    override suspend fun fetchExaminationOptions(
+        provider: String,
+        insuranceType: String
+    ): FetchExaminationOptionsResult {
+        return try {
+            val response = scaApiService.fetchExaminationOptions(
+                action = "fetch_options",
+                provider = provider,
+                insuranceType
+            )
+            when {
+                response.isSuccessful -> {
+                    response.body()?.let {
+                        FetchExaminationOptionsResult.Success(it)
+                    } ?: FetchExaminationOptionsResult.UnknownError
+                }
+                response.code() in 500..599 -> {
+                    FetchExaminationOptionsResult.ServerError
+                }
+                else -> {
+                    FetchExaminationOptionsResult.UnknownError
+                }
+            }
+        } catch(e: IOException) {
+            Log.d(TAG, e.toString())
+            FetchExaminationOptionsResult.NetworkError
+        } catch (e: Exception) {
+            Log.e(TAG, "Unknown error", e)
+            FetchExaminationOptionsResult.UnknownError
         }
     }
 
@@ -396,6 +448,69 @@ class ScaNetworkDataRepository(
         } catch (e: Exception) {
             Log.e(TAG, "Unknown error", e)
             NewDayCareExaminationResult.UnknownError
+        }
+    }
+
+    override suspend fun newRegularExamination(
+        userId: String,
+        provider: String,
+        doctor: String,
+        specialty: String,
+        insuranceType: String,
+        reason: String,
+        exam1: String,
+        exam2: String,
+        exam3: String,
+        exam4: String,
+        exam5: String,
+        exam6: String,
+        exam7: String,
+        exam8: String
+    ): NewRegularExaminationResult {
+        return try {
+            val response = scaApiService.newRegularExamination(
+                action = "confirm_examination",
+                userId = userId,
+                provider = provider,
+                doctor = doctor,
+                specialty = specialty,
+                insuranceType = insuranceType,
+                reason = reason,
+                exam1 = exam1,
+                exam2 = exam2,
+                exam3 = exam3,
+                exam4 = exam4,
+                exam5 = exam5,
+                exam6 = exam6,
+                exam7 = exam7,
+                exam8 = exam8,
+            )
+
+            when {
+                response.isSuccessful -> {
+                    if (response.body()?.isOk() == true) {
+                        NewRegularExaminationResult.Success
+                    } else {
+                        NewRegularExaminationResult.UnknownError
+                    }
+                }
+
+                response.code() in 500..599 -> {
+                    Log.e(TAG, "Server error: ${response.errorBody()?.string()}")
+                    NewRegularExaminationResult.UnknownError
+                }
+
+                else -> {
+                    Log.e(TAG, "Request failed: ${response.errorBody()?.string()}")
+                    NewRegularExaminationResult.UnknownError
+                }
+            }
+        } catch (e: IOException) {
+            Log.e(TAG, "Network error", e)
+            NewRegularExaminationResult.NetworkError
+        } catch (e: Exception) {
+            Log.e(TAG, "Unknown error", e)
+            NewRegularExaminationResult.UnknownError
         }
     }
 }

@@ -11,7 +11,7 @@
     <string name="remember_me">Se souvenir de moi</string>
     <string name="login">Se connecter</string>
     <string name="forgotten_password_title">Mot de passe oublié</string>
-    <string name="forgotten_password_text">Pour vos accès, veuillez contacter le Départment informatique de SCA INTER A aux numéros suivants:</string>
+    <string name="forgotten_password_text">Pour vos accès, veuillez contacter le départment informatique de SCA INTER A aux numéros suivants:</string>
 
     <!-- SUPPORT PAGE -->
     <string name="contact_hours">Lundi au Vendredi de 08h00 à 18h00</string>
@@ -141,7 +141,7 @@
     <string name="exam_cost_hint">Montant</string>
     <string name="exam_same_day_request_title">Demande de soins</string>
     <string name="exam_regular_request_title">Demande d\'examen</string>
-    <string name="new_same_day_care_success_message">Nouvelle demande de soins  établie.</string>
+    <string name="new_same_day_care_success_message">Nouvelle demande de soins établie.</string>
     <string name="examination_details_title">Détails Examen</string>
     <string name="hospitalisation_details_title">Détails Hospitalisation</string>
     <string name="exam_info_title">Demande d\'examen</string>
@@ -153,4 +153,19 @@
     <string name="exam_designation_label">Examen:</string>
     <string name="exam_list_title">Examens demandés</string>
     <string name="exam_default_answer">En attente</string>
+    <string name="exam_request_title">Détails de la demande</string>
+    <string name="exam_doctor_hint">Médecin Traitant</string>
+    <string name="exam_specialty_hint">Spécialité médicale</string>
+    <string name="exam_reg_reason_hint">Motif de l\'examen</string>
+    <string name="exam_select_exam_hint">Sélectioner un examen</string>
+    <string name="exam_1_hint">Examen 1</string>
+    <string name="exam_2_hint">Examen 2</string>
+    <string name="exam_3_hint">Examen 3</string>
+    <string name="exam_4_hint">Examen 4</string>
+    <string name="exam_5_hint">Examen 5</string>
+    <string name="exam_6_hint">Examen 6</string>
+    <string name="exam_7_hint">Examen 7</string>
+    <string name="exam_8_hint">Examen 8</string>
+    <string name="exam_options_loaded_message">Liste d\'examens mise à jour</string>
+    <string name="new_regular_exam_success_message">Nouvelle demande d\'examen établie.</string>
 </resources>

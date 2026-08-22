@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -30,11 +31,13 @@ import com.nanoporetech.scainter.ui.examination.ExaminationDetailsScreen
 import com.nanoporetech.scainter.ui.examination.ExaminationFamilyMembersListScreen
 import com.nanoporetech.scainter.ui.examination.ExaminationListScreen
 import com.nanoporetech.scainter.ui.examination.ExaminationPolicyHolderDetailsScreen
+import com.nanoporetech.scainter.ui.examination.ExaminationRegularExamScreen
 import com.nanoporetech.scainter.ui.examination.ExaminationSameDayExamScreen
-import com.nanoporetech.scainter.ui.examination.ExaminationViewModel
+import com.nanoporetech.scainter.ui.examination.SameDayExaminationViewModel
 import com.nanoporetech.scainter.ui.examination.ListExaminationsViewModel
 import com.nanoporetech.scainter.ui.examination.NewExaminationScreen
 import com.nanoporetech.scainter.ui.examination.NewExaminationViewModel
+import com.nanoporetech.scainter.ui.examination.RegularExaminationViewModel
 import com.nanoporetech.scainter.ui.menu.NavGraphs
 import com.nanoporetech.scainter.ui.menu.NavResult
 import com.nanoporetech.scainter.ui.menu.ScaAppScreen
@@ -42,6 +45,7 @@ import com.nanoporetech.scainter.ui.utils.AppSnackbarVisuals
 import com.nanoporetech.scainter.ui.utils.SnackbarType
 
 private const val TAG = "ExaminationNavigation"
+private const val NAV_RESULT = "nav_result"
 
 object ExaminationPolicyHolderDetails {
     const val POLICY_HOLDER_ID = "policyHolderId"
@@ -182,7 +186,11 @@ private fun NavGraphBuilder.newExaminationGraph(
             }
         )
     ) { backStackEntry ->
-        val policyHolderId = requireNotNull(backStackEntry.arguments?.getInt(ExaminationPolicyHolderDetails.POLICY_HOLDER_ID))
+        val policyHolderId = requireNotNull(
+            backStackEntry.arguments?.getInt(
+                ExaminationPolicyHolderDetails.POLICY_HOLDER_ID
+            )
+        )
 
         val viewModel = newExaminationViewModel(
             navController,
@@ -206,6 +214,9 @@ private fun NavGraphBuilder.newExaminationGraph(
                 onDayExamination = {
                     navController.navigate(ScaAppScreen.ExaminationSameDayExamination.name)
                 },
+                onRegularExamination = {
+                    navController.navigate(ScaAppScreen.ExaminationRegularExamination.name)
+                },
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(dimensionResource(R.dimen.padding_medium))
@@ -213,11 +224,74 @@ private fun NavGraphBuilder.newExaminationGraph(
         }
     }
 
-    composable(route = ScaAppScreen.ExaminationSameDayExamination.name) { backStackEntry ->
-        val parentEntry = remember(backStackEntry) {
-            navController.getBackStackEntry(NavGraphs.NEW_EXAMINATION)
-        }
+    composable(route = ScaAppScreen.ExaminationRegularExamination.name) { backStackEntry ->
+        val newExaminationViewModel = newExaminationViewModel(
+            navController,
+            backStackEntry,
+            providerName
+        )
 
+        val newExaminationUiState by newExaminationViewModel.uiState.collectAsStateWithLifecycle()
+        val policyHolder = newExaminationUiState.currentPolicyHolder
+
+        if (policyHolder != null) {
+            val viewModel: RegularExaminationViewModel = viewModel(
+                viewModelStoreOwner = backStackEntry,
+                key = "regular_examination_${policyHolder.id}",
+                factory = RegularExaminationViewModel.provideFactory(
+                    providerName = providerName,
+                    insuranceType = policyHolder.insuranceType,
+                    userId = policyHolder.id.toString()
+                )
+            )
+
+            val context = LocalContext.current
+            val localUiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+            // convert from model.events to nav_result
+            LaunchedEffect(viewModel) {
+                viewModel.events.collect { event ->
+                    when (event) {
+                        is UiEvent.Success -> {
+                            val dashboardEntry = navController.getBackStackEntry(ScaAppScreen.HealthCareDashboard.name)
+
+                            dashboardEntry.savedStateHandle[NAV_RESULT] = NavResult.NewRegularExaminationSuccess.name
+
+                            navController.navigate(NavGraphs.EXISTING_EXAMINATION) {
+                                popUpTo(ScaAppScreen.HealthCareDashboard.name) {
+                                    inclusive = false
+                                }
+                            }
+                        }
+                        is UiEvent.Error -> {
+                            snackbarHostState.showSnackbar(
+                                AppSnackbarVisuals(
+                                    message = context.getString(event.errorId),
+                                    type = SnackbarType.Error,
+                                    duration = SnackbarDuration.Long
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+
+            ExaminationRegularExamScreen(
+                state = localUiState,
+                onDoctorChanged = viewModel::setDoctor,
+                onSpecialtyChanged = viewModel::setSpecialty,
+                onReasonChanged = viewModel::setReason,
+                onExaminationSelected = viewModel::setSelectedExamination,
+                onRequestExamination = viewModel::requestExamination,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = AppConstants.lightGreen)
+                    .padding(dimensionResource(R.dimen.padding_medium)),
+            )
+        }
+    }
+
+    composable(route = ScaAppScreen.ExaminationSameDayExamination.name) { backStackEntry ->
         val newExaminationViewModel = newExaminationViewModel(
             navController,
             backStackEntry,
@@ -229,10 +303,10 @@ private fun NavGraphBuilder.newExaminationGraph(
         val policyHolder = newExaminationUiState.currentPolicyHolder
 
         if (policyHolder != null) {
-            val viewModel: ExaminationViewModel = viewModel(
-                viewModelStoreOwner = parentEntry,
+            val viewModel: SameDayExaminationViewModel = viewModel(
+                viewModelStoreOwner = backStackEntry,
                 key = "same_day_examination_${policyHolder.id}",
-                factory = ExaminationViewModel.provideFactory(
+                factory = SameDayExaminationViewModel.provideFactory(
                     providerName = providerName,
                     careCoverage = policyHolder.coverExternal,
                     userId = policyHolder.id.toString()
@@ -246,7 +320,7 @@ private fun NavGraphBuilder.newExaminationGraph(
                         is UiEvent.Success -> {
                             val dashboardEntry = navController.getBackStackEntry(ScaAppScreen.HealthCareDashboard.name)
 
-                            dashboardEntry.savedStateHandle["nav_result"] = NavResult.NewSameDayExaminationSuccess.name
+                            dashboardEntry.savedStateHandle[NAV_RESULT] = NavResult.NewSameDayExaminationSuccess.name
 
                             navController.navigate(NavGraphs.EXISTING_EXAMINATION) {
                                 popUpTo(ScaAppScreen.HealthCareDashboard.name) {
@@ -305,7 +379,7 @@ private fun NavGraphBuilder.existingExaminationGraph(
         }
         val dashboardNavResult by dashboardEntry
             .savedStateHandle
-            .getStateFlow<String?>("nav_result", null)
+            .getStateFlow<String?>(NAV_RESULT, null)
             .collectAsStateWithLifecycle()
 
         val context = LocalContext.current
@@ -320,11 +394,19 @@ private fun NavGraphBuilder.existingExaminationGraph(
                         )
                     )
                 }
+                NavResult.NewRegularExaminationSuccess.name -> {
+                    snackbarHostState.showSnackbar(
+                        AppSnackbarVisuals(
+                            message = context.getString(R.string.new_regular_exam_success_message),
+                            type = SnackbarType.Success
+                        )
+                    )
+                }
                 null -> Unit
             }
             // now clear old nav result
             if (dashboardNavResult != null) {
-                dashboardEntry.savedStateHandle["nav_result"] = null
+                dashboardEntry.savedStateHandle[NAV_RESULT] = null
             }
         }
 

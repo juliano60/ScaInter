@@ -40,12 +40,12 @@ import com.nanoporetech.scainter.ui.theme.ScaInterAppTheme
 fun ExaminationPolicyHolderDetailsScreen(
     policyHolder: PolicyHolder,
     modifier: Modifier = Modifier,
-    onExamination: () -> Unit = {},
+    onRegularExamination: () -> Unit = {},
     onDayExamination: () -> Unit = {},
 ) {
     ExaminationPolicyHolderDetailsContent(
         policyHolder = policyHolder,
-        onExamination = onExamination,
+        onExamination = onRegularExamination,
         onDayExamination = onDayExamination,
         modifier = modifier
     )

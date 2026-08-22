@@ -16,6 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
@@ -141,7 +142,7 @@ fun ConsultationNewPrescriptionScreen(
 
                 CardHeader(
                     title = stringResource(R.string.medical_prescription_title),
-                    iconImg = Icons.AutoMirrored.Filled.Assignment,
+                    iconImg = Icons.Filled.EditNote,
                     modifier = Modifier
                         .padding(bottom = paddingMedium)
                 )

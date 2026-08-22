@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class ExaminationViewModel(
+class SameDayExaminationViewModel(
     private val providerName: String,
     private val careCoverage: String,
     private val userId: String,
@@ -103,7 +103,7 @@ class ExaminationViewModel(
                 val application = this[APPLICATION_KEY] as ScaInterApplication
                 val repository = application.container.scaDataRepository
 
-                ExaminationViewModel(
+                SameDayExaminationViewModel(
                     providerName = providerName,
                     careCoverage = careCoverage,
                     userId = userId,

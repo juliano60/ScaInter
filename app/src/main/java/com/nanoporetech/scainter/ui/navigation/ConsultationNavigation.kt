@@ -43,6 +43,7 @@ import com.nanoporetech.scainter.ui.utils.SnackbarType
 import kotlinx.coroutines.flow.collectLatest
 
 private const val TAG = "ConsultationNavigation"
+private const val NAV_RESULT = "nav_result"
 
 object ConsultationPolicyHolderDetails {
     const val POLICY_HOLDER_ID = "policyHolderId"
@@ -215,7 +216,7 @@ private fun NavGraphBuilder.newConsultationGraph(
                         // indicate success/failure
                         navController
                             .getBackStackEntry(ScaAppScreen.HealthCareDashboard.name)
-                            .savedStateHandle["nav_result"] = NavResult.NewConsultationSuccess.name
+                            .savedStateHandle[NAV_RESULT] = NavResult.NewConsultationSuccess.name
 
                         // then navigate
                         navController.navigate(NavGraphs.EXISTING_CONSULTATION) {
@@ -284,7 +285,7 @@ private fun NavGraphBuilder.existingConsultationGraph(
         }
         val dashboardNavResult by dashboardEntry
             .savedStateHandle
-            .getStateFlow<String?>("nav_result", null)
+            .getStateFlow<String?>(NAV_RESULT, null)
             .collectAsStateWithLifecycle()
 
         val context = LocalContext.current
@@ -296,15 +297,6 @@ private fun NavGraphBuilder.existingConsultationGraph(
                         AppSnackbarVisuals(
                             message = context.getString(R.string.new_consultation_success_message),
                             type = SnackbarType.Success
-                        )
-                    )
-                }
-                NavResult.NewConsultationFailed.name -> {
-                    snackbarHostState.showSnackbar(
-                        AppSnackbarVisuals(
-                            message = context.getString(R.string.err_unknown_error_message),
-                            type = SnackbarType.Error,
-                            duration = SnackbarDuration.Long
                         )
                     )
                 }
@@ -320,7 +312,7 @@ private fun NavGraphBuilder.existingConsultationGraph(
             }
             // now clear old nav result
             if (dashboardNavResult != null) {
-                dashboardEntry.savedStateHandle["nav_result"] = null
+                dashboardEntry.savedStateHandle[NAV_RESULT] = null
             }
         }
 
@@ -426,7 +418,7 @@ private fun NavGraphBuilder.existingConsultationGraph(
                         navController
                             .getBackStackEntry(
                                 ScaAppScreen.HealthCareDashboard.name)
-                            .savedStateHandle["nav_result"] = NavResult.NewPrescriptionSuccess.name
+                            .savedStateHandle[NAV_RESULT] = NavResult.NewPrescriptionSuccess.name
 
                         navController.navigate(NavGraphs.EXISTING_CONSULTATION) {
                             popUpTo(ScaAppScreen.HealthCareDashboard.name) {

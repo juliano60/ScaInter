@@ -30,6 +30,8 @@ class NewExaminationViewModel(
     private val _events = MutableSharedFlow<UiEvent>()
     val events = _events.asSharedFlow()
 
+    private var loadedFamilyId: String? = null
+
     fun setPolicyHolder(policyHolder: PolicyHolder) {
         _uiState.update {
             it.copy(
@@ -39,6 +41,10 @@ class NewExaminationViewModel(
     }
 
     fun loadFamily(familyId: String) {
+        if (familyId == loadedFamilyId) {
+            return
+        }
+
         viewModelScope.launch {
             // load family members
             when (val result = repository.fetchFamilyMembers(familyId = familyId)) {
@@ -85,6 +91,7 @@ class NewExaminationViewModel(
                 }
             }
         }
+        loadedFamilyId = familyId
     }
 
     companion object {

@@ -76,9 +76,9 @@ private const val TAG = "TabScreen"
 
 enum class NavResult {
     NewConsultationSuccess,
-    NewConsultationFailed,
     NewPrescriptionSuccess,
     NewSameDayExaminationSuccess,
+    NewRegularExaminationSuccess,
 }
 
 enum class ScaAppScreen(@StringRes val title: Int) {

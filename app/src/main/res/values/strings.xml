@@ -152,4 +152,19 @@
     <string name="exam_designation_label">Examination:</string>
     <string name="exam_list_title">Examinations requested</string>
     <string name="exam_default_answer">Pending</string>
+    <string name="exam_request_title">Request details</string>
+    <string name="exam_doctor_hint">Primary care physician</string>
+    <string name="exam_specialty_hint">Medical specialty</string>
+    <string name="exam_reg_reason_hint">Reason for care</string>
+    <string name="exam_select_exam_hint">Select an examination</string>
+    <string name="exam_1_hint">Examination 1</string>
+    <string name="exam_2_hint">Examination 2</string>
+    <string name="exam_3_hint">Examination 3</string>
+    <string name="exam_4_hint">Examination 4</string>
+    <string name="exam_5_hint">Examination 5</string>
+    <string name="exam_6_hint">Examination 6</string>
+    <string name="exam_7_hint">Examination 7</string>
+    <string name="exam_8_hint">Examination 8</string>
+    <string name="exam_options_loaded_message">Examination options loaded successfully</string>
+    <string name="new_regular_exam_success_message">Examination request sent registered</string>
 </resources>

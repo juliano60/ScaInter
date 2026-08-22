@@ -1,6 +1,7 @@
 package com.nanoporetech.scainter.network
 
 import com.nanoporetech.scainter.model.Consultation
+import com.nanoporetech.scainter.model.ExamOption
 import com.nanoporetech.scainter.model.Examination
 import com.nanoporetech.scainter.model.FamilyMember
 import com.nanoporetech.scainter.model.Hospitalisation
@@ -73,6 +74,32 @@ interface ScaApiService {
         @Query(value = "exam1") exam1: String,
         @Query(value = "cost") cost: String
     ): Response<Status>
+
+    @GET("examination_api.php")
+    suspend fun newRegularExamination(
+        @Query(value = "action") action: String,
+        @Query(value = "id") userId: String,
+        @Query(value = "provider") provider: String,
+        @Query(value = "doctor") doctor: String,
+        @Query(value = "specialty") specialty: String,
+        @Query(value = "insurance_type") insuranceType: String,
+        @Query(value = "reason") reason: String,
+        @Query(value = "exam1") exam1: String,
+        @Query(value = "exam2") exam2: String,
+        @Query(value = "exam3") exam3: String,
+        @Query(value = "exam4") exam4: String,
+        @Query(value = "exam5") exam5: String,
+        @Query(value = "exam6") exam6: String,
+        @Query(value = "exam7") exam7: String,
+        @Query(value = "exam8") exam8: String
+    ): Response<Status>
+
+    @GET("examination_api.php")
+    suspend fun fetchExaminationOptions(
+        @Query(value = "action") action: String,
+        @Query(value = "provider") provider: String,
+        @Query(value = "insurance_type") insuranceType: String
+    ): Response<List<ExamOption>>
 
     // hospitalisation.php
 
