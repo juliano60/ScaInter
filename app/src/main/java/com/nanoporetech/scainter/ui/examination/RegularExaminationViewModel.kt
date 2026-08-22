@@ -9,7 +9,6 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.ScaInterApplication
 import com.nanoporetech.scainter.data.FetchExaminationOptionsResult
-import com.nanoporetech.scainter.data.NewDayCareExaminationResult
 import com.nanoporetech.scainter.data.NewRegularExaminationResult
 import com.nanoporetech.scainter.data.RegularExamUiState
 import com.nanoporetech.scainter.data.ScaDataRepository
@@ -53,21 +52,18 @@ class RegularExaminationViewModel(
                             isLoadingOptions = false
                         )
                     }
-                    _events.emit(UiMessage.Success(R.string.exam_options_loaded_message))
                 }
                 is FetchExaminationOptionsResult.NetworkError -> {
                     _uiState.update { it.copy(isLoadingOptions = false) }
-                    _events.emit(UiMessage.Error(R.string.err_network_error_message))
                 }
                 else -> {
                     _uiState.update { it.copy(isLoadingOptions = false) }
-                    _events.emit(UiMessage.Error(R.string.examinations_loaded_error_message))
                 }
             }
         }
     }
 
-    fun requestExamination() {
+    fun submitRequest() {
         if (_uiState.value.isSubmitting) return
 
         viewModelScope.launch {

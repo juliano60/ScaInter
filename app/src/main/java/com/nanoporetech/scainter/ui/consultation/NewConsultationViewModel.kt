@@ -14,6 +14,7 @@ import com.nanoporetech.scainter.data.NewConsultationUiState
 import com.nanoporetech.scainter.data.ScaDataRepository
 import com.nanoporetech.scainter.model.PolicyHolder
 import com.nanoporetech.scainter.ui.events.UiMessage
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -33,50 +34,68 @@ class NewConsultationViewModel(
     private val _events = MutableSharedFlow<UiMessage>()
     val events = _events.asSharedFlow()
 
+    private var loadFamilyJob: Job? = null
+    private var loadedFamilyId: String? = null
+
+
     fun loadFamily(familyId: String) {
-        viewModelScope.launch {
+        if (familyId == loadedFamilyId) {
+            return
+        }
+
+        // clear stale state
+        _uiState.update {
+            it.copy(
+                familyMembers = emptyList(),
+                policyHolders = emptyList(),
+                currentPolicyHolder = null
+            )
+        }
+
+        loadFamilyJob?.cancel()
+
+        loadFamilyJob = viewModelScope.launch {
             // load family members
-            when (val result = repository.fetchFamilyMembers(familyId = familyId)) {
+            when (val fetchFamilyResult = repository.fetchFamilyMembers(familyId = familyId)) {
                 is FetchFamilyMembersResult.Success -> {
                     _uiState.update {
                         it.copy(
-                            familyMembers = result.members
+                            familyMembers = fetchFamilyResult.members
                         )
                     }
 
-                    // then fetch their policy details
-                    if (result.members.isEmpty()) {
+                    if (fetchFamilyResult.members.isEmpty()) {
+                        loadedFamilyId = familyId
                         return@launch
                     }
-                    val memberIds = result.members.map { it.id }
-                    when (val result = repository.fetchPolicyHolders(
+
+                    val memberIds = fetchFamilyResult.members.map { it.id }
+
+                    when (val fetchPolicyResult = repository.fetchPolicyHolders(
                         memberIds = memberIds.joinToString(","),
                         providerName = providerName)
                     ) {
                         is FetchPolicyHoldersResult.Success -> {
                             _uiState.update {
                                 it.copy(
-                                    policyHolders = result.members
+                                    policyHolders = fetchPolicyResult.members
                                 )
                             }
+                            loadedFamilyId = familyId
                         }
 
                         is FetchPolicyHoldersResult.NetworkError -> {
-                            //_events.emit(UiMessage.Error(R.string.err_connection_offline))
                         }
 
                         else -> {
-                            //_events.emit(UiMessage.Error(R.string.err_unknown_error))
                         }
                     }
                 }
 
                 is FetchFamilyMembersResult.NetworkError -> {
-                    //_events.emit(UiMessage.Error(R.string.err_connection_offline))
                 }
 
                 else -> {
-                    //_events.emit(UiMessage.Error(R.string.err_unknown_error))
                 }
             }
         }

@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -282,7 +281,7 @@ private fun NavGraphBuilder.newExaminationGraph(
                 onSpecialtyChanged = viewModel::setSpecialty,
                 onReasonChanged = viewModel::setReason,
                 onExaminationSelected = viewModel::setSelectedExamination,
-                onRequestExamination = viewModel::requestExamination,
+                onRequestExamination = viewModel::submitRequest,
                 modifier = Modifier
                     .fillMaxSize()
                     .background(color = AppConstants.lightGreen)

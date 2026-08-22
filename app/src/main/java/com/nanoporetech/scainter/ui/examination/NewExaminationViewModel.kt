@@ -12,6 +12,7 @@ import com.nanoporetech.scainter.data.FetchPolicyHoldersResult
 import com.nanoporetech.scainter.data.NewExaminationUiState
 import com.nanoporetech.scainter.data.ScaDataRepository
 import com.nanoporetech.scainter.model.PolicyHolder
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -21,9 +22,10 @@ class NewExaminationViewModel(
     private val providerName: String,
     private val repository: ScaDataRepository
 ): ViewModel() {
-    private var _uiState = MutableStateFlow(NewExaminationUiState())
+    private val _uiState = MutableStateFlow(NewExaminationUiState())
     val uiState = _uiState.asStateFlow()
 
+    private var loadFamilyJob: Job? = null
     private var loadedFamilyId: String? = null
 
     fun setPolicyHolder(policyHolder: PolicyHolder) {
@@ -39,31 +41,45 @@ class NewExaminationViewModel(
             return
         }
 
-        viewModelScope.launch {
+        // clear stale state
+        _uiState.update {
+            it.copy(
+                familyMembers = emptyList(),
+                policyHolders = emptyList(),
+                currentPolicyHolder = null
+            )
+        }
+
+        loadFamilyJob?.cancel()
+
+        loadFamilyJob = viewModelScope.launch {
             // load family members
-            when (val result = repository.fetchFamilyMembers(familyId = familyId)) {
+            when (val fetchFamilyResult = repository.fetchFamilyMembers(familyId = familyId)) {
                 is FetchFamilyMembersResult.Success -> {
                     _uiState.update {
                         it.copy(
-                            familyMembers = result.members
+                            familyMembers = fetchFamilyResult.members
                         )
                     }
 
-                    // then fetch their policy details
-                    if (result.members.isEmpty()) {
+                    if (fetchFamilyResult.members.isEmpty()) {
+                        loadedFamilyId = familyId
                         return@launch
                     }
-                    val memberIds = result.members.map { it.id }
-                    when (val result = repository.fetchPolicyHolders(
+
+                    val memberIds = fetchFamilyResult.members.map { it.id }
+
+                    when (val fetchPolicyResult = repository.fetchPolicyHolders(
                         memberIds = memberIds.joinToString(","),
                         providerName = providerName)
                     ) {
                         is FetchPolicyHoldersResult.Success -> {
                             _uiState.update {
                                 it.copy(
-                                    policyHolders = result.members
+                                    policyHolders = fetchPolicyResult.members
                                 )
                             }
+                            loadedFamilyId = familyId
                         }
 
                         is FetchPolicyHoldersResult.NetworkError -> {
@@ -81,7 +97,6 @@ class NewExaminationViewModel(
                 }
             }
         }
-        loadedFamilyId = familyId
     }
 
     companion object {

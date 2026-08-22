@@ -6,15 +6,11 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.nanoporetech.scainter.R
 import com.nanoporetech.scainter.ScaInterApplication
 import com.nanoporetech.scainter.data.FetchHospitalisationsResult
 import com.nanoporetech.scainter.data.ListHospitalisationsUiState
 import com.nanoporetech.scainter.data.ScaDataRepository
-import com.nanoporetech.scainter.ui.events.UiMessage
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -28,9 +24,6 @@ class ListHospitalisationsViewModel(
     private var _uiState = MutableStateFlow(ListHospitalisationsUiState())
     val uiState = _uiState.asStateFlow()
 
-    private val _events = MutableSharedFlow<UiMessage>()
-    val events = _events.asSharedFlow()
-
     fun loadHospitalisations() {
         viewModelScope.launch {
             when (val result = repository.fetchHospitalisationsFor(providerName)) {
@@ -41,15 +34,12 @@ class ListHospitalisationsViewModel(
                             isLoading = false
                         )
                     }
-                    _events.emit(UiMessage.Success(R.string.hospitalistions_loaded_message))
                 }
                 is FetchHospitalisationsResult.NetworkError -> {
                     _uiState.update { it.copy(isLoading = false) }
-                    _events.emit(UiMessage.Error(R.string.err_network_error_message))
                 }
                 else -> {
                     _uiState.update { it.copy(isLoading = false) }
-                    _events.emit(UiMessage.Error(R.string.hospitalisations_loaded_error_message))
                 }
             }
         }
